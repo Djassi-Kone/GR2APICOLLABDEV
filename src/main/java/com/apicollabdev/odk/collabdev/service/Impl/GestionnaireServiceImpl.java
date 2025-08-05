@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.service.Impl;
 import com.apicollabdev.odk.collabdev.dto.GestionnaireDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.StatutDemande;
+import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
 import com.apicollabdev.odk.collabdev.repository.*;
 import com.apicollabdev.odk.collabdev.service.Interfaces.GestionnaireService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +56,12 @@ public class GestionnaireServiceImpl implements GestionnaireService {
 
     // Valider une demande
     public void validerDemande(GestionnaireDTO gestionnaireDTO) {
-        Optional<Demande> demandeOpt = demandeRepository.findById(gestionnaireDTO.getDemandeId());
+        Optional<DemandeParticipation> demandeOpt = demandeRepository.findById(gestionnaireDTO.getDemandeId());
         Optional<Gestionnaire> gestionnaireOpt = gestionnaireRepository.findById(gestionnaireDTO.getId());
 
         if (demandeOpt.isPresent() && gestionnaireOpt.isPresent()) {
-            Demande demande = demandeOpt.get();
-            demande.setStatut(StatutDemande.valueOf("VALIDEE"));
+            DemandeParticipation demande = demandeOpt.get();
+            demande.setStatutDemandeParticipation(StatutDemandeParticipation.valueOf("VALIDEE"));
             demandeRepository.save(demande);
         } else {
             throw new RuntimeException("Demande ou Gestionnaire non trouvé");

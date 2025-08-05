@@ -1,9 +1,12 @@
 package com.apicollabdev.odk.collabdev.controller;
 
+import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
 import com.apicollabdev.odk.collabdev.dto.ContributeurDTO;
 import com.apicollabdev.odk.collabdev.entity.Contributeur;
+import com.apicollabdev.odk.collabdev.entity.Notification;
 import com.apicollabdev.odk.collabdev.mapper.ContributeurMapper;
 import com.apicollabdev.odk.collabdev.service.Impl.ContributeurServiceImpl;
+import com.apicollabdev.odk.collabdev.service.Interfaces.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,8 @@ import java.util.List;
 public class ContributeurController {
     @Autowired
     private  ContributeurServiceImpl contributeurServiceimpl;
+    @Autowired
+    private NotificationService notificationService;
 
 
 
@@ -25,6 +30,7 @@ public class ContributeurController {
         Contributeur contributeur = ContributeurMapper.toEntity(dto);
         return contributeurServiceimpl.CreerCompte(contributeur);
     }
+    
 
     @PostMapping("/connexion")
     public Contributeur connexion(@RequestParam String email, @RequestParam String password) {

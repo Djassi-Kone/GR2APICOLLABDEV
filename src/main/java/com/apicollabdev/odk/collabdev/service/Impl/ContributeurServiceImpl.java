@@ -1,6 +1,9 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
+import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
 import com.apicollabdev.odk.collabdev.entity.Contributeur;
+import com.apicollabdev.odk.collabdev.entity.Notification;
+import com.apicollabdev.odk.collabdev.enums.TypeNotification;
 import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributeurService;
 import lombok.RequiredArgsConstructor;
@@ -15,32 +18,46 @@ import java.util.List;
 public  class ContributeurServiceImpl implements ContributeurService {
     @Autowired
     private  ContributeurRepository contributeurRepository;
+    @Autowired
+    private NotificationServiceImpl notificationServiceImpl;
+
+
+    @Autowired
+    private EmailService emailService;
 
 
 
     @Override
     @Transactional
     public Contributeur CreerCompte(Contributeur dto) {
-      /*  if (contributeurRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email déjà utilisé !");
-        }*/
-
-        Contributeur contributeur = new Contributeur();
+        /*Contributeur contributeur = new Contributeur();
         contributeur.setNom(dto.getNom());
         contributeur.setPrenom(dto.getPrenom());
         contributeur.setEmail(dto.getEmail());
         contributeur.setPassword(dto.getPassword());
         contributeur.setNiveau(dto.getNiveau());
-        contributeur.setProfil(dto.getProfil());
+        contributeur.setProfil(dto.getProfil());*/
 
-        return contributeurRepository.save(contributeur);
+        Contributeur saved = contributeurRepository.save(dto);
+
+        // Envoi automatique de la notification
+        notificationServiceImpl.notifierEtEnvoyer(TypeNotification.INSCRIPTION, saved);
+
+        return saved;
     }
+
 
     @Override
     public Contributeur connexion(String email, String password) {
-        return contributeurRepository.findByEmailAndPassword(email, password)
+        Contributeur contributeur = contributeurRepository.findByEmailAndPassword(email, password)
                 .orElseThrow(() -> new RuntimeException("Identifiants invalides"));
+
+        Notification notification = NotificationFactory.creerNotificationCommentaire(contributeur.getNom(), "Connexion réussie.");
+        emailService.sendEmail(email, "Connexion réussie", notification.getDescription());
+
+        return contributeur;
     }
+
 
 
     @Override

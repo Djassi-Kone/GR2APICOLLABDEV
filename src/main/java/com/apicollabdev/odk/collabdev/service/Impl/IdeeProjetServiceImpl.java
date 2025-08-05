@@ -4,8 +4,10 @@ import com.apicollabdev.odk.collabdev.dto.CreateIdeeProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
+import com.apicollabdev.odk.collabdev.enums.TypeNotification;
 import com.apicollabdev.odk.collabdev.repository.*;
 import com.apicollabdev.odk.collabdev.service.Interfaces.IdeeProjetService;
+import com.apicollabdev.odk.collabdev.repository.IdeeProjetRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -36,6 +38,8 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private NotificationServiceImpl notificationServiceImpl;
 
 
     @Override
@@ -55,25 +59,60 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         ideeProjet.setContributeur(c);
         ideeProjet.setDomaine(d);
         ideeProjet.setDateCreation(LocalDate.now());
-        ideeProjet.setStatut(StatutIdee.ACCEPTEE);
+        ideeProjet.setStatut(StatutIdee.PROPOSEE);
 
-        // Promotion en gestionnaire
+
         if (!dto.isLeguer()) {
             boolean dejaGestionnaire = gestionnaireRepository.existsById(c.getId());
-            Query query = null;
 
             if (!dejaGestionnaire) {
-                // Requête native d'insertion dans la table GESTIONNAIRE
-                String sql = "INSERT INTO gestionnaire (id_gestionnaire, valider_commentaire, valider_contribution, valider_demande)" +
+                String sql = "INSERT INTO gestionnaire (id_gestionnaire, valider_commentaire, valider_contribution, valider_demande) " +
                         "VALUES (:id, false, false, false)";
-                query = entityManager.createNativeQuery(sql);
+                Query query = entityManager.createNativeQuery(sql);
                 query.setParameter("id", c.getId());
                 query.executeUpdate();
             }
+
+            // Conversion de l'idée en Projet
+            Projet projet = new Projet();
+            projet.setTitre(dto.getTitre());
+            projet.setDescription(dto.getDescription());
+            //projet.setNiveau(dto.getNiveau());
+            projet.setDomaine(d); // Domaine déjà récupéré plus haut
+
+            projetRepository.save(projet);
         }
 
-        return ideeProjetRepository.save(ideeProjet);
+        // Promotion en gestionnaire si l'idée n’est pas léguée
+       /* if (!dto.isLeguer()) {
+            boolean dejaGestionnaire = gestionnaireRepository.existsById(c.getId());
+
+            if (!dejaGestionnaire) {
+                String sql = "INSERT INTO gestionnaire (id_gestionnaire, valider_commentaire, valider_contribution, valider_demande) " +
+                        "VALUES (:id, false, false, false)";
+                Query query = entityManager.createNativeQuery(sql);
+                query.setParameter("id", c.getId());
+                query.executeUpdate();
+            }
+        }*/
+
+        // Enregistrement dans la base
+        IdeeProjet saved = ideeProjetRepository.save(ideeProjet);
+
+        // Envoi de notification + mail
+        try {
+            notificationServiceImpl.notifierEtEnvoyer(
+                    TypeNotification.PROPOSITIONIDEEPROJET,
+                    saved.getContributeur(),
+                    saved.getTitre() // par exemple, si tu veux passer le titre comme contenu de notification
+            );
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la notification : " + e.getMessage());
+        }
+
+        return saved;
     }
+
 
     @Override
     public List<IdeeProjet> getAllIdeeProjet() {
@@ -105,7 +144,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Override
     public void deleteById(Long id) {
         if (!ideeProjetRepository.existsById(id)) {
-
             throw new RuntimeException("Le IdeeProjet avec l'id " + id + " n'existe pas.");
         }
         ideeProjetRepository.deleteById(id);
@@ -125,13 +163,12 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
             throw new RuntimeException("Ce contributeur a légué l'idée et ne peut pas devenir gestionnaire.");
         }
 
-        // ⚠️ Ne pas créer un nouvel objet — utiliser l'existant en le "castant"
+        // Ne pas créer un nouvel objet — utiliser l'existant en le "castant"
         Gestionnaire gestionnaire = new Gestionnaire();
         gestionnaire.setId(contributeur.getId()); // conserve l'ID
         gestionnaire.setNom(contributeur.getNom());
         gestionnaire.setEmail(contributeur.getEmail());
         gestionnaire.setPassword(contributeur.getPassword());
-
 
         // Attributs propres au gestionnaire
         gestionnaire.setValiderCommentaire(true);
@@ -147,7 +184,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         projet.setDateCreation(LocalDate.now());
         projet.setStatut(StatutProjet.EN_COURS);
         projet.setCahierDeCharge(false);
-        projet.setGestionnaire(gestionnaire); // ✅ affecte l’objet déjà géré
+        projet.setGestionnaire(gestionnaire); // affecte l’objet déjà géré
         projet.setDomaine(ideeProjet.getDomaine());
 
         Projet projetCree = projetRepository.save(projet);

@@ -24,7 +24,7 @@ public class NotificationFactory {
     public static Notification creerNotificationIdeeProjet(String titreProjet) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.PROPOSITIONIDEEPROJET);
-        notif.setDescription("Une nouvelle idée de projet a été proposée : \"" + titreProjet + "\"");
+        notif.setDescription("Vous avez proposée Une nouvelle idée de projet : \"" + titreProjet + "\"");
         return notif;
     }
 
@@ -38,49 +38,57 @@ public class NotificationFactory {
     public static Notification creerNotificationInscription() {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.INSCRIPTION);
-        notif.setDescription("Bienvenue sur la plateforme COLLABDEV ! Votre inscription a été enregistrée avec succès.");
+        notif.setDescription("Bienvenue sur la plateforme COLLABDEV ! Votre compte a été créer avec succès.");
         return notif;
     }
 
-    public static Notification creerNotificationDemandeContribution(Gestionnaire gestionnaire, String nomProjet, Contributeur contributeur) {
+    public static Notification creerNotificationDemandeContribution(Gestionnaire gestionnaire, String titreProjet, Contributeur contributeur) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDECONTRIBUTION);
-        notif.setDescription("Le contributeur " + contributeur.getNom() + " souhaite contribuer à votre projet \"" + nomProjet + "\".");
+        notif.setDescription("Le contributeur " + contributeur.getNom() + " souhaite contribuer à votre projet \"" + titreProjet + "\".");
         return notif;
     }
 
-    public static Notification creerNotificationDemandeAcceptee(Contributeur contributeur, String nomProjet) {
+    public static Notification creerNotificationDemandeParticipation(String titreProjet) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.DEMANDEPARTICIPATION);
+        notif.setDescription("Votre demande de participation au projet \"" + titreProjet + "\" a été envoyée. Veuillez attendre la validation.");
+        return notif;
+    }
+
+
+    public static Notification creerNotificationDemandeAcceptee(Contributeur contributeur, String titreProjet) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMADEACCEPTEE);
-        notif.setDescription("Votre demande de contribution au projet \"" + nomProjet + "\" a été acceptée.");
+        notif.setDescription("Votre demande de contribution au projet \"" + titreProjet + "\" a été acceptée.");
         return notif;
     }
 
-    public static Notification creerNotificationDemandeRejetee(Contributeur contributeur, String nomProjet) {
+    public static Notification creerNotificationDemandeRejetee(Contributeur contributeur, String titreProjet) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDEREJETEE);
-        notif.setDescription("Votre demande de contribution au projet \"" + nomProjet + "\" a été rejetée.");
+        notif.setDescription("Votre demande de contribution au projet \"" + titreProjet + "\" a été rejetée.");
         return notif;
     }
 
-    public static Notification creerNotificationDemandeGestionnaire(Contributeur contributeur, String nomProjet, Gestionnaire gestionnaire) {
+    public static Notification creerNotificationDemandeGestionnaire(Contributeur contributeur, String titreProjet, Gestionnaire gestionnaire) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDEGESTIONNAIRE);
-        notif.setDescription("Vous avez reçu une demande pour être gestionnaire du projet \"" + nomProjet + "\" de la part de " + contributeur.getNom() + ".");
+        notif.setDescription("Vous avez reçu une demande pour être gestionnaire du projet \"" + titreProjet + "\" de la part de " + contributeur.getNom() + ".");
         return notif;
     }
 
-    public static Notification creerNotificationDemandeGestionnaireAcceptee(String nomProjet) {
+    public static Notification creerNotificationDemandeGestionnaireAcceptee(String titreProjet) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDEGESTIONNAIREACCEPTEE);
-        notif.setDescription("Votre demande à être gestionnaire du projet \"" + nomProjet + "\" a été acceptée.");
+        notif.setDescription("Votre demande à être gestionnaire du projet \"" + titreProjet + "\" a été acceptée.");
         return notif;
     }
 
-    public static Notification creerNotificationDemandeGestionnaireRejetee(String nomProjet) {
+    public static Notification creerNotificationDemandeGestionnaireRejetee(String titreProjet) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDEGESTIONNAIREREJETEE);
-        notif.setDescription("Votre demande à être gestionnaire du projet \"" + nomProjet + "\" a été rejetée.");
+        notif.setDescription("Votre demande à être gestionnaire du projet \"" + titreProjet + "\" a été rejetée.");
         return notif;
     }
 }

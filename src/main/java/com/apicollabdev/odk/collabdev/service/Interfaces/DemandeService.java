@@ -1,4 +1,4 @@
-package com.apicollabdev.odk.collabdev.service.Interfaces;
+/*package com.apicollabdev.odk.collabdev.service.Interfaces;
 
 import com.apicollabdev.odk.collabdev.dto.DemandeDTO;
 import com.apicollabdev.odk.collabdev.entity.Demande;
@@ -11,5 +11,5 @@ public interface DemandeService {
     List<Demande> getAllDemandes();
     Demande getById(Long id);
     void deleteById(Long id);
-}
+}*/
 

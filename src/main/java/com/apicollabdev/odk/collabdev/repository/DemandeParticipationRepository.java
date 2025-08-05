@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface DemandeParticipationRepository extends JpaRepository<DemandeParticipation, Integer> {
+public interface DemandeParticipationRepository extends JpaRepository<DemandeParticipation, Long> {
 
     List<DemandeParticipation> findByContributeur(Contributeur contributeur);
 }

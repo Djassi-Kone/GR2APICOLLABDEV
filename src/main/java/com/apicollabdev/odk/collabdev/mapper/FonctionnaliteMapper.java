@@ -4,7 +4,7 @@ package com.apicollabdev.odk.collabdev.mapper;
 import com.apicollabdev.odk.collabdev.dto.FonctionnaliteDTO;
 import com.apicollabdev.odk.collabdev.entity.Fonctionnalite;
 
-public class FonctionnaliteMapper {
+public interface FonctionnaliteMapper {
 
     public static FonctionnaliteDTO toDTO(Fonctionnalite f) {
         FonctionnaliteDTO dto = new FonctionnaliteDTO();

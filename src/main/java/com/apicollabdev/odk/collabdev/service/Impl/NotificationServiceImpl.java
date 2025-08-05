@@ -1,30 +1,39 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
 
-import com.apicollabdev.odk.collabdev.entity.Administrateur;
-import com.apicollabdev.odk.collabdev.entity.Contributeur;
-import com.apicollabdev.odk.collabdev.entity.Demande;
-import com.apicollabdev.odk.collabdev.entity.Notification;
-import com.apicollabdev.odk.collabdev.enums.StatutDemande;
+import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
+import com.apicollabdev.odk.collabdev.entity.*;
+import com.apicollabdev.odk.collabdev.enums.TypeNotification;
 import com.apicollabdev.odk.collabdev.repository.AdministrateurRepository;
 import com.apicollabdev.odk.collabdev.repository.NotificationRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
+
+import static com.apicollabdev.odk.collabdev.Notification.NotificationFactory.creerNotificationDemandeParticipation;
+import static com.apicollabdev.odk.collabdev.Notification.NotificationFactory.creerNotificationDemandeContribution;
+import static com.apicollabdev.odk.collabdev.enums.TypeNotification.*;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
     @Autowired
+    private final JavaMailSender mailSender;
+    @Autowired
     private EmailService emailService;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
     private AdministrateurRepository administrateurRepository;
+
     private Administrateur administrateur;
+
 
     @Override
     public Notification createNotification(Notification notification,long idAdmin) {
@@ -54,24 +63,107 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
 
-    public void notifierContributeurPourReponse(Demande demande, String statut) {
-        Contributeur contributeurs = demande.getContributeur();
-        StatutDemande statutDemande = statut.equalsIgnoreCase("ACCEPTEE") ? StatutDemande.ACCEPTEE : StatutDemande.REJETEE;
+    /**
+     * Envoie une notification par mail à un contributeur en fonction du type de notification
+     */
+    public void notifierEtEnvoyer(TypeNotification type, Contributeur contributeur, Object... data) {
+        Notification notification = null;
 
-        Notification notifications = new Notification();
-        notifications.setContributeur(contributeurs);
-        notifications.setDescription("Votre demande a été " + statutDemande);
-        notifications.setDateNotification(LocalDateTime.now());
-        notifications.setStatutDemande(statutDemande);
-        notificationRepository.save(notifications);
+        switch (type) {
+            case INSCRIPTION:
+                notification = NotificationFactory.creerNotificationInscription();
+                break;
 
-        // Envoi email
-        emailService.sendEmail(contributeurs.getEmail(), "Réponse à votre demande", notifications.getDescription());
+            case GAINCOINS:
+                notification = NotificationFactory.creerNotificationCoins((int) data[0]);
+                break;
+
+            case GAINBADGE:
+                notification = NotificationFactory.creerNotificationBadge((String) data[0]);
+                break;
+
+            case PROPOSITIONIDEEPROJET:
+                notification = NotificationFactory.creerNotificationIdeeProjet((String) data[0]);
+                break;
+
+            case COMMENTAIRE:
+                notification = NotificationFactory.creerNotificationCommentaire(
+                        contributeur.getNom(), (String) data[0]);
+                break;
+
+            case DEMANDECONTRIBUTION:
+                Gestionnaire gestionnaire = (Gestionnaire) data[0];
+                String titreProjet = (String) data[1];
+                Contributeur contributeurs = (Contributeur) data[2];
+
+                Notification notifGestionnaire = NotificationFactory.creerNotificationDemandeContribution(
+                        gestionnaire, titreProjet, contributeurs);
+
+                notification = NotificationFactory.creerNotificationDemandeParticipation(titreProjet);
+                break;
+
+
+            case DEMADEACCEPTEE:
+                notification = NotificationFactory.creerNotificationDemandeAcceptee(
+                        contributeur, (String) data[0]);
+                break;
+
+            case DEMANDEREJETEE:
+                notification = NotificationFactory.creerNotificationDemandeRejetee(
+                        contributeur, (String) data[0]);
+                break;
+
+            case DEMANDEGESTIONNAIRE:
+                notification = NotificationFactory.creerNotificationDemandeGestionnaire(
+                        contributeur, (String) data[0], (Gestionnaire) data[1]);
+                break;
+
+            case DEMANDEGESTIONNAIREACCEPTEE:
+                notification = NotificationFactory.creerNotificationDemandeGestionnaireAcceptee(
+                        (String) data[0]);
+                break;
+
+            case DEMANDEGESTIONNAIREREJETEE:
+                notification = NotificationFactory.creerNotificationDemandeGestionnaireRejetee(
+                        (String) data[0]);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Type de notification non géré : " + type);
+        }
+
+        // Envoie du mail
+        emailService.sendEmail(
+                contributeur.getEmail(),
+                "Notification : " + type.name(),
+                notification.getDescription()
+        );
+
+
     }
+
+    public NotificationServiceImpl(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    @Override
+    public void envoyerNotification( Contributeur contributeur, Notification notification) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(contributeur.getEmail());
+        message.setSubject("Notification : " + notification.getTypeNotyf().name());
+        message.setText(notification.getDescription());
+        message.setFrom("group2apicollabdev@gmail.com");
+
+        mailSender.send(message);
+    }
+
+    }
+
 
   /*  public List<Notification> getNotificationsByGestionnaire(Long idGestionnaire) {
         return notificationRepository.findByProjet_Gestionnaire_IdContributeur(idGestionnaire);
     }*/
 
 
-}
+
+

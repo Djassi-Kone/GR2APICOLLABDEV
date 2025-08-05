@@ -1,4 +1,4 @@
-package com.apicollabdev.odk.collabdev.entity;
+/*package com.apicollabdev.odk.collabdev.entity;
 import com.apicollabdev.odk.collabdev.enums.ChoixRole;
 import com.apicollabdev.odk.collabdev.enums.StatutDemande;
 import jakarta.persistence.*;
@@ -83,4 +83,4 @@ public class Demande {
         this.contributeur = contributeur;
     }
 }
-
+*/

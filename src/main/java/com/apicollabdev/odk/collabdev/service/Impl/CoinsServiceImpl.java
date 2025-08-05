@@ -10,6 +10,7 @@ import com.apicollabdev.odk.collabdev.repository.CoinsRepository;
 import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.BadgeService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.CoinsService;
+import com.apicollabdev.odk.collabdev.service.Interfaces.NotificationService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class CoinsServiceImpl implements CoinsService {
     private ContributeurRepository contributeurRepository;
     @Autowired
     private BadgeServiceImpl badgeServiceImpl;
+
 
 
     @Override

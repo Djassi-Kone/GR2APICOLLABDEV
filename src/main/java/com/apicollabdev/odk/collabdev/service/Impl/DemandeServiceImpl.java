@@ -1,4 +1,4 @@
-package com.apicollabdev.odk.collabdev.service.Impl;
+/*package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.dto.DemandeDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
@@ -53,8 +53,8 @@ public class DemandeServiceImpl implements DemandeService {
             demandeRepository.save(demande);
 
         Notification notification = new Notification();
-        notification.setProjet(projet); // ✅ tu dois utiliser "projet" (et pas "p" ou autre)
-        notification.setContributeur(contributeur); // ✅ "contributeur" et pas "c"
+        notification.setProjet(projet);
+        notification.setContributeur(contributeur);
         notification.setDescription("Nouvelle demande de participation pour le projet : " + projet.getTitre());
         notification.setDateNotification(LocalDateTime.now());
         notification.setStatutDemande(StatutDemande.EN_ATTENTE);
@@ -121,4 +121,4 @@ public class DemandeServiceImpl implements DemandeService {
 
         return savedDemande;
     }
-}
+}*/

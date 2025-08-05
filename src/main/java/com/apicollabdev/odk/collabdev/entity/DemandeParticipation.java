@@ -38,5 +38,60 @@ public class DemandeParticipation {
     private Contributeur contributeur;
 
 
+    public Long getIdDemandeParticipation() {
+        return idDemandeParticipation;
+    }
+
+    public void setIdDemandeParticipation(Long idDemandeParticipation) {
+        this.idDemandeParticipation = idDemandeParticipation;
+    }
+
+    public StatutDemandeParticipation getStatutDemandeParticipation() {
+        return statutDemandeParticipation;
+    }
+
+    public void setStatutDemandeParticipation(StatutDemandeParticipation statutDemandeParticipation) {
+        this.statutDemandeParticipation = statutDemandeParticipation;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public TypeDemandeParticipation getTypeDemandeParticipationemande() {
+        return typeDemandeParticipationemande;
+    }
+
+    public void setTypeDemandeParticipationemande(TypeDemandeParticipation typeDemandeParticipationemande) {
+        this.typeDemandeParticipationemande = typeDemandeParticipationemande;
+    }
+
+    public LocalDateTime getDatedemande() {
+        return datedemande;
+    }
+
+    public void setDatedemande(LocalDateTime datedemande) {
+        this.datedemande = datedemande;
+    }
+
+    public Projet getProjet() {
+        return projet;
+    }
+
+    public void setProjet(Projet projet) {
+        this.projet = projet;
+    }
+
+    public Contributeur getContributeur() {
+        return contributeur;
+    }
+
+    public void setContributeur(Contributeur contributeur) {
+        this.contributeur = contributeur;
+    }
 }
 

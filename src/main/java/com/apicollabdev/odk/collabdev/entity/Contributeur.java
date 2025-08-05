@@ -54,7 +54,7 @@ public class Contributeur extends Utilisateur{
     private List<DemandeParticipation> demandeParticipations;
 
     @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Demande> demandes;
+    private List<DemandeParticipation> demandes;
 
     @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DebloqueProjet> debloqueProjets;
@@ -143,11 +143,11 @@ public class Contributeur extends Utilisateur{
         this.demandeParticipations = demandeParticipations;
     }
 
-    public List<Demande> getDemandes() {
+    public List<DemandeParticipation> getDemandes() {
         return demandes;
     }
 
-    public void setDemandes(List<Demande> demandes) {
+    public void setDemandes(List<DemandeParticipation> demandes) {
         this.demandes = demandes;
     }
 

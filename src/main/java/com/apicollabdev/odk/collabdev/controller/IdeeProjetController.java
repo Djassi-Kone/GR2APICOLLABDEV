@@ -2,8 +2,10 @@ package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.CreateIdeeProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
+import com.apicollabdev.odk.collabdev.enums.TypeNotification;
 import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.repository.DomaineRepository;
+import com.apicollabdev.odk.collabdev.service.Impl.NotificationServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributeurService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.DomaineService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.IdeeProjetService;
@@ -34,6 +36,7 @@ public class IdeeProjetController {
      private IdeeProjetServiceImpl ideeProjetServiceImpl;
 
 
+
      private Domaine domaine;
      //  Constructeur pour injecter le service
     @Autowired
@@ -51,6 +54,8 @@ public class IdeeProjetController {
     ) {
         IdeeProjet created = ideeProjetServiceImpl.createIdeeProjet(dto, idContributeur, idDomaine);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
+
+
     }
 
 
