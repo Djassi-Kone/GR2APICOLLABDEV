@@ -15,6 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorValue("ADMINISTRATEUR")
 @PrimaryKeyJoinColumn(name = "id_administrateur")
 public class Administrateur extends Utilisateur{
 

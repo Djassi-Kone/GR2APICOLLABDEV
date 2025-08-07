@@ -13,20 +13,34 @@ import java.util.List;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("CONTRIBUTEUR")
+@Table(name = "Contributeur", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @PrimaryKeyJoinColumn(name = "id_contributeur")
 public class Contributeur extends Utilisateur{
 
 
+    @Column(nullable = false)
     private String nom;
+
+    @Column(nullable = false)
     private String prenom;
-    private boolean Active;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
 
     @Enumerated(EnumType.STRING)
-    private Profil profil; // DEVELOPPER, DESIGNER, etc
+    @Column(nullable = false)
+    private Profil profil;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Niveau niveau;
+
+    @Column(nullable = false)
+    private boolean active = true;
 
     //@Column(nullable = false)
     //private int coin = 0;
@@ -88,11 +102,11 @@ public class Contributeur extends Utilisateur{
     }
 
     public boolean isActive() {
-        return Active;
+        return active;
     }
 
     public void setActive(boolean active) {
-        Active = active;
+        this.active = active;
     }
 
     public Profil getProfil() {

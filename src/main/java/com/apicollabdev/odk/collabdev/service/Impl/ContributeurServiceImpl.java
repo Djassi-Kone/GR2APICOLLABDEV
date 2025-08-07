@@ -8,6 +8,7 @@ import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributeurService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,21 +31,30 @@ public  class ContributeurServiceImpl implements ContributeurService {
     @Override
     @Transactional
     public Contributeur CreerCompte(Contributeur dto) {
-        /*Contributeur contributeur = new Contributeur();
+        // Vérification si l'email existe déjà
+        if (contributeurRepository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Un compte avec cet email existe déjà !");
+        }
+
+        // Création de l'objet Contributeur à enregistrer
+        Contributeur contributeur = new Contributeur();
         contributeur.setNom(dto.getNom());
         contributeur.setPrenom(dto.getPrenom());
         contributeur.setEmail(dto.getEmail());
-        contributeur.setPassword(dto.getPassword());
+        contributeur.setPassword(dto.getPassword()); // À encoder si besoin
         contributeur.setNiveau(dto.getNiveau());
-        contributeur.setProfil(dto.getProfil());*/
+        contributeur.setProfil(dto.getProfil());
+        contributeur.setActive(dto.isActive());
 
-        Contributeur saved = contributeurRepository.save(dto);
+        // Sauvegarde dans la base
+        Contributeur saved = contributeurRepository.save(contributeur);
 
         // Envoi automatique de la notification
         notificationServiceImpl.notifierEtEnvoyer(TypeNotification.INSCRIPTION, saved);
 
         return saved;
     }
+
 
 
     @Override

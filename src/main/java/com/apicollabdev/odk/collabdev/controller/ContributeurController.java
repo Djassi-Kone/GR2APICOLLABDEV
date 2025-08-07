@@ -7,6 +7,7 @@ import com.apicollabdev.odk.collabdev.entity.Notification;
 import com.apicollabdev.odk.collabdev.mapper.ContributeurMapper;
 import com.apicollabdev.odk.collabdev.service.Impl.ContributeurServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.NotificationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,26 +27,26 @@ public class ContributeurController {
 
 
     @PostMapping("/inscription")
-    public Contributeur CreerCompte(@RequestBody ContributeurDTO dto) {
+    public Contributeur CreerCompte(@Valid @RequestBody ContributeurDTO dto) {
         Contributeur contributeur = ContributeurMapper.toEntity(dto);
         return contributeurServiceimpl.CreerCompte(contributeur);
     }
     
 
     @PostMapping("/connexion")
-    public Contributeur connexion(@RequestParam String email, @RequestParam String password) {
+    public Contributeur connexion(@Valid @RequestParam String email, @RequestParam String password) {
         return contributeurServiceimpl.connexion(email, password);
     }
 
     @GetMapping("/deconnexion/{id}")
-    public void deconnexion(@PathVariable Long id) {
+    public void deconnexion(@Valid @PathVariable Long id) {
         contributeurServiceimpl.deconnexion(id);
     }
 
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('id')")
-    public Contributeur getById(@PathVariable Long id) {
+    public Contributeur getById( @PathVariable Long id) {
         return contributeurServiceimpl.getContributeurById(id);
     }
 
@@ -63,7 +64,7 @@ public class ContributeurController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Contributeur> mettreAJourContributeur(
-            @PathVariable Long id,
+            @Valid @PathVariable Long id,
             @RequestBody ContributeurDTO dto) {
 
         Contributeur contributeur = ContributeurMapper.toEntity(dto);
