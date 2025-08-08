@@ -8,6 +8,7 @@ public class IdeeProjetDTO {
    // private LocalDateTime dateCreation = LocalDateTime.now();
     private String niveau;
     private String description;
+    private boolean leguer;
 
     public IdeeProjetDTO() {
     }
@@ -16,12 +17,13 @@ public class IdeeProjetDTO {
                          String titre,
                          LocalDateTime dateCreation,
                          String niveau,
-                         String description,
+                         String description, boolean leguer,
                          String domaine) {
         this.idIdeeProjet = idIdeeProjet;
         this.titre = titre;
         this.niveau = niveau;
         this.description = description;
+        this.leguer = leguer;
     }
 
     public int getIdIdeeProjet() {

@@ -92,4 +92,14 @@ public class IdeeProjetController {
         return ResponseEntity.ok(ideeUpdated);
     }
 
+    @PostMapping("/transferer-et-transformer/{idIdeeProjet}/vers/{idContributeur}")
+    public ResponseEntity<Projet> transfererEtTransformer(
+            @PathVariable Long idIdeeProjet,
+            @PathVariable Long idContributeur) {
+
+        Projet projet = ideeProjetServiceImpl.transfererEtTransformerIdeeLeguee(idIdeeProjet, idContributeur);
+        return ResponseEntity.ok(projet);
+    }
+
+
 }

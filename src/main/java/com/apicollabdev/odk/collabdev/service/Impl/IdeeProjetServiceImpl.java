@@ -41,7 +41,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Autowired
     private NotificationServiceImpl notificationServiceImpl;
 
-
+/*
     @Override
     @Transactional
     public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeur, long idDomaine) {
@@ -83,19 +83,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
             projetRepository.save(projet);
         }
 
-        // Promotion en gestionnaire si l'idée n’est pas léguée
-       /* if (!dto.isLeguer()) {
-            boolean dejaGestionnaire = gestionnaireRepository.existsById(c.getId());
-
-            if (!dejaGestionnaire) {
-                String sql = "INSERT INTO gestionnaire (id_gestionnaire, valider_commentaire, valider_contribution, valider_demande) " +
-                        "VALUES (:id, false, false, false)";
-                Query query = entityManager.createNativeQuery(sql);
-                query.setParameter("id", c.getId());
-                query.executeUpdate();
-            }
-        }*/
-
         // Enregistrement dans la base
         IdeeProjet saved = ideeProjetRepository.save(ideeProjet);
 
@@ -111,7 +98,47 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         }
 
         return saved;
+    }  */
+
+    @Override
+    @Transactional
+    public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeur, long idDomaine) {
+        Contributeur c = contributeurRepository.findById(idContributeur)
+                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
+
+        Domaine d = domaineRepository.findById(idDomaine)
+                .orElseThrow(() -> new RuntimeException("Domaine non trouvé"));
+
+        IdeeProjet ideeProjet = new IdeeProjet();
+        ideeProjet.setTitre(dto.getTitre());
+        ideeProjet.setDescription(dto.getDescription());
+        ideeProjet.setNiveau(dto.getNiveau());
+        ideeProjet.setLeguer(dto.isLeguer());
+        ideeProjet.setContributeur(c);
+        ideeProjet.setDomaine(d);
+        ideeProjet.setDateCreation(LocalDate.now());
+        ideeProjet.setStatut(StatutIdee.PROPOSEE);
+
+        IdeeProjet saved = ideeProjetRepository.save(ideeProjet);
+
+        if (!dto.isLeguer()) {
+            transformerIdeeEnProjet(saved.getIdIdeeProjet());
+            saved = ideeProjetRepository.findById(saved.getIdIdeeProjet()).orElse(saved);
+        }
+
+        try {
+            notificationServiceImpl.notifierEtEnvoyer(
+                    TypeNotification.PROPOSITIONIDEEPROJET,
+                    saved.getContributeur(),
+                    saved.getTitre()
+            );
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la notification : " + e.getMessage());
+        }
+
+        return saved;
     }
+
 
 
     @Override
@@ -162,6 +189,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         if (Boolean.TRUE.equals(ideeProjet.isLeguer())) {
             throw new RuntimeException("Ce contributeur a légué l'idée et ne peut pas devenir gestionnaire.");
         }
+        /*
 
         // Ne pas créer un nouvel objet — utiliser l'existant en le "castant"
         Gestionnaire gestionnaire = new Gestionnaire();
@@ -177,7 +205,24 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
 
         // On ne le sauvegarde pas — Hibernate gère déjà l’objet via l’ID unique.
         // Pas de delete sur le contributeur non plus.
-
+*/
+        // Récupère ou crée un gestionnaire persistant lié au contributeur
+        Gestionnaire gestionnaire = gestionnaireRepository.findById(contributeur.getId())
+                .orElseGet(() -> {
+                    Gestionnaire g = new Gestionnaire();
+                    g.setId(contributeur.getId());
+                    g.setId(contributeur.getId());
+                    g.setNom(contributeur.getNom());
+                    g.setPrenom(contributeur.getPrenom());
+                    g.setEmail(contributeur.getEmail());
+                    g.setNiveau(contributeur.getNiveau());
+                    g.setProfil(contributeur.getProfil());
+                    g.setPassword(contributeur.getPassword());
+                    g.setValiderCommentaire(true);
+                    g.setValiderContribution(true);
+                    g.setValiderDemande(true);
+                    return gestionnaireRepository.save(g);
+                });
         Projet projet = new Projet();
         projet.setTitre(ideeProjet.getTitre());
         projet.setDescription(ideeProjet.getDescription());
@@ -196,6 +241,84 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         return projetCree;
 
     }
+
+
+    @Transactional
+    public Projet transfererEtTransformerIdeeLeguee(Long idIdeeProjet, Long idNouveauContributeur) {
+        // 1. Récupérer l'idée projet
+        IdeeProjet ideeProjet = ideeProjetRepository.findById(idIdeeProjet)
+                .orElseThrow(() -> new RuntimeException("Idée de projet non trouvée"));
+
+        // 2. Vérifier que l'idée est bien léguée
+        if (!Boolean.TRUE.equals(ideeProjet.isLeguer())) {
+            throw new RuntimeException("Cette idée n'est pas léguée, transfert impossible");
+        }
+
+        // 3. Récupérer le nouveau contributeur
+        Contributeur nouveauContributeur = contributeurRepository.findById(idNouveauContributeur)
+                .orElseThrow(() -> new RuntimeException("Contributeur à affecter non trouvé"));
+
+        // 4. Affecter le nouveau contributeur à l'idée
+        ideeProjet.setContributeur(nouveauContributeur);
+        ideeProjet.setLeguer(false);
+
+        /*// 5. Créer ou récupérer le gestionnaire correspondant au contributeur
+        Gestionnaire gestionnaire = gestionnaireRepository.findById(nouveauContributeur.getId())
+                .orElseGet(() -> {
+                    Gestionnaire g = new Gestionnaire();
+                    g.setNom(nouveauContributeur.getNom());
+                    g.setPrenom(nouveauContributeur.getPrenom());
+                    g.setEmail(nouveauContributeur.getEmail());
+                    g.setNiveau(nouveauContributeur.getNiveau());
+                    g.setProfil(nouveauContributeur.getProfil());
+                    g.setPassword(nouveauContributeur.getPassword());
+                    g.setValiderCommentaire(true);
+                    g.setValiderContribution(true);
+                    g.setValiderDemande(true);
+                    return gestionnaireRepository.save(g);
+                }); */
+        Gestionnaire gestionnaire = gestionnaireRepository.findById(nouveauContributeur.getId())
+                .orElseGet(() -> {
+                    Gestionnaire g = new Gestionnaire();
+                    g.setId(nouveauContributeur.getId());
+                    g.setNom(nouveauContributeur.getNom());
+                    g.setPrenom(nouveauContributeur.getPrenom());
+                    g.setEmail(nouveauContributeur.getEmail());
+                    g.setNiveau(nouveauContributeur.getNiveau());
+                    g.setProfil(nouveauContributeur.getProfil());
+                    g.setPassword(nouveauContributeur.getPassword());
+                    g.setValiderCommentaire(true);
+                    g.setValiderContribution(true);
+                    g.setValiderDemande(true);
+                    return gestionnaireRepository.save(g);
+                });
+
+        Projet projet = null;
+        projet.setGestionnaire(gestionnaire);
+
+
+        // 6. Créer le projet
+        projet = new Projet();
+        projet.setTitre(ideeProjet.getTitre());
+        projet.setDescription(ideeProjet.getDescription());
+        projet.setDateCreation(LocalDate.now());
+        projet.setStatut(StatutProjet.EN_COURS);
+        projet.setCahierDeCharge(false);
+        projet.setDomaine(ideeProjet.getDomaine());
+        projet.setGestionnaire(gestionnaire);
+
+        Projet projetCree = projetRepository.save(projet);
+
+        // 7. Lier le projet à l'idée et changer le statut
+        ideeProjet.setProjet(projetCree);
+        ideeProjet.setStatut(StatutIdee.ACCEPTEE);
+        ideeProjetRepository.save(ideeProjet);
+
+        // 8. Retourner le projet
+        return projetCree;
+    }
+
+
 
 
 
