@@ -4,7 +4,7 @@ import com.apicollabdev.odk.collabdev.enums.RoleUtilisateur;
 import jakarta.persistence.*;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "role_utilisateur")
+@DiscriminatorColumn(name = "role_utilisateur", discriminatorType = DiscriminatorType.STRING)
 public class Utilisateur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +13,8 @@ public class Utilisateur {
     private String email;
     private String password;
 
-
+    @Version  // <-- Ajoute cette annotation
+    private Long version;
 
     public Long getId() {
         return id;
@@ -39,5 +40,11 @@ public class Utilisateur {
         this.password = password;
     }
 
+    public Long getVersion() {
+        return version;
+    }
 
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 }

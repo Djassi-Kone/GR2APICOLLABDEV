@@ -13,6 +13,8 @@ import java.util.List;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorValue("CONTRIBUTEUR")
 @PrimaryKeyJoinColumn(name = "id_contributeur")
 public class Contributeur extends Utilisateur{
 
@@ -20,6 +22,7 @@ public class Contributeur extends Utilisateur{
     private String nom;
     private String prenom;
     private boolean Active;
+    private int totalCoins;
 
 
     @Enumerated(EnumType.STRING)
@@ -61,6 +64,15 @@ public class Contributeur extends Utilisateur{
 
     @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Recevoir> recevoirs;
+
+    @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Fonctionnalite> fonctionnalites;
+
+    @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contribution> contributions;
+
+// + autres attributs habituels
+
 
 
     public List<Badge> getBadges() {
@@ -165,6 +177,30 @@ public class Contributeur extends Utilisateur{
 
     public void setRecevoirs(List<Recevoir> recevoirs) {
         this.recevoirs = recevoirs;
+    }
+
+    public int getTotalCoins() {
+        return totalCoins;
+    }
+
+    public void setTotalCoins(int totalCoins) {
+        this.totalCoins = totalCoins;
+    }
+
+    public List<Fonctionnalite> getFonctionnalites() {
+        return fonctionnalites;
+    }
+
+    public void setFonctionnalites(List<Fonctionnalite> fonctionnalites) {
+        this.fonctionnalites = fonctionnalites;
+    }
+
+    public List<Contribution> getContributions() {
+        return contributions;
+    }
+
+    public void setContributions(List<Contribution> contributions) {
+        this.contributions = contributions;
     }
 }
 

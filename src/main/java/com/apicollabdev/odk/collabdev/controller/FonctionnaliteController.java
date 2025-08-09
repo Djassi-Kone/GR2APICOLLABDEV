@@ -17,7 +17,7 @@ public class FonctionnaliteController {
     @Autowired
     private FonctionnaliteServiceImpl fonctionnaliteService;
 
-    @PostMapping
+    @PostMapping("/gestionnaire/{gestionnaire}/newfonctionnalite")
     public ResponseEntity<FonctionnaliteDTO> create(@RequestBody FonctionnaliteDTO dto) {
         FonctionnaliteDTO created = fonctionnaliteService.creerFonctionnalite(dto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
@@ -29,16 +29,16 @@ public class FonctionnaliteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FonctionnaliteDTO> getById(@PathVariable int id) {
+    public ResponseEntity<FonctionnaliteDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(fonctionnaliteService.ListeFonctionnaliteParId(id));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<FonctionnaliteDTO> update(@PathVariable int id, @RequestBody FonctionnaliteDTO dto) {
+    public ResponseEntity<FonctionnaliteDTO> update(@PathVariable Long id, @RequestBody FonctionnaliteDTO dto) {
         FonctionnaliteDTO updated = fonctionnaliteService.modifierFonctionnalite(id, dto);
         return ResponseEntity.ok(updated);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         fonctionnaliteService.supprimerFonctionnalite(id);
         return ResponseEntity.noContent().build(); // 204 No Content
     }

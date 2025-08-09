@@ -6,8 +6,16 @@ import com.apicollabdev.odk.collabdev.entity.Contribution;
 import java.util.List;
 
 public interface ContributionService {
-    Contribution createContribution(ContributionDTO contribution, long idProjet, long idContributeur);
-    List<Contribution> getAllContributions();
-    Contribution getById(Long id);
-    void deleteById(Long id);
+    public List<Contribution> getAllContributions();
+    public Contribution getById(Long id);
+    public void deleteById(Long id);
+    public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur);
+    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, String urlCode);
+    public Contribution validerContribution(Long idContribution);
+    public Contribution rejeterContribution(Long idContribution);
+
+
+
+
+
 }

@@ -24,9 +24,6 @@ public class Recevoir {
     @JoinColumn(name = "id_contributeur", nullable = false)
     private Contributeur contributeur;
 
-    public void setContributeur(Contributeur gestionnaireContributeur) {
-    }
-
     public int getIdRecevoir() {
         return idRecevoir;
     }
@@ -61,5 +58,9 @@ public class Recevoir {
 
     public Contributeur getContributeur() {
         return contributeur;
+    }
+
+    public void setContributeur(Contributeur contributeur) {
+        this.contributeur = contributeur;
     }
 }

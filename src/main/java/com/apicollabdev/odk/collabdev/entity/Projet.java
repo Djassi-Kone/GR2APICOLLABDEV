@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -21,7 +22,7 @@ public class Projet {
     private String titre;
     private String description;
 
-    private LocalDate dateCreation;
+    private LocalDateTime dateCreation;
 
     private boolean cahierDeCharge;
 
@@ -64,6 +65,9 @@ public class Projet {
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notification;
 
+    @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Fonctionnalite> fonctionnalites;
+
     public Long getIdProjet() {
         return idProjet;
     }
@@ -86,14 +90,6 @@ public class Projet {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public LocalDate getDate() {
-        return dateCreation;
-    }
-
-    public void setDate(LocalDate date) {
-        this.dateCreation = date;
     }
 
     public boolean isCahierDeCharge() {
@@ -168,11 +164,11 @@ public class Projet {
         this.gestionnaire = gestionnaire;
     }
 
-    public LocalDate getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(LocalDate dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 

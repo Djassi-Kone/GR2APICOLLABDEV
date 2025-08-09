@@ -2,16 +2,19 @@ package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.dto.GestionnaireDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
+import com.apicollabdev.odk.collabdev.enums.StatutContribution;
 import com.apicollabdev.odk.collabdev.enums.StatutDemande;
 import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
 import com.apicollabdev.odk.collabdev.repository.*;
 import com.apicollabdev.odk.collabdev.service.Interfaces.GestionnaireService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@Transactional
 public class GestionnaireServiceImpl implements GestionnaireService {
     @Autowired
     private final GestionnaireRepository gestionnaireRepository;
@@ -39,15 +42,21 @@ public class GestionnaireServiceImpl implements GestionnaireService {
 
         if (contributionOpt.isPresent() && gestionnaireOpt.isPresent()) {
             Contribution contribution = contributionOpt.get();
-            contribution.setValidee(true);
+            contribution.setStatutC(StatutContribution.VALIDEE);
             contributionRepository.save(contribution);
 
             // Attribuer des coins si nécessaire
             if (gestionnaireDTO.getCoinsAAttribuer() > 0) {
-                //Contributeur contributeur = contribution.getContributeur();
-                // contributeur.setCoin(contributeur.getCoins() + gestionnaireDTO.getCoinsAAttribuer());
-
-                //contributeurRepository.save(contributeur);
+                Contributeur contributeur = contribution.getContributeur();
+            if (!contributeur.getCoins().isEmpty()) {
+                Coins coins = contributeur.getCoins().get(0); // par exemple le premier
+                coins.setNombreCoins(coins.getNombreCoins() + gestionnaireDTO.getCoinsAAttribuer());
+            } else {
+                Coins nouveau = new Coins();
+                nouveau.setNombreCoins(gestionnaireDTO.getCoinsAAttribuer());
+                contributeur.getCoins().add(nouveau);
+            }
+                contributeurRepository.save(contributeur);
             }
         } else {
             throw new RuntimeException("Contribution ou Gestionnaire non trouvé");

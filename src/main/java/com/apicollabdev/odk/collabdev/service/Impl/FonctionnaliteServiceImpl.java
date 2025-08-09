@@ -3,7 +3,7 @@ package com.apicollabdev.odk.collabdev.service.Impl;
 import com.apicollabdev.odk.collabdev.dto.FonctionnaliteDTO;
 import com.apicollabdev.odk.collabdev.entity.Fonctionnalite;
 import com.apicollabdev.odk.collabdev.entity.Projet;
-import com.apicollabdev.odk.collabdev.enums.StatutProjet;
+import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
 import com.apicollabdev.odk.collabdev.mapper.FonctionnaliteMapper;
 import com.apicollabdev.odk.collabdev.repository.FonctionnaliteRepository;
 import com.apicollabdev.odk.collabdev.repository.GestionnaireRepository;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-@Service
 
+@Service
 public class FonctionnaliteServiceImpl implements FonctionnaliteService {
 
     @Autowired
@@ -27,10 +27,11 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
     @Autowired
     private GestionnaireRepository gestionnaireRepository;
 
+    @Override
     public FonctionnaliteDTO creerFonctionnalite(FonctionnaliteDTO dto) {
         Fonctionnalite f = new Fonctionnalite();
         f.setPointFonctionnalite(Integer.parseInt(dto.getPointFonctionnalite()));
-        f.setStatutP(StatutProjet.valueOf(dto.getStatut()));
+        f.setStatutF(StatutFonctionnalite.valueOf(dto.getStatut()));
         f.setNomFonctionnalite(dto.getFonctionnaliteNom());
         f.setDescriptionFonctionnalite(dto.getFonctionnaliteDescription());
 
@@ -39,10 +40,10 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
         f.setProjet(projet);
 
         Fonctionnalite saved = fonctionnaliteRepository.save(f);
-
         return FonctionnaliteMapper.toDTO(saved);
     }
 
+    @Override
     public List<FonctionnaliteDTO> ListerFonctionnalite() {
         return fonctionnaliteRepository.findAll()
                 .stream()
@@ -50,27 +51,31 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
                 .collect(Collectors.toList());
     }
 
-    public FonctionnaliteDTO ListeFonctionnaliteParId(int id) {
+    @Override
+    public FonctionnaliteDTO ListeFonctionnaliteParId(Long id) {
         Fonctionnalite f = fonctionnaliteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fonctionnalité non trouvée"));
         return FonctionnaliteMapper.toDTO(f);
     }
-    public void supprimerFonctionnalite(int id) {
+
+    @Override
+    public void supprimerFonctionnalite(Long id) {
         Fonctionnalite f = fonctionnaliteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fonctionnalité non trouvée"));
         fonctionnaliteRepository.delete(f);
     }
-    public FonctionnaliteDTO modifierFonctionnalite(int id, FonctionnaliteDTO dto) {
+
+    @Override
+    public FonctionnaliteDTO modifierFonctionnalite(Long id, FonctionnaliteDTO dto) {
         Fonctionnalite f = fonctionnaliteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fonctionnalité non trouvée"));
 
         f.setPointFonctionnalite(Integer.parseInt(dto.getPointFonctionnalite()));
-        f.setStatutP(StatutProjet.valueOf(dto.getStatut()));
+        f.setStatutF(StatutFonctionnalite.valueOf(dto.getStatut()));
         f.setNomFonctionnalite(dto.getFonctionnaliteNom());
         f.setDescriptionFonctionnalite(dto.getFonctionnaliteDescription());
 
         Fonctionnalite updated = fonctionnaliteRepository.save(f);
         return FonctionnaliteMapper.toDTO(updated);
     }
-
 }

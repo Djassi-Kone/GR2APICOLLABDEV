@@ -21,7 +21,7 @@ public class FonctionnaliteDTO {
         this.FonctionnaliteDescription = FonctionnaliteDescription;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

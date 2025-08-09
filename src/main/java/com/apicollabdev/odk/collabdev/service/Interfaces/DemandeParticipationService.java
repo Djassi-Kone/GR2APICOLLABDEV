@@ -9,4 +9,9 @@ public interface DemandeParticipationService {
     List<DemandeParticipation> getAllDemandeParticipation();
     DemandeParticipation getById(Long id);
     void deleteById(Long id);
+    DemandeParticipation faireDemandeGestionnaire (Long idIdeeProjet, Long idContributeur);
+    DemandeParticipation accepterDemandeGestionnaire(Long idDomaine);
+    DemandeParticipation rejeterDemandeGestionnaire (Long idDemande);
+    DemandeParticipation accepterDemandeParticipation(Long idDomaine);
+    DemandeParticipation rejeterDemandeParticipation (Long idDemande);
 }

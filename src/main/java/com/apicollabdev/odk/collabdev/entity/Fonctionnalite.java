@@ -1,6 +1,6 @@
 package com.apicollabdev.odk.collabdev.entity;
 
-import com.apicollabdev.odk.collabdev.enums.StatutProjet;
+import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,19 +14,26 @@ public class Fonctionnalite {
 
     private int pointFonctionnalite;
     @Enumerated(EnumType.STRING)
-    private StatutProjet statutP;
+    private StatutFonctionnalite statutF;
     private String nomFonctionnalite;
     private String DescriptionFonctionnalite;
 
     @ManyToOne
-    @JoinColumn(name = "projet_id",
-            nullable = false)
+    @JoinColumn(name = "projet_id", nullable = false)
     private Projet projet;
     @ManyToOne
-    @JoinColumn(name = "gestionnaire_id",
-            referencedColumnName = "id_utilisateur",
-            nullable = false)
+    @JoinColumn(name = "id_gestionnaire", nullable = false)
+            //referencedColumnName = "id_gestionnaire",
     private Gestionnaire gestionnaires;
+
+    @ManyToOne
+    @JoinColumn(name = "id_coins")
+    private Coins coins;
+
+    @ManyToOne
+    @JoinColumn(name = "id_contributeur", nullable = false)
+           // referencedColumnName = "id_contributeur",
+    private Contributeur contributeur;
 
     public int getIdFonctionnalite() {
         return idFonctionnalite;
@@ -44,12 +51,12 @@ public class Fonctionnalite {
         this.pointFonctionnalite = pointFonctionnalite;
     }
 
-    public StatutProjet getStatutP() {
-        return statutP;
+    public StatutFonctionnalite getStatutF() {
+        return statutF;
     }
 
-    public void setStatutP(StatutProjet statutP) {
-        this.statutP = statutP;
+    public void setStatutF(StatutFonctionnalite statutP) {
+        this.statutF = statutP;
     }
 
     public Projet getProjet() {
@@ -74,5 +81,29 @@ public class Fonctionnalite {
 
     public void setDescriptionFonctionnalite(String descriptionFonctionnalite) {
         DescriptionFonctionnalite = descriptionFonctionnalite;
+    }
+
+    public Gestionnaire getGestionnaires() {
+        return gestionnaires;
+    }
+
+    public void setGestionnaires(Gestionnaire gestionnaires) {
+        this.gestionnaires = gestionnaires;
+    }
+
+    public Contributeur getContributeur() {
+        return contributeur;
+    }
+
+    public void setContributeur(Contributeur contributeur) {
+        this.contributeur = contributeur;
+    }
+
+    public Coins getCoins() {
+        return coins;
+    }
+
+    public void setCoins(Coins coins) {
+        this.coins = coins;
     }
 }

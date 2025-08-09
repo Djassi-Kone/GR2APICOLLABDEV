@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
+import com.apicollabdev.odk.collabdev.Exception.RessourceNotFoundException;
 import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
 import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.entity.Notification;
@@ -30,21 +31,28 @@ public  class ContributeurServiceImpl implements ContributeurService {
     @Override
     @Transactional
     public Contributeur CreerCompte(Contributeur dto) {
-        /*Contributeur contributeur = new Contributeur();
+        Contributeur contributeur = new Contributeur();
         contributeur.setNom(dto.getNom());
         contributeur.setPrenom(dto.getPrenom());
         contributeur.setEmail(dto.getEmail());
         contributeur.setPassword(dto.getPassword());
         contributeur.setNiveau(dto.getNiveau());
-        contributeur.setProfil(dto.getProfil());*/
+        contributeur.setProfil(dto.getProfil());
 
-        Contributeur saved = contributeurRepository.save(dto);
+        // Sauvegarde
+        Contributeur saved = contributeurRepository.save(contributeur);
+
+        // Vérification : l’ID est bien généré
+        if (saved.getId() == null) {
+            throw new IllegalStateException("L'ID du contributeur est null après sauvegarde.");
+        }
 
         // Envoi automatique de la notification
         notificationServiceImpl.notifierEtEnvoyer(TypeNotification.INSCRIPTION, saved);
 
         return saved;
     }
+
 
 
     @Override
@@ -63,7 +71,7 @@ public  class ContributeurServiceImpl implements ContributeurService {
     @Override
     public Void deconnexion(Long idContributeur) {
         Contributeur c = contributeurRepository.findById(idContributeur)
-                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
+                .orElseThrow(() -> new RessourceNotFoundException("Contributeur non trouvé"));
 
         c.setActive(false); // Supposons que tu as un champ `actif` dans l'entité
         contributeurRepository.save(c);

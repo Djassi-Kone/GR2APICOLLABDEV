@@ -4,7 +4,11 @@ import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.entity.Gestionnaire;
 import com.apicollabdev.odk.collabdev.entity.Notification;
 import com.apicollabdev.odk.collabdev.enums.TypeNotification;
+import com.apicollabdev.odk.collabdev.entity.Fonctionnalite;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
+@Service
 public class NotificationFactory {
 
     public static Notification creerNotificationCoins(int coinsGagner) {
@@ -68,6 +72,27 @@ public class NotificationFactory {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDEREJETEE);
         notif.setDescription("Votre demande de contribution au projet \"" + titreProjet + "\" a été rejetée.");
+        return notif;
+    }
+
+    public static Notification creerNotificationContribution(Gestionnaire gestionnaire, String titreProjet, String nomFonctionnalite) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.FAIRECONTRIBUTION);
+        notif.setDescription("Le contributeur \"" + gestionnaire + "\" a fait une contribution sur le projet \"" + titreProjet + "\" pour la fonctionnalité \"" + nomFonctionnalite + "\"  veillez vérifier pour valider ou rejeter.");
+        return notif;
+    }
+
+    public static Notification creerNotificationContributionValider(Contributeur contributeur, String titreProjet, String nomFonctionnalite) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.CONTRIBUTIONVALIDER);
+        notif.setDescription("Votre contribution a été sur le projet \"" + titreProjet + "\" pour la fonctionnalite \"" + nomFonctionnalite+ "\"  a été validée.");
+        return notif;
+    }
+
+    public static Notification creerNotificationContributionRejetee(Contributeur contributeur, String titreProjet, String nomFonctionnalite) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.DEMANDEREJETEE);
+        notif.setDescription("Votre contribution a été sur le projet \"" + titreProjet + "\" pour la fonctionnalite \"" + nomFonctionnalite+ "\" a été rejetée.");
         return notif;
     }
 

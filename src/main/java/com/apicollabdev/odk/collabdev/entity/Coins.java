@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -17,6 +20,7 @@ public class Coins {
     private Long idCoin;
 
     private int nombreCoins;
+    private LocalDateTime dateAcquisition;
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
@@ -26,6 +30,12 @@ public class Coins {
     @JoinColumn(name = "id_administrateur", nullable = true, referencedColumnName = "id_administrateur")
     @JsonBackReference
     private Administrateur administrateur;
+
+    @OneToMany(mappedBy = "id_coins")
+    private List<Fonctionnalite> fonctionnalites;
+
+    @OneToMany(mappedBy = "coins", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contribution> contributions;
 
 
     public Long getIdCoin() {
@@ -60,5 +70,27 @@ public class Coins {
         this.administrateur = administrateur;
     }
 
+    public List<Fonctionnalite> getFonctionnalites() {
+        return fonctionnalites;
+    }
 
+    public void setFonctionnalites(List<Fonctionnalite> fonctionnalites) {
+        this.fonctionnalites = fonctionnalites;
+    }
+
+    public List<Contribution> getContributions() {
+        return contributions;
+    }
+
+    public void setContributions(List<Contribution> contributions) {
+        this.contributions = contributions;
+    }
+
+    public LocalDateTime getDateAcquisition(LocalDateTime now) {
+        return dateAcquisition;
+    }
+
+    public void setDateAcquisition(LocalDateTime dateAcquisition) {
+        this.dateAcquisition = dateAcquisition;
+    }
 }
