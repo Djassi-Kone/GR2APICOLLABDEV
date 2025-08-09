@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface ContributionRepository extends JpaRepository<Contribution, Long> {
     Contribution save(Contribution contribution);
-    List<Contribution> findByFonctionnaliteId(Long fonctionnaliteId);
+    List<Contribution> findByFonctionnaliteIdFonctionnalite(int fonctionnaliteId);
     List<Contribution> findByContributeurId(Long contributeurId);
 }
 

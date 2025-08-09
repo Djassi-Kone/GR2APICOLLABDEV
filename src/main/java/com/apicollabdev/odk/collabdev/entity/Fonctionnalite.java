@@ -4,6 +4,8 @@ import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 public class Fonctionnalite {
@@ -22,18 +24,19 @@ public class Fonctionnalite {
     @JoinColumn(name = "projet_id", nullable = false)
     private Projet projet;
     @ManyToOne
-    @JoinColumn(name = "id_gestionnaire", nullable = false)
-            //referencedColumnName = "id_gestionnaire",
+    @JoinColumn(name = "id_gestionnaire",referencedColumnName = "id_gestionnaire", nullable = false)
     private Gestionnaire gestionnaires;
 
-    @ManyToOne
-    @JoinColumn(name = "id_coins")
-    private Coins coins;
+    @OneToMany(mappedBy = "fonctionnalite" , cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Coins> coins;
 
     @ManyToOne
-    @JoinColumn(name = "id_contributeur", nullable = false)
-           // referencedColumnName = "id_contributeur",
+    @JoinColumn(name = "id_contributeur", referencedColumnName = "id_contributeur", nullable = false)
     private Contributeur contributeur;
+
+    @ManyToOne
+    @JoinColumn(name = "id_contribution") // FK dans Fonctionnalite
+    private Contribution contribution;
 
     public int getIdFonctionnalite() {
         return idFonctionnalite;
@@ -99,11 +102,11 @@ public class Fonctionnalite {
         this.contributeur = contributeur;
     }
 
-    public Coins getCoins() {
+    public List<Coins> getCoins() {
         return coins;
     }
 
-    public void setCoins(Coins coins) {
+    public void setCoins(List<Coins> coins) {
         this.coins = coins;
     }
 }

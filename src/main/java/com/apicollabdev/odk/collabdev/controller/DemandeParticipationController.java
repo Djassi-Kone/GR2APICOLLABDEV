@@ -46,16 +46,16 @@ public class DemandeParticipationController {
     }
 
     // Accepter une demande pour devenir gestionnaire
-    @PutMapping("/gestionnaire/accepter/{idDemande}")
+    /*@PutMapping("/gestionnaire/accepter/{idDemande}")
     public DemandeParticipation accepterDemandeGestionnaire(@PathVariable Long idDemande) {
         return demandeParticipationService.accepterDemandeGestionnaire(idDemande);
-    }
+    }*/
 
     // Rejeter une demande pour devenir gestionnaire
-    @PutMapping("/gestionnaire/rejeter/{idDemande}")
+    /*@PutMapping("/gestionnaire/rejeter/{idDemande}")
     public DemandeParticipation rejeterDemandeGestionnaire(@PathVariable Long idDemande) {
         return demandeParticipationService.rejeterDemandeGestionnaire(idDemande);
-    }
+    }*/
 
     // Récupérer toutes les demandes
     @GetMapping

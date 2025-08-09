@@ -5,6 +5,7 @@ import com.apicollabdev.odk.collabdev.enums.StatutContribution;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -38,9 +39,11 @@ public class Contribution {
     @JoinColumn(name = "id_fonctionnalite", nullable = true, referencedColumnName = "id_contributeur")
     private Fonctionnalite fonctionnalite;
 
-    @ManyToOne
-    @JoinColumn(name = "id_coins")
-    private Coins coins;
+    @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Coins> coins;
+
+    @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Fonctionnalite> fonctionnalites;
 
     public Long getIdContribution() {
         return idContribution;

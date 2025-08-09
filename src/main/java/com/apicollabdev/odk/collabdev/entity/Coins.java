@@ -31,12 +31,17 @@ public class Coins {
     @JsonBackReference
     private Administrateur administrateur;
 
-    @OneToMany(mappedBy = "id_coins")
-    private List<Fonctionnalite> fonctionnalites;
+    @ManyToOne
+    @JoinColumn(name = "idFonctionnalite", nullable = false)
+    private Fonctionnalite fonctionnalite;
 
-    @OneToMany(mappedBy = "coins", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Contribution> contributions;
+    /*@ManyToOne
+    @JoinColumn(name = "id_contribution")
+    private Contribution contributions;*/
 
+    @ManyToOne
+    @JoinColumn(name = "contribution_id")
+    private Contribution contribution;
 
     public Long getIdCoin() {
         return idCoin;
@@ -70,27 +75,23 @@ public class Coins {
         this.administrateur = administrateur;
     }
 
-    public List<Fonctionnalite> getFonctionnalites() {
-        return fonctionnalites;
-    }
-
-    public void setFonctionnalites(List<Fonctionnalite> fonctionnalites) {
-        this.fonctionnalites = fonctionnalites;
-    }
-
-    public List<Contribution> getContributions() {
-        return contributions;
-    }
-
-    public void setContributions(List<Contribution> contributions) {
-        this.contributions = contributions;
-    }
-
     public LocalDateTime getDateAcquisition(LocalDateTime now) {
         return dateAcquisition;
     }
 
     public void setDateAcquisition(LocalDateTime dateAcquisition) {
         this.dateAcquisition = dateAcquisition;
+    }
+
+    public LocalDateTime getDateAcquisition() {
+        return dateAcquisition;
+    }
+
+    public Fonctionnalite getFonctionnalite() {
+        return fonctionnalite;
+    }
+
+    public void setFonctionnalite(Fonctionnalite fonctionnalite) {
+        this.fonctionnalite = fonctionnalite;
     }
 }

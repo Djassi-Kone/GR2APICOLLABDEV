@@ -119,7 +119,8 @@ public class ContributionServiceImpl implements ContributionService {
 
         Contributeur c = contribution.getContributeur();
         Coins gain = new Coins();
-        gain.setNombreCoins(f.getCoins().getNombreCoins()); // nombre gagné
+        int totalCoins = f.getCoins().stream().mapToInt(Coins::getNombreCoins).sum();
+        gain.setNombreCoins(totalCoins);
         gain.setDateAcquisition(LocalDateTime.now());
         c.getCoins().add(gain); // ajout du gain à la liste
 
