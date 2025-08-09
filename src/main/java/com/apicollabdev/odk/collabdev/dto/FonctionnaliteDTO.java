@@ -45,8 +45,8 @@ public class FonctionnaliteDTO {
         this.statut = statut;
     }
 
-    public Long getProjetId() {
-        return projetId;
+    public long getProjetId() {
+        return Math.toIntExact(projetId);
     }
 
     public void setProjetId(Long projetId) {

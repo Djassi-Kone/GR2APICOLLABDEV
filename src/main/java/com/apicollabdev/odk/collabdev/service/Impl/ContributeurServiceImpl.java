@@ -9,6 +9,7 @@ import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributeurService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,38 +23,45 @@ public  class ContributeurServiceImpl implements ContributeurService {
     @Autowired
     private NotificationServiceImpl notificationServiceImpl;
 
-
     @Autowired
     private EmailService emailService;
-
-
 
     @Override
     @Transactional
     public Contributeur CreerCompte(Contributeur dto) {
+        // Vérification si l'email existe déjà
+        if (contributeurRepository.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Un compte avec cet email existe déjà !");
+        }
+
+        // Création de l'objet Contributeur à enregistrer
+
         Contributeur contributeur = new Contributeur();
         contributeur.setNom(dto.getNom());
         contributeur.setPrenom(dto.getPrenom());
         contributeur.setEmail(dto.getEmail());
-        contributeur.setPassword(dto.getPassword());
+        contributeur.setPassword(dto.getPassword()); // À encoder si besoin
         contributeur.setNiveau(dto.getNiveau());
         contributeur.setProfil(dto.getProfil());
 
         // Sauvegarde
         Contributeur saved = contributeurRepository.save(contributeur);
 
-        // Vérification : l’ID est bien généré
+       /* // Vérification : l’ID est bien généré
         if (saved.getId() == null) {
             throw new IllegalStateException("L'ID du contributeur est null après sauvegarde.");
         }
+=======
+        contributeur.setActive(dto.isActive());
+
+        // Sauvegarde dans la base
+        Contributeur saved = contributeurRepository.save(contributeur);*/
 
         // Envoi automatique de la notification
         notificationServiceImpl.notifierEtEnvoyer(TypeNotification.INSCRIPTION, saved);
 
         return saved;
     }
-
-
 
     @Override
     public Contributeur connexion(String email, String password) {
@@ -62,7 +70,6 @@ public  class ContributeurServiceImpl implements ContributeurService {
 
         Notification notification = NotificationFactory.creerNotificationCommentaire(contributeur.getNom(), "Connexion réussie.");
         emailService.sendEmail(email, "Connexion réussie", notification.getDescription());
-
         return contributeur;
     }
 

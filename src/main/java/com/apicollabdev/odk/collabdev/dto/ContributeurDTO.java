@@ -3,18 +3,33 @@ package com.apicollabdev.odk.collabdev.dto;
 import com.apicollabdev.odk.collabdev.enums.Niveau;
 import com.apicollabdev.odk.collabdev.enums.Profil;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 public class ContributeurDTO {
+    @NotBlank(message = "Le nom est obligatoire")
     private String nom;
+
+    @NotBlank(message = "Le prénom est obligatoire")
     private String prenom;
+
+    @NotBlank(message = "L'email est obligatoire")
+    @Email(message = "L'email doit être valide")
     private String email;
+
+    @NotBlank(message = "Le mot de passe est obligatoire")
     private String password;
+
+    @NotNull(message = "Le profil est obligatoire")
     private Profil profil;
+
+    @NotNull(message = "Le niveau est obligatoire")
     private Niveau niveau;
-    @Column(nullable = false)
+
     private boolean active = true;
 
     public String getNom() {

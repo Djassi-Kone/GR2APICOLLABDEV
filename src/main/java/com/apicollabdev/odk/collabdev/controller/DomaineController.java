@@ -9,6 +9,7 @@ import com.apicollabdev.odk.collabdev.service.Interfaces.AdministrateurService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.DomaineService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,11 @@ public class DomaineController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/administrateur/{idAdmin}/{idDomaine}")
+    @PutMapping(
+            value = "/administrateur/{idAdmin}/{idDomaine}",
+            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE },
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Domaine> updateDomaine(
             @PathVariable("idAdmin") Long idAdmin,
             @PathVariable("idDomaine") Long idDomaine,

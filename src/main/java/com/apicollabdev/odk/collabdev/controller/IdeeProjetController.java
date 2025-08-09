@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.controller;
 import com.apicollabdev.odk.collabdev.dto.CreateIdeeProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.IdeeProjet;
 import com.apicollabdev.odk.collabdev.entity.Projet;
+import com.apicollabdev.odk.collabdev.service.Impl.IdeeProjetServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.IdeeProjetService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import java.util.Map;
 public class IdeeProjetController {
 
     @Autowired
-    private IdeeProjetService ideeProjetService;
+    private IdeeProjetServiceImpl ideeProjetServiceImpl;
 
     // Créer une idée de projet (avec notification si applicable)
     @PostMapping("/contributeur/{idContributeur}/domaine/{idDomaine}")
@@ -30,7 +31,7 @@ public class IdeeProjetController {
             @Valid @RequestBody CreateIdeeProjetDTO dto
     ) {
         try {
-            IdeeProjet ideeCree = ideeProjetService.createIdeeProjet(dto, idContributeur, idDomaine);
+            IdeeProjet ideeCree = ideeProjetServiceImpl.createIdeeProjet(dto, idContributeur, idDomaine);
             return ResponseEntity.status(HttpStatus.CREATED).body(ideeCree);
         } catch (ObjectOptimisticLockingFailureException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
@@ -44,13 +45,13 @@ public class IdeeProjetController {
     // Lister toutes les idées de projet
     @GetMapping
     public ResponseEntity<List<IdeeProjet>> getAllIdees() {
-        return ResponseEntity.ok(ideeProjetService.getAllIdeeProjet());
+        return ResponseEntity.ok(ideeProjetServiceImpl.getAllIdeeProjet());
     }
 
     // Obtenir une idée par ID
     @GetMapping("/{id}")
     public ResponseEntity<IdeeProjet> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(ideeProjetService.getById(id));
+        return ResponseEntity.ok(ideeProjetServiceImpl.getById(id));
     }
 
     // Modifier une idée
@@ -59,14 +60,24 @@ public class IdeeProjetController {
             @PathVariable Long id,
             @RequestBody IdeeProjet ideeProjet
     ) {
-        return ResponseEntity.ok(ideeProjetService.updateIdeeProjet(id, ideeProjet));
+        return ResponseEntity.ok(ideeProjetServiceImpl.updateIdeeProjet(id, ideeProjet));
     }
 
     // Supprimer une idée
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        ideeProjetService.deleteById(id);
+        ideeProjetServiceImpl.deleteById(id);
         return ResponseEntity.ok("Idée supprimée avec succès");
     }
+
+    @PostMapping("/transferer-et-transformer/{idIdeeProjet}/vers/{idContributeur}")
+    public ResponseEntity<Projet> transfererEtTransformer(
+            @PathVariable Long idIdeeProjet,
+            @PathVariable Long idContributeur) {
+
+        Projet projet = ideeProjetServiceImpl.transfererEtTransformerIdeeLeguee(idIdeeProjet, idContributeur);
+        return ResponseEntity.ok(projet);
+    }
+
 
 }
