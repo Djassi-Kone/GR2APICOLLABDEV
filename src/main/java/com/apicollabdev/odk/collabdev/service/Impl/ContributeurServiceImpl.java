@@ -47,16 +47,6 @@ public  class ContributeurServiceImpl implements ContributeurService {
         // Sauvegarde
         Contributeur saved = contributeurRepository.save(contributeur);
 
-       /* // Vérification : l’ID est bien généré
-        if (saved.getId() == null) {
-            throw new IllegalStateException("L'ID du contributeur est null après sauvegarde.");
-        }
-=======
-        contributeur.setActive(dto.isActive());
-
-        // Sauvegarde dans la base
-        Contributeur saved = contributeurRepository.save(contributeur);*/
-
         // Envoi automatique de la notification
         notificationServiceImpl.notifierEtEnvoyer(TypeNotification.INSCRIPTION, saved);
 

@@ -18,11 +18,8 @@ import java.util.Optional;
 public interface ContributeurRepository extends JpaRepository<Contributeur, Long> {
     Optional<Contributeur> findByEmailAndPassword(String email, String password);
     boolean existsByEmail(String email);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM Contributeur c WHERE c.id = :id")
-    Optional<Contributeur> findByIdWithLock(@Param("id") Long id);
-
+    Optional<Contributeur> findByIdInclureSousClasses(@Param("id") Long id);
 
 }
 
