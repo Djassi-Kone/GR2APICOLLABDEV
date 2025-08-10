@@ -3,7 +3,7 @@ package com.apicollabdev.odk.collabdev.dto;
 public class FonctionnaliteDTO {
     private int id;
     private String pointFonctionnalite;
-    private String statut;
+    private String statutF;
     private Long projetId;
     private String FonctionnaliteNom;
     private String FonctionnaliteDescription;
@@ -15,7 +15,7 @@ public class FonctionnaliteDTO {
     public FonctionnaliteDTO(int id, String pointFonctionnalite, String statut, Long projetId, String FonctionnaliteNom, String FonctionnaliteDescription) {
         this.id = id;
         this.pointFonctionnalite = pointFonctionnalite;
-        this.statut = statut;
+        this.statutF = statut;
         this.projetId = projetId;
         this.FonctionnaliteNom = FonctionnaliteNom;
         this.FonctionnaliteDescription = FonctionnaliteDescription;
@@ -38,11 +38,11 @@ public class FonctionnaliteDTO {
     }
 
     public String getStatut() {
-        return statut;
+        return statutF;
     }
 
     public void setStatut(String statut) {
-        this.statut = statut;
+        this.statutF = statut;
     }
 
     public long getProjetId() {

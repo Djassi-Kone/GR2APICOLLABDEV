@@ -121,7 +121,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
             projet.setTitre(dto.getTitre());
             projet.setDescription(dto.getDescription());
             projet.setDateCreation(LocalDateTime.now());
-            projet.setStatut(StatutProjet.PAS_DEBUTER);
+            projet.setStatut(StatutProjet.EN_COURS);
             projet.setCahierDeCharge(false);
             projet.setGestionnaire(gestionnaireCree);
             projet.setDomaine(domaine);
@@ -264,7 +264,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         projet.setTitre(ideeProjet.getTitre());
         projet.setDescription(ideeProjet.getDescription());
         projet.setDateCreation(LocalDateTime.now());
-        projet.setStatut(StatutProjet.EN_COURS);
+        projet.setStatut(StatutProjet.PAS_DEBUTER);
         projet.setCahierDeCharge(false);
         projet.setDomaine(ideeProjet.getDomaine());
         projet.setGestionnaire(gestionnaire);
