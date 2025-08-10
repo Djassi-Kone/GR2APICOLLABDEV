@@ -210,8 +210,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         Gestionnaire gestionnaire = gestionnaireRepository.findById(contributeur.getId())
                 .orElseGet(() -> {
                     Gestionnaire g = new Gestionnaire();
-                    g.setId(contributeur.getId());
-                    g.setId(contributeur.getId());
                     g.setNom(contributeur.getNom());
                     g.setPrenom(contributeur.getPrenom());
                     g.setEmail(contributeur.getEmail());
