@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/domaines")
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class DomaineController {
 
     @Autowired
@@ -48,7 +49,7 @@ public class DomaineController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/administrateur/{idAdmin}/{idDomaine}")
+    @PutMapping(value= "/administrateur/{idAdmin}/{idDomaine}",  consumes = "application/json")
     public ResponseEntity<Domaine> updateDomaine(
             @PathVariable("idAdmin") Long idAdmin,
             @PathVariable("idDomaine") Long idDomaine,
@@ -60,5 +61,7 @@ public class DomaineController {
         Domaine updated = domaineServiceImpl.updateDomaine(idDomaine, domaine, admin);
         return ResponseEntity.ok(updated);
     }
+
+
 
 }

@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/badges")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class BadgeController {
 
     @Autowired

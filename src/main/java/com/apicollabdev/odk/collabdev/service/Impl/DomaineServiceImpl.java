@@ -28,11 +28,12 @@ public class DomaineServiceImpl implements DomaineService {
                 .orElseThrow(() -> new RuntimeException("Cet admin n'existe pas"));
 
         domaine.setAdministrateur(a);
-        domaine.setDescription(domaine.getDescription());
-        domaine.setTitre(domaine.getTitre());
+        domaine.setDescription(domaineDto.getDescription());
+        domaine.setTitre(domaineDto.getTitre());
 
         return domaineRepository.save(domaine);
     }
+
 
     @Override
     public List<Domaine> getAllDomaine() {

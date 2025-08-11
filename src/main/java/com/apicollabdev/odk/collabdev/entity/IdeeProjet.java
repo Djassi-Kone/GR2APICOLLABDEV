@@ -36,10 +36,12 @@ public class IdeeProjet {
     private boolean Leguer;
 
     @ManyToOne
+    @JsonBackReference()
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
     private Contributeur contributeur;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference()
     @JoinColumn(name = "id_projet")
     private Projet projet;
 

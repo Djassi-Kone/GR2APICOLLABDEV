@@ -127,4 +127,10 @@ public class ProjetServiceImpl implements ProjetService {
         return null;
     }
 
+    @Override
+    public List<Projet> getAllProjetsSansFiltre() {
+        return projetRepository.findAll();
+    }
+
+
 }

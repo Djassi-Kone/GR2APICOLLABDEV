@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/contributeurs")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ContributeurController {
     @Autowired
     private  ContributeurServiceImpl contributeurServiceimpl;

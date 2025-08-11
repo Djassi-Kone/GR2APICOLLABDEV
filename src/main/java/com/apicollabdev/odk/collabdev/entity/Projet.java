@@ -2,6 +2,8 @@ package com.apicollabdev.odk.collabdev.entity;
 
 
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -35,32 +37,39 @@ public class Projet {
         this.contributions = contributions;
     }
 
-
+    @JsonManagedReference()
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL)
     private List<Contribution> contributions;
 
+    @JsonBackReference()
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_idee_projet")
     private IdeeProjet ideeProjet;
 
-
+    @JsonManagedReference()
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DemandeParticipation> demandeParticipation;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DemandeParticipation> demandes;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DebloqueProjet> debloqueProjets;
 
+
+    @JsonBackReference()
     @ManyToOne
     @JoinColumn(name = "id_domaine", nullable = true)
     private Domaine domaine;
 
+    @JsonBackReference()
     @ManyToOne
     @JoinColumn(name = "id_gestionnaire", referencedColumnName = "id_utilisateur")
     private Gestionnaire gestionnaire;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notification;
 

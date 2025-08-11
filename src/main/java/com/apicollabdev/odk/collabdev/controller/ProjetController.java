@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/projets")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProjetController {
 
 
@@ -51,7 +51,7 @@ public ResponseEntity<Projet> createProjet(@RequestBody CreateProjetRequest requ
         return projetService.getProjetById(id, id_contributeur);
     }
 
-    @GetMapping("recupère/{id_contributeur}")
+    @GetMapping("recupere/{id_contributeur}")
     public List<Projet> getAll(@PathVariable Long id_contributeur) {
         Contributeur contributeur = contributeurRepository.findById(id_contributeur)
                 .orElseThrow(() -> new RuntimeException("Le contributeur n'existe pas"));
@@ -66,6 +66,13 @@ public ResponseEntity<Projet> createProjet(@RequestBody CreateProjetRequest requ
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+
+
+    @GetMapping
+    public List<Projet> getAllProjets() {
+        return projetService.getAllProjetsSansFiltre();
     }
 
 }
