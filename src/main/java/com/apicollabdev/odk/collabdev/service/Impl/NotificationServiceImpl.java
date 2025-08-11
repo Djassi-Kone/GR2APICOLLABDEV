@@ -129,8 +129,11 @@ public class NotificationServiceImpl implements NotificationService {
             case DEMANDEGESTIONNAIRE -> {
                 Contributeur demandeur = (Contributeur) data[0];
                 String titreProjet = (String) data[1];
-                Gestionnaire gestionnaire = (Gestionnaire) data[2];
-                notification = NotificationFactory.creerNotificationDemandeGestionnaire(demandeur, titreProjet, gestionnaire);
+                Contributeur createur = (Contributeur) data[2];
+
+                notification = NotificationFactory.creerNotificationDemandeGestionnaire(
+                        demandeur,
+                        titreProjet, createur);
             }
 
             case DEMANDEGESTIONNAIREACCEPTEE -> {

@@ -96,10 +96,10 @@ public class NotificationFactory {
         return notif;
     }
 
-    public static Notification creerNotificationDemandeGestionnaire(Contributeur contributeur, String titreProjet, Gestionnaire gestionnaire) {
+    public static Notification creerNotificationDemandeGestionnaire(Contributeur demandeur, String titreProjet, Contributeur createur) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDEGESTIONNAIRE);
-        notif.setDescription("Vous avez reçu une demande pour être gestionnaire du projet \"" + titreProjet + "\" de la part de " + contributeur.getNom() + ".");
+        notif.setDescription("Vous avez reçu une demande pour être gestionnaire du projet \"" + titreProjet + "\" de la part de " + demandeur.getNom() + ".");
         return notif;
     }
 
