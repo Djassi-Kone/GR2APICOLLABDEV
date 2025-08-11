@@ -51,8 +51,8 @@ public ResponseEntity<Projet> createProjet(@RequestBody CreateProjetRequest requ
         return projetService.getProjetById(id, id_contributeur);
     }
 
-    @GetMapping("/recupère")
-    public List<Projet> getAll(@PathVariable Long id_contributeur) {
+    @GetMapping("/recupère/{idContributeur}")
+    public List<Projet> getAll(@PathVariable("idContributeur") Long id_contributeur) {
         Contributeur contributeur = contributeurRepository.findById(id_contributeur)
                 .orElseThrow(() -> new RuntimeException("Le contributeur n'existe pas"));
         return projetService.getAllProjets(id_contributeur);
