@@ -43,11 +43,11 @@ public class ContributionServiceImpl implements ContributionService {
             throw new RuntimeException("Fonctionnalité non disponible");
         }
 
-        Contributeur c = contributeurRepository.findById(idContributeur)
-                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
+        Contribution c = contributionRepository.findById(idContributeur)
+                .orElseThrow(() -> new RuntimeException("Contribution non trouvé"));
 
         f.setStatutF(StatutFonctionnalite.RESERVEE);
-        f.setContributeur(c);
+        f.setContribution(c);
         fonctionnaliteRepository.save(f);
 
         return null;

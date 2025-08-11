@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
+import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.DemandeParticipationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,37 +13,38 @@ import java.util.List;
 public class DemandeParticipationController {
 
     @Autowired
-    private DemandeParticipationService demandeParticipationService;
+    private DemandeParticipationServiceImpl demandeParticipationServiceImpl;
 
     // Créer une demande de participation à un projet existant
     @PostMapping("/participation")
     public DemandeParticipation createDemandeParticipation(
-            @RequestParam Long idProjet,
-            @RequestParam Long idContributeur,
+            @PathVariable Long idProjet,
+            @PathVariable Long idContributeur,
             @RequestParam String description
     ) {
-        return demandeParticipationService.createDemandeParticipation(idProjet, idContributeur, description);
+        return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur, description);
     }
 
     // Accepter une demande pour devenir participation
     @PutMapping("/gestionnaire/accepter/{idDemande}")
     public DemandeParticipation accepterDemandeParticipation(@PathVariable Long idDemande) {
-        return demandeParticipationService.accepterDemandeParticipation(idDemande);
+        return demandeParticipationServiceImpl.accepterDemandeParticipation(idDemande);
     }
 
     // Rejeter une demande pour devenir gestionnaire
     @PutMapping("/gestionnaire/rejeter/{idDemande}")
     public DemandeParticipation rejeterDemandeParticipation(@PathVariable Long idDemande) {
-        return demandeParticipationService.rejeterDemandeParticipation(idDemande);
+        return demandeParticipationServiceImpl.rejeterDemandeParticipation(idDemande);
     }
 
     // Faire une demande pour devenir gestionnaire d'une idée de projet
-    @PostMapping("/contributeur/{contributeur}/idIdeeProjet/{idIdeeProjet}")
+    @PostMapping("/idContributeur/{idContributeur}/idIdeeProjet/{idIdeeProjet}")
     public DemandeParticipation faireDemandeGestionnaire(
-            @RequestParam Long idIdeeProjet,
-            @RequestParam Long idContributeur
+            @PathVariable Long idContributeur,
+            @PathVariable Long idIdeeProjet
+
     ) {
-        return demandeParticipationService.faireDemandeGestionnaire(idIdeeProjet, idContributeur);
+        return demandeParticipationServiceImpl.faireDemandeGestionnaire(idIdeeProjet, idContributeur);
     }
 
     // Accepter une demande pour devenir gestionnaire
@@ -60,18 +62,18 @@ public class DemandeParticipationController {
     // Récupérer toutes les demandes
     @GetMapping
     public List<DemandeParticipation> getAllDemandes() {
-        return demandeParticipationService.getAllDemandeParticipation();
+        return demandeParticipationServiceImpl.getAllDemandeParticipation();
     }
 
     // Récupérer une demande par ID
     @GetMapping("/{id}")
     public DemandeParticipation getById(@PathVariable Long id) {
-        return demandeParticipationService.getById(id);
+        return demandeParticipationServiceImpl.getById(id);
     }
 
     // Supprimer une demande
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
-        demandeParticipationService.deleteById(id);
+        demandeParticipationServiceImpl.deleteById(id);
     }
 }
