@@ -47,18 +47,6 @@ public class DemandeParticipationController {
         return demandeParticipationServiceImpl.faireDemandeGestionnaire(idIdeeProjet, idContributeur);
     }
 
-    // Accepter une demande pour devenir gestionnaire
-    /*@PutMapping("/gestionnaire/accepter/{idDemande}")
-    public DemandeParticipation accepterDemandeGestionnaire(@PathVariable Long idDemande) {
-        return demandeParticipationService.accepterDemandeGestionnaire(idDemande);
-    }*/
-
-    // Rejeter une demande pour devenir gestionnaire
-    /*@PutMapping("/gestionnaire/rejeter/{idDemande}")
-    public DemandeParticipation rejeterDemandeGestionnaire(@PathVariable Long idDemande) {
-        return demandeParticipationService.rejeterDemandeGestionnaire(idDemande);
-    }*/
-
     // Récupérer toutes les demandes
     @GetMapping
     public List<DemandeParticipation> getAllDemandes() {

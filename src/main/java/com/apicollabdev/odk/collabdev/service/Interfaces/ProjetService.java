@@ -12,4 +12,5 @@ public interface ProjetService {
     List<Projet> getAllProjets(Long id_contributeur);
     void deleteProjet(Long id,Long idAdmin);
     Projet updateProjet(Long id);
+    List<Projet> getAllProjetsSysteme();
 }

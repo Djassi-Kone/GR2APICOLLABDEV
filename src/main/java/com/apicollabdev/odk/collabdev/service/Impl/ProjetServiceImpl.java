@@ -128,4 +128,9 @@ public class ProjetServiceImpl implements ProjetService {
         return null;
     }
 
+    @Override
+    public List<Projet> getAllProjetsSysteme() {
+        return projetRepository.findAll();
+    }
+
 }
