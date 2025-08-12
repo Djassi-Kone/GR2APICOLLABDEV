@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.Exception.RessourceNotFoundException;
+import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
 import com.apicollabdev.odk.collabdev.dto.CreateIdeeProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
@@ -25,6 +26,8 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Autowired
     private ProjetRepository projetRepository;
 
+    private NotificationFactory notificationFactory;
+
     @Autowired
     private ContributeurRepository contributeurRepository;
 
@@ -40,15 +43,18 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Autowired
     private NotificationServiceImpl notificationServiceImpl;
 
-   // @Override
-   // @Transactional
-    /*public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeur, long idDomaine) {
+    @Override
+    @Transactional
+    public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeur, long idDomaine) {
+        // Récupération du contributeur
         Contributeur c = contributeurRepository.findById(idContributeur)
                 .orElseThrow(() -> new RessourceNotFoundException("Contributeur non trouvé"));
 
+        // Récupération du domaine
         Domaine d = domaineRepository.findById(idDomaine)
                 .orElseThrow(() -> new RessourceNotFoundException("Domaine non trouvé"));
 
+        // Création de l'idée projet
         IdeeProjet ideeProjet = new IdeeProjet();
         ideeProjet.setTitre(dto.getTitre());
         ideeProjet.setDescription(dto.getDescription());
@@ -59,17 +65,30 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         ideeProjet.setDateCreation(LocalDateTime.now());
         ideeProjet.setStatut(StatutIdee.PROPOSEE);
 
+        // Sauvegarde initiale
         IdeeProjet saved = ideeProjetRepository.save(ideeProjet);
 
+        // Si l'idée n'est pas léguée, on la transforme immédiatement en projet
         if (!dto.isLeguer()) {
-            // On transfère et transforme l'idée léguée en projet pour ce contributeur
-            Projet projetCree = transfererEtTransformerIdeeLeguee(saved.getIdIdeeProjet(), idContributeur);
-            // Recharge l'idée projet à jour
-            saved = ideeProjetRepository.findById(saved.getIdIdeeProjet()).orElse(saved);
-        }*/
+            transfererEtTransformerIdeeLeguee(saved.getIdIdeeProjet(), idContributeur);
+            // Recharger l'idée projet à jour
+            saved = ideeProjetRepository.findById(saved.getIdIdeeProjet())
+                    .orElseThrow(() -> new RessourceNotFoundException("Idée projet non trouvée après transformation"));
+        }
+
+        // Création de la notification pour le contributeur
+        Notification notif = NotificationFactory.creerNotificationIdeeProjet(
+
+                saved.getTitre()
+        );
+        notificationServiceImpl.createNotification(notif, c.getId());
+
+        return saved;
+    }
 
 
-    @Override
+
+   /* @Override
     @Transactional
     public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeurOriginal, long idDomaine) {
         Contributeur contributeurOriginal = contributeurRepository.findById(idContributeurOriginal)
@@ -87,6 +106,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         ideeProjet.setDateCreation(LocalDateTime.now());
 
         if (!dto.isLeguer()) {
+
             // Création d'un nouveau contributeur (clone)
             Contributeur nouveauContributeur = new Contributeur();
             nouveauContributeur.setNom(contributeurOriginal.getNom());
@@ -151,7 +171,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         }
 
         return saved;
-    }
+    }*/
 
     @Override
     public List<IdeeProjet> getAllIdeeProjet() {
@@ -196,13 +216,14 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
             throw new RuntimeException("Aucun contributeur associé à cette idée");
         }
 
-        if (Boolean.TRUE.equals(ideeProjet.isLeguer())) {
+        if (Boolean.TRUE.equals(ideeProjet.isLeguer(true))) {
             throw new RuntimeException("Ce contributeur a légué l'idée et ne peut pas devenir gestionnaire.");
         }
 
         Gestionnaire gestionnaire = gestionnaireRepository.findById(contributeur.getId())
                 .orElseGet(() -> {
                     Gestionnaire g = new Gestionnaire();
+                    g.setId(contributeur.getId());
                     g.setNom(contributeur.getNom());
                     g.setPrenom(contributeur.getPrenom());
                     g.setEmail(contributeur.getEmail());
@@ -217,7 +238,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         projet.setTitre(ideeProjet.getTitre());
         projet.setDescription(ideeProjet.getDescription());
         projet.setDateCreation(LocalDateTime.now());
-        projet.setStatut(StatutProjet.EN_COURS);
+        projet.setStatut(StatutProjet.PAS_DEBUTER);
         projet.setCahierDeCharge(false);
         projet.setGestionnaire(gestionnaire);
         projet.setDomaine(ideeProjet.getDomaine());
@@ -236,7 +257,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         IdeeProjet ideeProjet = ideeProjetRepository.findById(idIdeeProjet)
                 .orElseThrow(() -> new RessourceNotFoundException("Idée de projet non trouvée"));
 
-        if (!Boolean.FALSE.equals(ideeProjet.isLeguer())) {
+        if (!Boolean.FALSE.equals(ideeProjet.isLeguer(true))) {
             throw new RuntimeException("Cette idée n'est pas léguée, transfert impossible");
         }
 
@@ -249,7 +270,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         Gestionnaire gestionnaire = gestionnaireRepository.findById(nouveauContributeur.getId())
                 .orElseGet(() -> {
                     Gestionnaire g = new Gestionnaire();
-                    g.setId(nouveauContributeur.getId());
                     g.setNom(nouveauContributeur.getNom());
                     g.setPrenom(nouveauContributeur.getPrenom());
                     g.setEmail(nouveauContributeur.getEmail());

@@ -2,12 +2,10 @@ package com.apicollabdev.odk.collabdev.entity;
 
 import com.apicollabdev.odk.collabdev.enums.Niveau;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
-import com.apicollabdev.odk.collabdev.enums.StatutProjet;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,10 +28,13 @@ public class IdeeProjet {
     private LocalDateTime dateCreation = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50) // pour éviter tout dépassement
     private StatutIdee statut;
 
     @Enumerated(EnumType.STRING)
     private Niveau niveau;
+
+
 
     private boolean Leguer;
 
@@ -132,7 +133,7 @@ public class IdeeProjet {
         this.domaine = domaine;
     }
 
-    public boolean isLeguer() {
+    public boolean isLeguer(boolean b) {
         return Leguer;
     }
 

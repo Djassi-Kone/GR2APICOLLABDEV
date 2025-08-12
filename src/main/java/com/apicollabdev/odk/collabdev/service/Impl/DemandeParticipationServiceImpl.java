@@ -10,6 +10,7 @@ import com.apicollabdev.odk.collabdev.repository.IdeeProjetRepository;
 import com.apicollabdev.odk.collabdev.repository.ProjetRepository;
 import com.apicollabdev.odk.collabdev.repository.DemandeParticipationRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.DemandeParticipationService;
+import com.apicollabdev.odk.collabdev.service.Interfaces.IdeeProjetService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
 
     @Autowired
     private IdeeProjetRepository ideeProjetRepository;
+
+    @Autowired
+    private IdeeProjetService ideeProjetService;
 
     @Autowired
     private ContributeurRepository contributeurRepository;
@@ -118,7 +122,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
 
         return saved;
     }
- /*
+
     @Override
     @Transactional
     public DemandeParticipation accepterDemandeParticipation(Long idDemande) {
@@ -142,34 +146,8 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
                 idee.getTitre()
         );
         notificationServiceImpl.createNotification(notif, contributeur.getId());
-
-
         return demande;
-    }*/
- @Transactional
- public DemandeParticipation accepterDemandeParticipation(Long idDemande) {
-     DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
-             .orElseThrow(() -> new RuntimeException("Demande introuvable"));
-
-     demande.setStatutDemandeParticipation(StatutDemandeParticipation.ACCEPTEE);
-     demandeParticipationRepository.save(demande);
-
-     IdeeProjet idee = demande.getIdeeProjet();
-     Contributeur contributeur = demande.getContributeur();
-
-     try {
-         notificationServiceImpl.notifierEtEnvoyer(
-                 TypeNotification.DEMADEACCEPTEE,
-                 contributeur,
-                 "Votre demande pour l'idée \"" + idee.getTitre() + "\" a été acceptée."
-         );
-     } catch (Exception e) {
-         System.err.println("Erreur lors de la notification : " + e.getMessage());
-     }
-
-     return demande;
- }
-
+    }
 
     @Override
     @Transactional
@@ -197,18 +175,14 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         return demande;
     }
 
- /*
+
     @Override
     @Transactional
-    public DemandeParticipation faireDemandeGestionnaire(Long idIdeeProjet, Long idContributeur) {
+    /*public DemandeParticipation faireDemandeGestionnaire(Long idIdeeProjet, Long idContributeur) {
         IdeeProjet idee = ideeProjetRepository.findById(idIdeeProjet)
                 .orElseThrow(() -> new RuntimeException("Idée de projet introuvable"));
 
-        if (idee.getProjet() != null) {
-            throw new RuntimeException("Ce projet a déjà un gestionnaire.");
-        }
-
-        if (idee.getProjet() != null && idee.getProjet().getGestionnaire() != null) {
+        if (idee.getProjet() != null || idee.getContributeur() != null) {
             throw new RuntimeException("Ce projet a déjà un gestionnaire.");
         }
 
@@ -221,63 +195,48 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         demande.setStatutDemandeParticipation(StatutDemandeParticipation.EN_ATTENTE);
         demande.setTypeDemandeParticipationemande(TypeDemandeParticipation.GESTIONNAIRE);
         demande.setDatedemande(LocalDateTime.now());
+        demandeParticipationRepository.save(demande);*/
+
+    public DemandeParticipation faireDemandeGestionnaire(Long idIdeeProjet, Long idContributeur) {
+        IdeeProjet idee = ideeProjetRepository.findById(idIdeeProjet)
+                .orElseThrow(() -> new RuntimeException("Idée de projet introuvable"));
+
+        if (idee.getProjet() != null && idee.getProjet().getGestionnaire() != null) {
+            throw new RuntimeException("Ce projet a déjà un gestionnaire.");
+        }
+
+        Contributeur contributeur = contributeurRepository.findById(idContributeur)
+                .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
+
+        DemandeParticipation demande = new DemandeParticipation();
+        demande.setContributeur(contributeur);
+        demande.setIdeeProjet(idee);
+        demande.setStatutDemandeParticipation(StatutDemandeParticipation.ACCEPTEE);
+        demande.setTypeDemandeParticipationemande(TypeDemandeParticipation.GESTIONNAIRE);
+        demande.setDatedemande(LocalDateTime.now());
         demandeParticipationRepository.save(demande);
+        idee.isLeguer(true);
+        ideeProjetRepository.save(idee);
+        ideeProjetService.transfererEtTransformerIdeeLeguee(idIdeeProjet, idContributeur);
+
 
         // Notifier le créateur de l'idée
-       Contributeur demandeur = idee.getContributeur();
+        Contributeur contributeurs = idee.getContributeur();
 
-        Contributeur createurIdee = idee.getContributeur();
         notificationServiceImpl.notifierEtEnvoyer(
                 TypeNotification.DEMANDEGESTIONNAIRE,
-                demandeur,
-                idee.getTitre(),
-                createurIdee
+                contributeur,
+                contributeurs,
+                idee.getTitre()
         );
 
         // Enregistrer la notification dans la base
         Notification notif = NotificationFactory.creerNotificationDemandeGestionnaire(
                 contributeurs, idee.getTitre(), null
         );
-        notificationServiceImpl.createNotification(notif, demandeur.getId());
+        notificationServiceImpl.createNotification(notif, contributeur.getId());
         return demande;
-
-    }*/
- @Transactional
- public DemandeParticipation faireDemandeGestionnaire(Long idIdeeProjet, Long idContributeur) {
-     IdeeProjet idee = ideeProjetRepository.findById(idIdeeProjet)
-             .orElseThrow(() -> new RuntimeException("Idée de projet introuvable"));
-
-     if (idee.getProjet() != null && idee.getProjet().getGestionnaire() != null) {
-         throw new RuntimeException("Ce projet a déjà un gestionnaire.");
-     }
-
-     Contributeur contributeur = contributeurRepository.findById(idContributeur)
-             .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
-
-     DemandeParticipation demande = new DemandeParticipation();
-     demande.setContributeur(contributeur);
-     demande.setIdeeProjet(idee);
-     demande.setStatutDemandeParticipation(StatutDemandeParticipation.EN_ATTENTE);
-     demande.setTypeDemandeParticipationemande(TypeDemandeParticipation.GESTIONNAIRE);
-     demande.setDatedemande(LocalDateTime.now());
-     demandeParticipationRepository.save(demande);
-
-     // Notifier le créateur de l'idée
-     Contributeur createurIdee = idee.getContributeur();
-
-     try {
-         notificationServiceImpl.notifierEtEnvoyer(
-                 TypeNotification.DEMANDEGESTIONNAIRE,
-                 createurIdee,
-                 "Le contributeur \"" + contributeur.getNom() + "\" a fait une demande pour gérer l'idée \"" + idee.getTitre() + "\"."
-         );
-     } catch (Exception e) {
-         System.err.println("Erreur lors de la notification : " + e.getMessage());
-     }
-
-     return demande;
- }
-
+    }
 
     @Override
     @Transactional
