@@ -32,18 +32,16 @@ public class Contribution {
     private Projet projet;
 
     @ManyToOne
-    @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
+    @JoinColumn(name = "contributeur_id")
     private Contributeur contributeur;
 
-    @ManyToOne
-    @JoinColumn(name = "id_fonctionnalite", nullable = true, referencedColumnName = "id_contributeur")
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "fonctionnalite_id")
     private Fonctionnalite fonctionnalite;
 
     @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Coins> coins;
-
-    @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Fonctionnalite> fonctionnalites;
 
     public Long getIdContribution() {
         return idContribution;
@@ -116,5 +114,7 @@ public class Contribution {
     public void setFonctionnalite(Fonctionnalite fonctionnalite) {
         this.fonctionnalite = fonctionnalite;
     }
+
+
 }
 

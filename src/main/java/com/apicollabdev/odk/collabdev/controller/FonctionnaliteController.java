@@ -17,9 +17,9 @@ public class FonctionnaliteController {
     @Autowired
     private FonctionnaliteServiceImpl fonctionnaliteService;
 
-    @PostMapping("/gestionnaire/{gestionnaire}/newfonctionnalite")
-    public ResponseEntity<FonctionnaliteDTO> create(@RequestBody FonctionnaliteDTO dto) {
-        FonctionnaliteDTO created = fonctionnaliteService.creerFonctionnalite(dto);
+    @PostMapping("/gestionnaire/{idGestionnaire}/newfonctionnalite")
+    public ResponseEntity<FonctionnaliteDTO> create(@RequestBody FonctionnaliteDTO dto, @PathVariable("idGestionnaire") Long id_gestionnaire) {
+        FonctionnaliteDTO created = fonctionnaliteService.creerFonctionnalite(dto, id_gestionnaire);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 

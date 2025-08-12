@@ -23,19 +23,19 @@ public class Fonctionnalite {
     @ManyToOne
     @JoinColumn(name = "projet_id", nullable = false)
     private Projet projet;
+
     @ManyToOne
-    @JoinColumn(name = "id_gestionnaire",referencedColumnName = "id_gestionnaire", nullable = false)
-    private Gestionnaire gestionnaires;
+    @JoinColumn(name = "id_gestionnaire", nullable = false)
+    private Gestionnaire gestionnaire;
+
+
 
     @OneToMany(mappedBy = "fonctionnalite" , cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Coins> coins;
 
-    @ManyToOne
-    @JoinColumn(name = "id_contributeur", referencedColumnName = "id_contributeur", nullable = false)
-    private Contributeur contributeur;
 
-    @ManyToOne
-    @JoinColumn(name = "id_contribution") // FK dans Fonctionnalite
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_contribution")
     private Contribution contribution;
 
     public int getIdFonctionnalite() {
@@ -86,20 +86,12 @@ public class Fonctionnalite {
         DescriptionFonctionnalite = descriptionFonctionnalite;
     }
 
-    public Gestionnaire getGestionnaires() {
-        return gestionnaires;
+    public Gestionnaire getGestionnaire() {
+        return gestionnaire;
     }
 
-    public void setGestionnaires(Gestionnaire gestionnaires) {
-        this.gestionnaires = gestionnaires;
-    }
-
-    public Contributeur getContributeur() {
-        return contributeur;
-    }
-
-    public void setContributeur(Contributeur contributeur) {
-        this.contributeur = contributeur;
+    public void setGestionnaire(Gestionnaire gestionnaires) {
+        this.gestionnaire = gestionnaires;
     }
 
     public List<Coins> getCoins() {
@@ -108,5 +100,13 @@ public class Fonctionnalite {
 
     public void setCoins(List<Coins> coins) {
         this.coins = coins;
+    }
+
+    public Contribution getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Contribution contribution) {
+        this.contribution = contribution;
     }
 }

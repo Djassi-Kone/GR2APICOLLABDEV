@@ -79,9 +79,6 @@ public class Contributeur extends Utilisateur{
     private List<Recevoir> recevoirs;
 
     @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Fonctionnalite> fonctionnalites;
-
-    @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contribution> contributions;
 
 // + autres attributs habituels
@@ -198,14 +195,6 @@ public class Contributeur extends Utilisateur{
 
     public void setTotalCoins(int totalCoins) {
         this.totalCoins = totalCoins;
-    }
-
-    public List<Fonctionnalite> getFonctionnalites() {
-        return fonctionnalites;
-    }
-
-    public void setFonctionnalites(List<Fonctionnalite> fonctionnalites) {
-        this.fonctionnalites = fonctionnalites;
     }
 
     public List<Contribution> getContributions() {
