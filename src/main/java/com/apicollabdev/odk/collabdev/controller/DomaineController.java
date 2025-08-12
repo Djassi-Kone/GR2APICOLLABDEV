@@ -43,14 +43,14 @@ public class DomaineController {
         return ResponseEntity.ok(domaineServiceImpl.getById(id));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/domaine/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         domaineServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(
-            value = "/administrateur/{idAdmin}/{idDomaine}",
+            value = "/administrateur/{idAdmin}/domaine/{idDomaine}",
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE },
             produces = MediaType.APPLICATION_JSON_VALUE
     )

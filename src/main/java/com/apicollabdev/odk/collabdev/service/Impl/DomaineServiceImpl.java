@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
+import com.apicollabdev.odk.collabdev.Exception.RessourceNotFoundException;
 import com.apicollabdev.odk.collabdev.dto.DomaineRequestDto;
 import com.apicollabdev.odk.collabdev.entity.Administrateur;
 import com.apicollabdev.odk.collabdev.entity.Domaine;
@@ -25,7 +26,7 @@ public class DomaineServiceImpl implements DomaineService {
         Domaine domaine = new Domaine();
 
         Administrateur a = administrateurRepository.findById(idAdmin)
-                .orElseThrow(() -> new RuntimeException("Cet admin n'existe pas"));
+                .orElseThrow(() -> new RessourceNotFoundException("Cet admin n'existe pas"));
 
         domaine.setAdministrateur(a);
         domaine.setDescription(domaineDto.getDescription());
@@ -42,13 +43,13 @@ public class DomaineServiceImpl implements DomaineService {
     @Override
     public Domaine getById(Long id) {
         return domaineRepository.findById((id))
-                .orElseThrow(() -> new RuntimeException("Domaine non trouvé avec l'id : " + id));
+                .orElseThrow(() -> new RessourceNotFoundException("Domaine non trouvé avec l'id : " + id));
     }
 
     @Override
     public void deleteById(Long id) {
         if (!domaineRepository.existsById((id))) {
-            throw new RuntimeException("Le domaine avec l'id " + id + " n'existe pas.");
+            throw new RessourceNotFoundException("Le domaine avec l'id " + id + " n'existe pas.");
         }
         domaineRepository.deleteById((id));
     }
@@ -56,7 +57,7 @@ public class DomaineServiceImpl implements DomaineService {
     @Override
     public Domaine updateDomaine(Long idDomaine, Domaine newDomaineData, Administrateur admin) {
         Domaine domaine = domaineRepository.findById(idDomaine)
-                .orElseThrow(() -> new RuntimeException("Domaine introuvable"));
+                .orElseThrow(() -> new RessourceNotFoundException("Domaine introuvable"));
 
         domaine.setTitre(newDomaineData.getTitre());
         domaine.setDescription(newDomaineData.getDescription());

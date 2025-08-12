@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface BadgeService {
     Badge createBadge(BadgeDTO dto, long idAdmin);
+    Badge updateBadge(Long idBadge, BadgeDTO dto, long idAdmin);
     List<Badge> getAllBadges();
     Badge getById(Long id);
     void deleteById(Long id);
