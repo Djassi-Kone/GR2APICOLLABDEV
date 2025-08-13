@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.entity;
 
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -41,6 +42,9 @@ public class Projet {
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL)
     private List<Contribution> contributions;
 
+
+
+
     @JsonBackReference()
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_idee_projet")
@@ -67,6 +71,7 @@ public class Projet {
     @JsonBackReference()
     @ManyToOne
     @JoinColumn(name = "id_gestionnaire", referencedColumnName = "id_utilisateur")
+    @JsonIgnore
     private Gestionnaire gestionnaire;
 
     @JsonManagedReference

@@ -5,10 +5,12 @@ import com.apicollabdev.odk.collabdev.repository.AdministrateurRepository;
 import com.apicollabdev.odk.collabdev.service.Impl.CoinsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 @RestController
 @RequestMapping("/api/coins")
@@ -38,9 +40,16 @@ public class CoinsController {
 
 
     @GetMapping
-    public List<Coins> getAll() {
-        return coinsServiceImpl.getAllCoins();
+    public ResponseEntity<?> getAll() {
+        try {
+            List<Coins> coinsList = coinsServiceImpl.getAllCoins();
+            return ResponseEntity.ok(coinsList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Erreur serveur: " + e.getMessage()));
+        }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Coins> getById(@PathVariable Long id) {

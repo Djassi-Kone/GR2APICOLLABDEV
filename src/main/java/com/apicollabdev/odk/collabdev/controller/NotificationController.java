@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class NotificationController {
     @Autowired
     private  NotificationService notificationService;
@@ -39,7 +40,7 @@ public class NotificationController {
 
 
 
-    @PostMapping("/administrateurs/{idadmin}")
+    @PostMapping(value= "/administrateurs/{idadmin}", consumes = "application/json")
     public ResponseEntity<Notification> create(@RequestBody Notification notification,@PathVariable("idadmin") long idAdministrateur) {
         Administrateur a = administrateurRepository.findById(idAdministrateur).get();
         return ResponseEntity.ok(notificationService.createNotification(notification, idAdministrateur));

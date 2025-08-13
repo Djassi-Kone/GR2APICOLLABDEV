@@ -2,6 +2,7 @@ package com.apicollabdev.odk.collabdev.entity;
 
 import com.apicollabdev.odk.collabdev.enums.Niveau;
 import com.apicollabdev.odk.collabdev.enums.Profil;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +21,7 @@ public class Contributeur extends Utilisateur{
     private String nom;
     private String prenom;
     private boolean Active;
+
 
 
     @Enumerated(EnumType.STRING)

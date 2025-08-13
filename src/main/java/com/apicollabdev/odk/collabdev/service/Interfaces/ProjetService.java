@@ -15,4 +15,7 @@ public interface ProjetService {
 
 
     List<Projet> getAllProjetsSansFiltre();
+
+
+
 }

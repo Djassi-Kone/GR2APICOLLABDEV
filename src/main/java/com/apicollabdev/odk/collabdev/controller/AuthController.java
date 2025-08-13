@@ -20,7 +20,7 @@ import java.util.UUID;
 public class AuthController {
 
     @Autowired
-    private  UtilisateurRepository utilisateurRepository;
+    private UtilisateurRepository utilisateurRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -29,13 +29,18 @@ public class AuthController {
 
         if (userOpt.isPresent()) {
             Utilisateur user = userOpt.get();
-            String fakeToken = UUID.randomUUID().toString(); // Génère un identifiant aléatoire
+            String fakeToken = UUID.randomUUID().toString(); // Génère un token aléatoire
 
-            // Stocker ce token quelque part, comme dans une map statique ou une base temporaire
+            // Sauvegarder le token en session
             SessionAuth.sessions.put(fakeToken, user.getId());
+
+            // Détection du rôle selon le type d'objet ou un champ "role"
+            String role = user.getClass().getSimpleName();
+
 
             return ResponseEntity.ok(Map.of(
                     "token", fakeToken,
+                    "role", role,
                     "message", "Connexion réussie"
             ));
         } else {

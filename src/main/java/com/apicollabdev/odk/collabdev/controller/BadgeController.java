@@ -10,11 +10,13 @@ import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.BadgeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/badges")
@@ -42,11 +44,26 @@ public class BadgeController {
     }
 
     @GetMapping("/contributeur/{id}")
-    public ResponseEntity<List<Badge>> getBadgesByContributeur(@PathVariable Long id) {
-        Contributeur contributeur = contributeurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
-        return ResponseEntity.ok(contributeur.getBadges());
+    public ResponseEntity<?> getBadgesByContributeur(@PathVariable Long id) {
+        try {
+            Contributeur contributeur = contributeurRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
+            List<BadgeDTO> dtos = contributeur.getBadges().stream().map(badge -> {
+                BadgeDTO dto = new BadgeDTO();
+                dto.setNom(badge.getNom());
+                dto.setDescription(badge.getDescription());
+                dto.setImage(badge.getImage());
+                dto.setNombre(badge.getNombre());
+                return dto;
+            }).collect(Collectors.toList());
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur interne : " + e.getMessage());
+        }
     }
+
+
 
     @GetMapping
     public List<Badge> getAll() {

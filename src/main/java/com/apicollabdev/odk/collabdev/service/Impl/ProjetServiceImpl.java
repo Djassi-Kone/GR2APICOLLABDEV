@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.antlr.v4.runtime.tree.xpath.XPath.findAll;
+
 @Service
 public class ProjetServiceImpl implements ProjetService {
 
@@ -99,13 +101,7 @@ public class ProjetServiceImpl implements ProjetService {
         return projetRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public List<Projet> getAllProjets(Long id_contributeur) {
-        Contributeur contributeur= contributeurRepository.findById(id_contributeur).
-                orElseThrow(()->new RuntimeException("Cet admin n'existe pas"));
 
-        return projetRepository.findAll();
-    }
 
     @Override
     public void deleteProjet(Long id, Long idAdmin) {
@@ -130,6 +126,15 @@ public class ProjetServiceImpl implements ProjetService {
     @Override
     public List<Projet> getAllProjetsSansFiltre() {
         return projetRepository.findAll();
+    }
+
+
+    @Override
+    public List<Projet> getAllProjets (Long id_contributeur ) {
+        Contributeur contributeur= contributeurRepository .findById(id_contributeur).
+                orElseThrow(()-> new RuntimeException( "Cet admin n'existe pas" ));
+
+        return projetRepository .findAll();
     }
 
 

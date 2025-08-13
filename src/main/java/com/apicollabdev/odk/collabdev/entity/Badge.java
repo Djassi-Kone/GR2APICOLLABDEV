@@ -2,6 +2,7 @@ package com.apicollabdev.odk.collabdev.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,12 +19,13 @@ public class Badge {
 
     private String nom;
     private String description;
-    private String image; // image en URL ou nom de fichier
+    private String image;
     private int nombre;
 
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true)
+    @JsonIgnore
     private Contributeur contributeur;
 
     @ManyToOne
