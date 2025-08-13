@@ -48,9 +48,8 @@ public class DomaineServiceImpl implements DomaineService {
 
     @Override
     public void deleteById(Long id) {
-        if (!domaineRepository.existsById((id))) {
+        if (!domaineRepository.existsById((id)))
             throw new RessourceNotFoundException("Le domaine avec l'id " + id + " n'existe pas.");
-        }
         domaineRepository.deleteById((id));
     }
 
