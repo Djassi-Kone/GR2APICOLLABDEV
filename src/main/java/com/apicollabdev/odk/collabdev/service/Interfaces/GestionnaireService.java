@@ -5,7 +5,9 @@ import com.apicollabdev.odk.collabdev.entity.Gestionnaire;
 
 public interface GestionnaireService {
     void validerContribution(GestionnaireDTO gestionnaireDTO);
+   // void rejeterContribution(GestionnaireDTO gestionnaireDTO);
     void validerDemande(GestionnaireDTO gestionnaireDTO);
+   // void rejeterDemande(GestionnaireDTO gestionnaireDTO);
     Gestionnaire getGestionnaireById(Long id);
     Gestionnaire updateGestionnaire(Gestionnaire gestionnaire);
 }

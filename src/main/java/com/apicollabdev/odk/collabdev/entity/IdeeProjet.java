@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -25,7 +27,7 @@ public class IdeeProjet {
 
     private String titre;
 
-    private LocalDate dateCreation = LocalDate.now();
+    private LocalDateTime dateCreation = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     private StatutIdee statut;
@@ -34,6 +36,11 @@ public class IdeeProjet {
     private Niveau niveau;
 
     private boolean Leguer;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
+
 
     @ManyToOne
     @JsonBackReference()
@@ -44,6 +51,9 @@ public class IdeeProjet {
     @JsonBackReference()
     @JoinColumn(name = "id_projet")
     private Projet projet;
+
+    @OneToMany(mappedBy = "idDemandeParticipation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DemandeParticipation> demandes;
 
 
     @ManyToOne
@@ -76,11 +86,11 @@ public class IdeeProjet {
         this.titre = titre;
     }
 
-    public LocalDate getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(LocalDate dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 
@@ -131,4 +141,22 @@ public class IdeeProjet {
     public void setLeguer(boolean leguer) {
         Leguer = leguer;
     }
+
+    public List<DemandeParticipation> getDemandes() {
+        return demandes;
+    }
+
+    public void setDemandes(List<DemandeParticipation> demandes) {
+        this.demandes = demandes;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 }
+
+

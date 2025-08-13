@@ -19,9 +19,6 @@ public class Commentaire {
 
     private String contenu;
 
-    private boolean supprime;
-    private boolean modifie;
-
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
     private Contributeur contributeur;
@@ -53,22 +50,6 @@ public class Commentaire {
 
     public void setContenu(String contenu) {
         this.contenu = contenu;
-    }
-
-    public boolean isSupprime() {
-        return supprime;
-    }
-
-    public void setSupprime(boolean supprime) {
-        this.supprime = supprime;
-    }
-
-    public boolean isModifie() {
-        return modifie;
-    }
-
-    public void setModifie(boolean modifie) {
-        this.modifie = modifie;
     }
 
     public Contributeur getContributeur() {

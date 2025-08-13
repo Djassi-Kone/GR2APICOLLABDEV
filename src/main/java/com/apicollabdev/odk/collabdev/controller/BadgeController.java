@@ -32,6 +32,7 @@ public class BadgeController {
     private AdministrateurRepository administrateurRepository;
     @Autowired
     private ContributeurRepository contributeurRepository;
+
     @PostMapping(
             value = "/administrateur/{idadmin}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -42,6 +43,20 @@ public class BadgeController {
                 .orElseThrow( ()-> new RuntimeException("Administrateur non trouvé"));
         return ResponseEntity.ok(badgeService.createBadge(dto, idAmin));
     }
+
+    @PutMapping(
+            value = "/{idBadge}/administrateur/{idAdmin}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Badge> updateBadge(
+            @PathVariable Long idBadge,
+            @PathVariable Long idAdmin,
+            @RequestBody BadgeDTO dto
+    ) {
+        return ResponseEntity.ok(badgeService.updateBadge(idBadge, dto, idAdmin));
+    }
+
 
     @GetMapping("/contributeur/{id}")
     public ResponseEntity<?> getBadgesByContributeur(@PathVariable Long id) {

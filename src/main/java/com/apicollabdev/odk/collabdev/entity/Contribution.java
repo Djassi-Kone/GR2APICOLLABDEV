@@ -1,9 +1,11 @@
 package com.apicollabdev.odk.collabdev.entity;
 
 
+import com.apicollabdev.odk.collabdev.enums.StatutContribution;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,7 +21,8 @@ public class Contribution {
     private String titre;
 
     private String contenu;
-    private boolean validee = false;
+    @Enumerated(EnumType.STRING)
+    private StatutContribution statutC;
     private String type; // Exemple : "code", "design", "idée", etc.
 
     private LocalDateTime dateSoumission;
@@ -29,8 +32,16 @@ public class Contribution {
     private Projet projet;
 
     @ManyToOne
-    @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
+    @JoinColumn(name = "contributeur_id")
     private Contributeur contributeur;
+
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "fonctionnalite_id")
+    private Fonctionnalite fonctionnalite;
+
+    @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Coins> coins;
 
     public Long getIdContribution() {
         return idContribution;
@@ -48,8 +59,8 @@ public class Contribution {
         this.titre = titre;
     }
 
-    public String getContenu() {
-        return contenu;
+    public String getContenu(String contenu) {
+        return this.contenu;
     }
 
     public void setContenu(String contenu) {
@@ -88,12 +99,22 @@ public class Contribution {
         this.contributeur = contributeur;
     }
 
-    public boolean isValidee() {
-        return validee;
+    public StatutContribution getStatutC() {
+        return statutC;
     }
 
-    public void setValidee(boolean validee) {
-        this.validee = validee;
+    public void setStatutC(StatutContribution statutC) {
+        this.statutC = statutC;
     }
+
+    public Fonctionnalite getFonctionnalite() {
+        return fonctionnalite;
+    }
+
+    public void setFonctionnalite(Fonctionnalite fonctionnalite) {
+        this.fonctionnalite = fonctionnalite;
+    }
+
+
 }
 

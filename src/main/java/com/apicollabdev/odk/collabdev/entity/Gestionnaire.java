@@ -2,7 +2,6 @@ package com.apicollabdev.odk.collabdev.entity;
 
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,38 +16,12 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "id_gestionnaire")
 public class Gestionnaire extends Contributeur{
 
-    private boolean validerContribution;
-    private boolean validerCommentaire;
-    private boolean validerDemande;
 
     @OneToMany(mappedBy = "gestionnaire", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<Projet> projets;
 
-
-    public boolean isValiderContribution() {
-        return validerContribution;
-    }
-
-    public void setValiderContribution(boolean validerContribution) {
-        this.validerContribution = validerContribution;
-    }
-
-    public boolean isValiderCommentaire() {
-        return validerCommentaire;
-    }
-
-    public void setValiderCommentaire(boolean validerCommentaire) {
-        this.validerCommentaire = validerCommentaire;
-    }
-
-    public boolean isValiderDemande() {
-        return validerDemande;
-    }
-
-    public void setValiderDemande(boolean validerDemande) {
-        this.validerDemande = validerDemande;
-    }
+    @OneToMany(mappedBy = "gestionnaire", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Fonctionnalite> fonctionnalites;
 
     public List<Projet> getProjets() {
         return projets;
@@ -58,6 +31,12 @@ public class Gestionnaire extends Contributeur{
         this.projets = projets;
     }
 
+    public List<Fonctionnalite> getFonctionnalites() {
+        return fonctionnalites;
+    }
 
+    public void setFonctionnalites(List<Fonctionnalite> fonctionnalites) {
+        this.fonctionnalites = fonctionnalites;
+    }
 }
 

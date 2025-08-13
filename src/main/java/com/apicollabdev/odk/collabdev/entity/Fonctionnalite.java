@@ -1,8 +1,10 @@
 package com.apicollabdev.odk.collabdev.entity;
 
-import com.apicollabdev.odk.collabdev.enums.StatutProjet;
+import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -14,19 +16,27 @@ public class Fonctionnalite {
 
     private int pointFonctionnalite;
     @Enumerated(EnumType.STRING)
-    private StatutProjet statutP;
+    private StatutFonctionnalite statutF;
     private String nomFonctionnalite;
     private String DescriptionFonctionnalite;
 
     @ManyToOne
-    @JoinColumn(name = "projet_id",
-            nullable = false)
+    @JoinColumn(name = "projet_id", nullable = false)
     private Projet projet;
+
     @ManyToOne
-    @JoinColumn(name = "gestionnaire_id",
-            referencedColumnName = "id_utilisateur",
-            nullable = false)
-    private Gestionnaire gestionnaires;
+    @JoinColumn(name = "id_gestionnaire", nullable = false)
+    private Gestionnaire gestionnaire;
+
+
+
+    @OneToMany(mappedBy = "fonctionnalite" , cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Coins> coins;
+
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_contribution")
+    private Contribution contribution;
 
     public int getIdFonctionnalite() {
         return idFonctionnalite;
@@ -44,12 +54,12 @@ public class Fonctionnalite {
         this.pointFonctionnalite = pointFonctionnalite;
     }
 
-    public StatutProjet getStatutP() {
-        return statutP;
+    public StatutFonctionnalite getStatutF() {
+        return statutF;
     }
 
-    public void setStatutP(StatutProjet statutP) {
-        this.statutP = statutP;
+    public void setStatutF(StatutFonctionnalite statutP) {
+        this.statutF = statutP;
     }
 
     public Projet getProjet() {
@@ -74,5 +84,29 @@ public class Fonctionnalite {
 
     public void setDescriptionFonctionnalite(String descriptionFonctionnalite) {
         DescriptionFonctionnalite = descriptionFonctionnalite;
+    }
+
+    public Gestionnaire getGestionnaire() {
+        return gestionnaire;
+    }
+
+    public void setGestionnaire(Gestionnaire gestionnaires) {
+        this.gestionnaire = gestionnaires;
+    }
+
+    public List<Coins> getCoins() {
+        return coins;
+    }
+
+    public void setCoins(List<Coins> coins) {
+        this.coins = coins;
+    }
+
+    public Contribution getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Contribution contribution) {
+        this.contribution = contribution;
     }
 }

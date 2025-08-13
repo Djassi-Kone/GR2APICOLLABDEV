@@ -34,6 +34,11 @@ public class DemandeParticipation {
     private Projet projet;
 
     @ManyToOne
+    @JoinColumn(name = "id_ideeprojet", nullable = true)
+    private IdeeProjet ideeProjet;
+
+
+    @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
     private Contributeur contributeur;
 
@@ -92,6 +97,14 @@ public class DemandeParticipation {
 
     public void setContributeur(Contributeur contributeur) {
         this.contributeur = contributeur;
+    }
+
+    public IdeeProjet getIdeeProjet() {
+        return ideeProjet;
+    }
+
+    public void setIdeeProjet(IdeeProjet ideeProjet) {
+        this.ideeProjet = ideeProjet;
     }
 }
 

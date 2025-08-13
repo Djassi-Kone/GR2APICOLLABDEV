@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,6 +21,7 @@ public class Coins {
     private Long idCoin;
 
     private int nombreCoins;
+    private LocalDateTime dateAcquisition;
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
@@ -29,6 +33,17 @@ public class Coins {
     @JsonBackReference
     private Administrateur administrateur;
 
+    @ManyToOne
+    @JoinColumn(name = "idFonctionnalite", nullable = false)
+    private Fonctionnalite fonctionnalite;
+
+    /*@ManyToOne
+    @JoinColumn(name = "id_contribution")
+    private Contribution contributions;*/
+
+    @ManyToOne
+    @JoinColumn(name = "contribution_id")
+    private Contribution contribution;
 
     public Long getIdCoin() {
         return idCoin;
@@ -62,5 +77,23 @@ public class Coins {
         this.administrateur = administrateur;
     }
 
+    public LocalDateTime getDateAcquisition(LocalDateTime now) {
+        return dateAcquisition;
+    }
 
+    public void setDateAcquisition(LocalDateTime dateAcquisition) {
+        this.dateAcquisition = dateAcquisition;
+    }
+
+    public LocalDateTime getDateAcquisition() {
+        return dateAcquisition;
+    }
+
+    public Fonctionnalite getFonctionnalite() {
+        return fonctionnalite;
+    }
+
+    public void setFonctionnalite(Fonctionnalite fonctionnalite) {
+        this.fonctionnalite = fonctionnalite;
+    }
 }

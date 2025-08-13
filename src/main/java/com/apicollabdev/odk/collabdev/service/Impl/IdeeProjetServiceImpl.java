@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
+import com.apicollabdev.odk.collabdev.Exception.RessourceNotFoundException;
 import com.apicollabdev.odk.collabdev.dto.CreateIdeeProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
@@ -7,21 +8,19 @@ import com.apicollabdev.odk.collabdev.enums.StatutProjet;
 import com.apicollabdev.odk.collabdev.enums.TypeNotification;
 import com.apicollabdev.odk.collabdev.repository.*;
 import com.apicollabdev.odk.collabdev.service.Interfaces.IdeeProjetService;
-import com.apicollabdev.odk.collabdev.repository.IdeeProjetRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class IdeeProjetServiceImpl implements IdeeProjetService {
 
     @Autowired
-    private  IdeeProjetRepository ideeProjetRepository;
+    private IdeeProjetRepository ideeProjetRepository;
 
     @Autowired
     private ProjetRepository projetRepository;
@@ -41,16 +40,15 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Autowired
     private NotificationServiceImpl notificationServiceImpl;
 
-
-    @Override
-    @Transactional
-    public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeur, long idDomaine) {
+   // @Override
+   // @Transactional
+    /*public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeur, long idDomaine) {
         Contributeur c = contributeurRepository.findById(idContributeur)
-                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
-        Domaine d = domaineRepository.findById(idDomaine)
-                .orElseThrow(() -> new RuntimeException("Domaine non trouvé"));
+                .orElseThrow(() -> new RessourceNotFoundException("Contributeur non trouvé"));
 
-        // Création de l'idée
+        Domaine d = domaineRepository.findById(idDomaine)
+                .orElseThrow(() -> new RessourceNotFoundException("Domaine non trouvé"));
+
         IdeeProjet ideeProjet = new IdeeProjet();
         ideeProjet.setTitre(dto.getTitre());
         ideeProjet.setDescription(dto.getDescription());
@@ -58,53 +56,95 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         ideeProjet.setLeguer(dto.isLeguer());
         ideeProjet.setContributeur(c);
         ideeProjet.setDomaine(d);
-        ideeProjet.setDateCreation(LocalDate.now());
+        ideeProjet.setDateCreation(LocalDateTime.now());
         ideeProjet.setStatut(StatutIdee.PROPOSEE);
 
+        IdeeProjet saved = ideeProjetRepository.save(ideeProjet);
 
         if (!dto.isLeguer()) {
-            boolean dejaGestionnaire = gestionnaireRepository.existsById(c.getId());
+            // On transfère et transforme l'idée léguée en projet pour ce contributeur
+            Projet projetCree = transfererEtTransformerIdeeLeguee(saved.getIdIdeeProjet(), idContributeur);
+            // Recharge l'idée projet à jour
+            saved = ideeProjetRepository.findById(saved.getIdIdeeProjet()).orElse(saved);
+        }*/
 
-            if (!dejaGestionnaire) {
-                String sql = "INSERT INTO gestionnaire (id_gestionnaire, valider_commentaire, valider_contribution, valider_demande) " +
-                        "VALUES (:id, false, false, false)";
-                Query query = entityManager.createNativeQuery(sql);
-                query.setParameter("id", c.getId());
-                query.executeUpdate();
-            }
 
-            // Conversion de l'idée en Projet
+    @Override
+    @Transactional
+    public IdeeProjet createIdeeProjet(CreateIdeeProjetDTO dto, long idContributeurOriginal, long idDomaine) {
+        Contributeur contributeurOriginal = contributeurRepository.findById(idContributeurOriginal)
+                .orElseThrow(() -> new RessourceNotFoundException("Contributeur non trouvé"));
+
+        Domaine domaine = domaineRepository.findById(idDomaine)
+                .orElseThrow(() -> new RessourceNotFoundException("Domaine non trouvé"));
+
+        IdeeProjet ideeProjet = new IdeeProjet();
+        ideeProjet.setTitre(dto.getTitre());
+        ideeProjet.setDescription(dto.getDescription());
+        ideeProjet.setNiveau(dto.getNiveau());
+        ideeProjet.setLeguer(dto.isLeguer());
+        ideeProjet.setDomaine(domaine);
+        ideeProjet.setDateCreation(LocalDateTime.now());
+
+        if (!dto.isLeguer()) {
+            // Création d'un nouveau contributeur (clone)
+            Contributeur nouveauContributeur = new Contributeur();
+            nouveauContributeur.setNom(contributeurOriginal.getNom());
+            nouveauContributeur.setPrenom(contributeurOriginal.getPrenom());
+            nouveauContributeur.setEmail(contributeurOriginal.getEmail()); // Génère un email unique ici !
+            nouveauContributeur.setPassword(contributeurOriginal.getPassword());
+            nouveauContributeur.setActive(true);
+            nouveauContributeur.setProfil(contributeurOriginal.getProfil());
+            nouveauContributeur.setNiveau(contributeurOriginal.getNiveau());
+            // Initialiser autres champs nécessaires...
+
+            Contributeur contributeurCree = contributeurRepository.save(nouveauContributeur);
+
+            ideeProjet.setContributeur(contributeurCree);
+            ideeProjet.setStatut(StatutIdee.ACCEPTEE);
+
+            // Créer gestionnaire à partir du nouveau contributeur
+            Gestionnaire gestionnaire = new Gestionnaire();
+            gestionnaire.setNom(contributeurCree.getNom());
+            gestionnaire.setPrenom(contributeurCree.getPrenom());
+            gestionnaire.setEmail(contributeurCree.getEmail());
+            gestionnaire.setPassword(contributeurCree.getPassword());
+            gestionnaire.setActive(true);
+            gestionnaire.setProfil(contributeurCree.getProfil());
+            gestionnaire.setNiveau(contributeurCree.getNiveau());
+            gestionnaire.setVersion(0L);
+
+            Gestionnaire gestionnaireCree = gestionnaireRepository.save(gestionnaire);
+
+            // Créer projet lié
             Projet projet = new Projet();
             projet.setTitre(dto.getTitre());
             projet.setDescription(dto.getDescription());
-            //projet.setNiveau(dto.getNiveau());
-            projet.setDomaine(d); // Domaine déjà récupéré plus haut
+            projet.setDateCreation(LocalDateTime.now());
+            projet.setStatut(StatutProjet.EN_COURS);
+            projet.setCahierDeCharge(false);
+            projet.setGestionnaire(gestionnaireCree);
+            projet.setDomaine(domaine);
 
-            projetRepository.save(projet);
+            Projet projetCree = projetRepository.save(projet);
+
+            ideeProjet.setProjet(projetCree);
+
+        } else {
+            // Si leguer == true, on garde le contributeur original
+            ideeProjet.setContributeur(contributeurOriginal);
+            ideeProjet.setStatut(StatutIdee.PROPOSEE);
         }
 
-        // Promotion en gestionnaire si l'idée n’est pas léguée
-       /* if (!dto.isLeguer()) {
-            boolean dejaGestionnaire = gestionnaireRepository.existsById(c.getId());
-
-            if (!dejaGestionnaire) {
-                String sql = "INSERT INTO gestionnaire (id_gestionnaire, valider_commentaire, valider_contribution, valider_demande) " +
-                        "VALUES (:id, false, false, false)";
-                Query query = entityManager.createNativeQuery(sql);
-                query.setParameter("id", c.getId());
-                query.executeUpdate();
-            }
-        }*/
-
-        // Enregistrement dans la base
         IdeeProjet saved = ideeProjetRepository.save(ideeProjet);
 
-        // Envoi de notification + mail
         try {
             notificationServiceImpl.notifierEtEnvoyer(
-                    TypeNotification.PROPOSITIONIDEEPROJET,
+                    dto.isLeguer() ? TypeNotification.PROPOSITIONIDEEPROJET : TypeNotification.CREATIONPROJET,
                     saved.getContributeur(),
-                    saved.getTitre() // par exemple, si tu veux passer le titre comme contenu de notification
+                    dto.isLeguer()
+                            ? "Votre idée \"" + saved.getTitre() + "\" a été enregistrée avec succès"
+                            : "Votre idée \"" + saved.getTitre() + "\" a été automatiquement transformée en projet"
             );
         } catch (Exception e) {
             System.err.println("Erreur lors de la notification : " + e.getMessage());
@@ -113,7 +153,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         return saved;
     }
 
-
     @Override
     public List<IdeeProjet> getAllIdeeProjet() {
         return ideeProjetRepository.findAll();
@@ -121,17 +160,15 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
 
     @Override
     public IdeeProjet getById(Long id) {
-        return ideeProjetRepository.findById((id))
-                .orElseThrow(() -> new RuntimeException("IdeeProjet non trouvé avec l'id : " + id));
-
+        return ideeProjetRepository.findById(id)
+                .orElseThrow(() -> new RessourceNotFoundException("IdeeProjet non trouvé avec l'id : " + id));
     }
 
     @Override
     public IdeeProjet updateIdeeProjet(Long id, IdeeProjet updatedIdeeProjet) {
         IdeeProjet existingIdeeProjet = ideeProjetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("IdeeProjet non trouvée avec l'id : " + id));
+                .orElseThrow(() -> new RessourceNotFoundException("IdeeProjet non trouvée avec l'id : " + id));
 
-        // Mise à jour des champs (ajuste les champs selon ton entité)
         existingIdeeProjet.setTitre(updatedIdeeProjet.getTitre());
         existingIdeeProjet.setDescription(updatedIdeeProjet.getDescription());
         existingIdeeProjet.setDomaine(updatedIdeeProjet.getDomaine());
@@ -144,7 +181,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Override
     public void deleteById(Long id) {
         if (!ideeProjetRepository.existsById(id)) {
-            throw new RuntimeException("Le IdeeProjet avec l'id " + id + " n'existe pas.");
+            throw new RessourceNotFoundException("Le IdeeProjet avec l'id " + id + " n'existe pas.");
         }
         ideeProjetRepository.deleteById(id);
     }
@@ -152,7 +189,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     @Transactional
     public Projet transformerIdeeEnProjet(Long idIdeeProjet) {
         IdeeProjet ideeProjet = ideeProjetRepository.findById(idIdeeProjet)
-                .orElseThrow(() -> new RuntimeException("Idée de projet non trouvée"));
+                .orElseThrow(() -> new RessourceNotFoundException("Idée de projet non trouvée"));
 
         Contributeur contributeur = ideeProjet.getContributeur();
         if (contributeur == null) {
@@ -163,28 +200,26 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
             throw new RuntimeException("Ce contributeur a légué l'idée et ne peut pas devenir gestionnaire.");
         }
 
-        // Ne pas créer un nouvel objet — utiliser l'existant en le "castant"
-        Gestionnaire gestionnaire = new Gestionnaire();
-        gestionnaire.setId(contributeur.getId()); // conserve l'ID
-        gestionnaire.setNom(contributeur.getNom());
-        gestionnaire.setEmail(contributeur.getEmail());
-        gestionnaire.setPassword(contributeur.getPassword());
-
-        // Attributs propres au gestionnaire
-        gestionnaire.setValiderCommentaire(true);
-        gestionnaire.setValiderContribution(true);
-        gestionnaire.setValiderDemande(true);
-
-        // On ne le sauvegarde pas — Hibernate gère déjà l’objet via l’ID unique.
-        // Pas de delete sur le contributeur non plus.
+        Gestionnaire gestionnaire = gestionnaireRepository.findById(contributeur.getId())
+                .orElseGet(() -> {
+                    Gestionnaire g = new Gestionnaire();
+                    g.setNom(contributeur.getNom());
+                    g.setPrenom(contributeur.getPrenom());
+                    g.setEmail(contributeur.getEmail());
+                    g.setNiveau(contributeur.getNiveau());
+                    g.setProfil(contributeur.getProfil());
+                    g.setPassword(contributeur.getPassword());
+                    // g.setVersion(0L); // si besoin
+                    return gestionnaireRepository.save(g);
+                });
 
         Projet projet = new Projet();
         projet.setTitre(ideeProjet.getTitre());
         projet.setDescription(ideeProjet.getDescription());
-        projet.setDateCreation(LocalDate.now());
+        projet.setDateCreation(LocalDateTime.now());
         projet.setStatut(StatutProjet.EN_COURS);
         projet.setCahierDeCharge(false);
-        projet.setGestionnaire(gestionnaire); // affecte l’objet déjà géré
+        projet.setGestionnaire(gestionnaire);
         projet.setDomaine(ideeProjet.getDomaine());
 
         Projet projetCree = projetRepository.save(projet);
@@ -194,9 +229,53 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         ideeProjetRepository.save(ideeProjet);
 
         return projetCree;
-
     }
 
+    @Transactional
+    public Projet transfererEtTransformerIdeeLeguee(Long idIdeeProjet, Long idNouveauContributeur) {
+        IdeeProjet ideeProjet = ideeProjetRepository.findById(idIdeeProjet)
+                .orElseThrow(() -> new RessourceNotFoundException("Idée de projet non trouvée"));
 
+        if (!Boolean.FALSE.equals(ideeProjet.isLeguer())) {
+            throw new RuntimeException("Cette idée n'est pas léguée, transfert impossible");
+        }
+
+        Contributeur nouveauContributeur = contributeurRepository.findById(idNouveauContributeur)
+                .orElseThrow(() -> new RessourceNotFoundException("Contributeur à affecter non trouvé"));
+
+        ideeProjet.setContributeur(nouveauContributeur);
+        ideeProjet.setLeguer(false);
+
+        Gestionnaire gestionnaire = gestionnaireRepository.findById(nouveauContributeur.getId())
+                .orElseGet(() -> {
+                    Gestionnaire g = new Gestionnaire();
+                    g.setId(nouveauContributeur.getId());
+                    g.setNom(nouveauContributeur.getNom());
+                    g.setPrenom(nouveauContributeur.getPrenom());
+                    g.setEmail(nouveauContributeur.getEmail());
+                    g.setNiveau(nouveauContributeur.getNiveau());
+                    g.setProfil(nouveauContributeur.getProfil());
+                    g.setPassword(nouveauContributeur.getPassword());
+                    g.setVersion(0L);
+                    return gestionnaireRepository.save(g);
+                });
+
+        Projet projet = new Projet();
+        projet.setTitre(ideeProjet.getTitre());
+        projet.setDescription(ideeProjet.getDescription());
+        projet.setDateCreation(LocalDateTime.now());
+        projet.setStatut(StatutProjet.PAS_DEBUTER);
+        projet.setCahierDeCharge(false);
+        projet.setDomaine(ideeProjet.getDomaine());
+        projet.setGestionnaire(gestionnaire);
+
+        Projet projetCree = projetRepository.save(projet);
+
+        ideeProjet.setProjet(projetCree);
+        ideeProjet.setStatut(StatutIdee.ACCEPTEE);
+        ideeProjetRepository.save(ideeProjet);
+
+        return projetCree;
+    }
 
 }

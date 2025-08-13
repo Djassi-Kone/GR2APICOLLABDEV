@@ -9,6 +9,7 @@ import com.apicollabdev.odk.collabdev.service.Interfaces.AdministrateurService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.DomaineService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/api/domaines")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 public class DomaineController {
 
     @Autowired
@@ -43,13 +43,17 @@ public class DomaineController {
         return ResponseEntity.ok(domaineServiceImpl.getById(id));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/domaine/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         domaineServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value= "/administrateur/{idAdmin}/{idDomaine}",  consumes = "application/json")
+    @PutMapping(
+            value = "/administrateur/{idAdmin}/domaine/{idDomaine}",
+            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE },
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Domaine> updateDomaine(
             @PathVariable("idAdmin") Long idAdmin,
             @PathVariable("idDomaine") Long idDomaine,
@@ -61,7 +65,5 @@ public class DomaineController {
         Domaine updated = domaineServiceImpl.updateDomaine(idDomaine, domaine, admin);
         return ResponseEntity.ok(updated);
     }
-
-
 
 }

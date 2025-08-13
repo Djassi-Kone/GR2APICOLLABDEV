@@ -26,7 +26,7 @@ public class Notification {
     private Administrateur administrateur;
 
     @ManyToOne
-    @JoinColumn(name = "idContributeur",  nullable = true)
+    @JoinColumn(name = "id_contributeur",  nullable = false)
     @JsonBackReference(value = "contributeur-notification")
     private Contributeur contributeur;
 

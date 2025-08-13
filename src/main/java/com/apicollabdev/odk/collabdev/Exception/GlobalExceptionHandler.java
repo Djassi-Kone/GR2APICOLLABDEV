@@ -1,5 +1,7 @@
 package com.apicollabdev.odk.collabdev.Exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,30 +14,26 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-        @ExceptionHandler({
-                ContributeurNotFoundException.class,
-                GestionnaireNotFoundException.class,
-                NotificationNotFoundException.class,
-                RecevoirNotFoundException.class
-        })
-        public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException ex) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("timestamp", LocalDateTime.now());
-            error.put("error", ex.getMessage());
-            error.put("status", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-        }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
+        logger.error("ResourceNotFoundException interceptée: ", ex);
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", ex.getMessage());
+        errorBody.put("status", HttpStatus.NOT_FOUND.value());
+        errorBody.put("timestamp", LocalDateTime.now().toString());
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
+    }
 
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<Map<String, Object>> handleGeneralError(Exception ex) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("timestamp", LocalDateTime.now());
-            error.put("error", "Une erreur interne est survenue.");
-            error.put("details", ex.getMessage());
-            error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        logger.error("Exception non gérée: ", ex);
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Une erreur interne est survenue.");
+        errorBody.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorBody.put("timestamp", LocalDateTime.now().toString());
+        return new ResponseEntity<>(errorBody, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
+

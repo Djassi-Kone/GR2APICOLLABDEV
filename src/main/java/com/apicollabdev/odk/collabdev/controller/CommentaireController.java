@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.controller;
 
+import com.apicollabdev.odk.collabdev.dto.CommentaireDTO;
 import com.apicollabdev.odk.collabdev.entity.Commentaire;
 import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.entity.Projet;
@@ -25,12 +26,23 @@ public class CommentaireController {
     @Autowired
     private  ProjetRepository projetRepository;
 
-    @PostMapping("/{idContributeur}")
-    public ResponseEntity<Commentaire> create(@RequestBody Commentaire commentaire,@PathVariable("idContributeur") long idContributeur, @RequestParam("idProjet") long idProjet ) {
-        Contributeur c = contributeurRepository.findById(idContributeur).orElseThrow(()-> new RuntimeException("Contributeur non trouvé"));
-        Projet p = projetRepository.findById(idProjet).orElseThrow(()-> new RuntimeException("Projet non trouvé"));
-        return ResponseEntity.ok(commentaireService.createCommentaire(commentaire, idContributeur, idProjet));
+    @PostMapping("/comment")
+    public ResponseEntity<Commentaire> create(@RequestBody CommentaireDTO dto) {
+        Contributeur contributeur = contributeurRepository.findById(dto.getIdContributeur())
+                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
+
+        Projet projet = projetRepository.findById(dto.getIdProjet())
+                .orElseThrow(() -> new RuntimeException("Projet non trouvé"));
+
+        Commentaire commentaire = new Commentaire();
+        commentaire.setAuteur(dto.getAuteur());
+        commentaire.setContenu(dto.getContenu());
+        commentaire.setContributeur(contributeur);
+        commentaire.setProjet(projet);
+
+        return ResponseEntity.ok(commentaireService.createCommentaire(commentaire, dto.getIdContributeur(), dto.getIdProjet()));
     }
+
 
 
     @GetMapping("{idContributeur}")

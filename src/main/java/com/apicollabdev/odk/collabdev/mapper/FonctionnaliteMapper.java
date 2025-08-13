@@ -10,7 +10,7 @@ public interface FonctionnaliteMapper {
         FonctionnaliteDTO dto = new FonctionnaliteDTO();
         dto.setId(f.getIdFonctionnalite());
         dto.setPointFonctionnalite(String.valueOf(f.getPointFonctionnalite()));
-        dto.setStatut(f.getStatutP().name());
+        dto.setStatut(f.getStatutF().name());
          // suppose que Gestionnaire a getId()
         dto.setProjetId((long) Math.toIntExact(f.getProjet().getIdProjet())); // suppose que Projet a getId()
         dto.setFonctionnaliteNom(f.getNomFonctionnalite());

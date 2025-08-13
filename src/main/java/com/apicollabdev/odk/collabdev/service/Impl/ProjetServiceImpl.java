@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
 
+import com.apicollabdev.odk.collabdev.Exception.RessourceNotFoundException;
 import com.apicollabdev.odk.collabdev.dto.CreateProjetRequest;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
@@ -11,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.antlr.v4.runtime.tree.xpath.XPath.findAll;
 
 @Service
 public class ProjetServiceImpl implements ProjetService {
@@ -51,32 +51,31 @@ public class ProjetServiceImpl implements ProjetService {
     @Override
     public Projet createProjetFromIdee(CreateProjetRequest request) {
         IdeeProjet idee = ideeProjetRepository.findById(request.getIdIdee())
-                .orElseThrow(() -> new RuntimeException("Idée introuvable"));
+                .orElseThrow(() -> new RessourceNotFoundException("Idée introuvable"));
 
         if (!idee.getStatut().equals(StatutIdee.ACCEPTEE)) {
             throw new IllegalStateException("L'idée doit être acceptée avant de devenir un projet.");
         }
 
         Contributeur contributeur = contributeurRepository.findById(request.getIdContributeur())
-                .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
+                .orElseThrow(() -> new RessourceNotFoundException("Contributeur introuvable"));
 
         Gestionnaire gestionnaire = gestionnaireRepository.findById(request.getIdGestionnaire())
-                .orElseThrow(() -> new RuntimeException("Gestionnaire introuvable"));
+                .orElseThrow(() -> new RessourceNotFoundException("Gestionnaire introuvable"));
 
         Domaine domaine = domaineRepository.findById(request.getIdDomaine())
-                .orElseThrow(() -> new RuntimeException("Domaine introuvable"));
+                .orElseThrow(() -> new RessourceNotFoundException("Domaine introuvable"));
 
         Projet projet = new Projet();
         projet.setTitre(request.getTitre() != null ? request.getTitre() : idee.getTitre());
         projet.setDescription(request.getDescription() != null ? request.getDescription() : idee.getDescription());
-        projet.setDate(request.getDateCreation() != null ? request.getDateCreation() : LocalDate.now());
+        projet.setDateCreation(request.getDateCreation() != null ? request.getDateCreation().atStartOfDay() : LocalDateTime.now());
         projet.setCahierDeCharge(request.isCahierDeCharge());
         projet.setStatut(StatutProjet.EN_COURS);
 
         projet.setIdeeProjet(idee);
         projet.setDomaine(domaine);
         projet.setGestionnaire(gestionnaire);
-
         projet.setContributions(new ArrayList<>());
         projet.setDemandes(new ArrayList<>());
         projet.setDebloqueProjets(new ArrayList<>());
@@ -101,7 +100,13 @@ public class ProjetServiceImpl implements ProjetService {
         return projetRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public List<Projet> getAllProjets(Long id_contributeur) {
+        Contributeur contributeur= contributeurRepository.findById(id_contributeur).
+                orElseThrow(()->new RuntimeException("Cet admin n'existe pas"));
 
+        return projetRepository.findAll();
+    }
 
     @Override
     public void deleteProjet(Long id, Long idAdmin) {
@@ -124,18 +129,8 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
-    public List<Projet> getAllProjetsSansFiltre() {
+    public List<Projet> getAllProjetsSysteme() {
         return projetRepository.findAll();
     }
-
-
-    @Override
-    public List<Projet> getAllProjets (Long id_contributeur ) {
-        Contributeur contributeur= contributeurRepository .findById(id_contributeur).
-                orElseThrow(()-> new RuntimeException( "Cet admin n'existe pas" ));
-
-        return projetRepository .findAll();
-    }
-
 
 }
