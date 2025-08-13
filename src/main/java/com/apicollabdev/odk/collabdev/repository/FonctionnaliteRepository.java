@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface FonctionnaliteRepository extends JpaRepository<Fonctionnalite, Long> {
     List<Fonctionnalite> findByProjetIdProjetAndStatutF(Long idProjet, StatutFonctionnalite statutF);
+    List<Fonctionnalite> findByProjetIdProjet(Long idProjet);
 
 }

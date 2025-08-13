@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.service.Impl;
 import com.apicollabdev.odk.collabdev.Exception.RessourceNotFoundException;
 import com.apicollabdev.odk.collabdev.dto.CreateIdeeProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
+import com.apicollabdev.odk.collabdev.enums.ModeTransfert;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
 import com.apicollabdev.odk.collabdev.enums.TypeNotification;
@@ -232,14 +233,19 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
     }
 
     @Transactional
-    public Projet transfererEtTransformerIdeeLeguee(Long idIdeeProjet, Long idNouveauContributeur) {
+    public Projet transfererEtTransformerIdeeLeguee(Long idIdeeProjet, Long idNouveauContributeur, ModeTransfert mode) {
         IdeeProjet ideeProjet = ideeProjetRepository.findById(idIdeeProjet)
                 .orElseThrow(() -> new RessourceNotFoundException("Idée de projet non trouvée"));
 
-        if (!Boolean.FALSE.equals(ideeProjet.isLeguer())) {
-            throw new RuntimeException("Cette idée n'est pas léguée, transfert impossible");
+        if (mode == ModeTransfert.CREATION) {
+            if (Boolean.TRUE.equals(ideeProjet.isLeguer())) {
+                throw new RuntimeException("Impossible de créer : cette idée est léguée");
+            }
+        } else if (mode == ModeTransfert.TRANSFERT_GESTIONNAIRE) {
+            if (!Boolean.TRUE.equals(ideeProjet.isLeguer())) {
+                throw new RuntimeException("Cette idée n'est pas léguée, transfert impossible");
+            }
         }
-
         Contributeur nouveauContributeur = contributeurRepository.findById(idNouveauContributeur)
                 .orElseThrow(() -> new RessourceNotFoundException("Contributeur à affecter non trouvé"));
 
@@ -249,7 +255,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         Gestionnaire gestionnaire = gestionnaireRepository.findById(nouveauContributeur.getId())
                 .orElseGet(() -> {
                     Gestionnaire g = new Gestionnaire();
-                    g.setId(nouveauContributeur.getId());
                     g.setNom(nouveauContributeur.getNom());
                     g.setPrenom(nouveauContributeur.getPrenom());
                     g.setEmail(nouveauContributeur.getEmail());

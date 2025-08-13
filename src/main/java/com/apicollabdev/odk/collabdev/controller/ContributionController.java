@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.controller;
 import com.apicollabdev.odk.collabdev.dto.ContributionDTO;
 import com.apicollabdev.odk.collabdev.entity.Contribution;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
+import com.apicollabdev.odk.collabdev.service.Interfaces.FonctionnaliteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +17,20 @@ public class ContributionController {
     @Autowired
     private ContributionService contributionService;
 
-    @PostMapping("/reserver")
+    @Autowired
+    private FonctionnaliteService fonctionnaliteService;
+
+    @PostMapping("/fonctionnalite/{idFonctionnalite}/reserver/contributeur/{idContributeur}")
     public ResponseEntity<Contribution> reserverFonctionnalite(
-            @RequestParam Long idFonctionnalite,
-            @RequestParam Long idContributeur) {
+            @PathVariable Long idFonctionnalite,
+            @PathVariable Long idContributeur) {
         Contribution contribution = contributionService.reserverFonctionnalite(idFonctionnalite, idContributeur);
         return ResponseEntity.ok(contribution);
     }
 
-    @PostMapping("/deposer")
+    @PostMapping("/fonctionnalite/{idFonctionnalite}/deposer")
     public ResponseEntity<Contribution> deposerContribution(
-            @RequestParam Long idFonctionnalite,
+            @PathVariable Long idFonctionnalite,
             @RequestParam Long idContributeur,
             @RequestParam String urlCode) {
         Contribution contribution = contributionService.deposerContribution(idFonctionnalite, idContributeur, urlCode);
@@ -45,6 +49,20 @@ public class ContributionController {
         return ResponseEntity.ok(contribution);
     }
 
+    @GetMapping("/contributeur/{idContributeur}")
+    public ResponseEntity<List<Contribution>> getByContributeur(@PathVariable Long idContributeur) {
+        List<Contribution> contributions = contributionService.getContributionsByContributeur(idContributeur);
+        return ResponseEntity.ok(contributions);
+    }
+
+    /*@GetMapping("/contributeur/{idContributeur}/projet/{idProjet}")
+    public ResponseEntity<List<Contribution>> getByContributeurAndProjet(
+            @PathVariable Long idContributeur,
+            @PathVariable Long idProjet) {
+        List<Contribution> contributions = contributionService.getContributionsByContributeurAndProjet(idContributeur, idProjet);
+        return ResponseEntity.ok(contributions);
+    }*/
+
     @GetMapping
     public ResponseEntity<List<Contribution>> getAllContributions() {
         return ResponseEntity.ok(contributionService.getAllContributions());
@@ -61,3 +79,4 @@ public class ContributionController {
         return ResponseEntity.noContent().build();
     }
 }
+

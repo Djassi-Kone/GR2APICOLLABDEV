@@ -49,21 +49,27 @@ public class DomaineServiceImpl implements DomaineService {
 
     @Override
     public void deleteById(Long id) {
-        if (!domaineRepository.existsById((id))) {
+        if (!domaineRepository.existsById((id)))
             throw new RessourceNotFoundException("Le domaine avec l'id " + id + " n'existe pas.");
-        }
         domaineRepository.deleteById((id));
     }
 
     @Override
     public Domaine updateDomaine(Long idDomaine, Domaine newDomaineData, Administrateur admin) {
-        Domaine domaine = domaineRepository.findById(idDomaine)
+        // Chercher le domaine
+        Domaine domaine = domaineRepository.findByIdDomaine(idDomaine)
                 .orElseThrow(() -> new RessourceNotFoundException("Domaine introuvable"));
 
-        domaine.setTitre(newDomaineData.getTitre());
-        domaine.setDescription(newDomaineData.getDescription());
-        domaine.setAdministrateur(admin); // On confirme que c’est bien cet admin
-
+        // Mise à jour des champs
+        if (newDomaineData.getTitre() != null) {
+            domaine.setTitre(newDomaineData.getTitre());
+        }
+        if (newDomaineData.getDescription() != null) {
+            domaine.setDescription(newDomaineData.getDescription());
+        }
+        // Lier l’administrateur
+        domaine.setAdministrateur(admin);
+        // Sauvegarder
         return domaineRepository.save(domaine);
     }
 

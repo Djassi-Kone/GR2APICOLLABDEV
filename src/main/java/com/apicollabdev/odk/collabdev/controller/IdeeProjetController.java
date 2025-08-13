@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.controller;
 import com.apicollabdev.odk.collabdev.dto.CreateIdeeProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.IdeeProjet;
 import com.apicollabdev.odk.collabdev.entity.Projet;
+import com.apicollabdev.odk.collabdev.enums.ModeTransfert;
 import com.apicollabdev.odk.collabdev.service.Impl.IdeeProjetServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.IdeeProjetService;
 import jakarta.validation.Valid;
@@ -75,7 +76,7 @@ public class IdeeProjetController {
             @PathVariable Long idIdeeProjet,
             @PathVariable Long idContributeur) {
 
-        Projet projet = ideeProjetServiceImpl.transfererEtTransformerIdeeLeguee(idIdeeProjet, idContributeur);
+        Projet projet = ideeProjetServiceImpl.transfererEtTransformerIdeeLeguee(idIdeeProjet, idContributeur, ModeTransfert.CREATION);
         return ResponseEntity.ok(projet);
     }
 

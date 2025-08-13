@@ -28,6 +28,11 @@ public class FonctionnaliteController {
         return ResponseEntity.ok(fonctionnaliteService.ListerFonctionnalite());
     }
 
+    @GetMapping("/projet/{idProjet}")
+    public ResponseEntity<List<FonctionnaliteDTO>> getByProjet(@PathVariable Long idProjet) {
+        return ResponseEntity.ok(fonctionnaliteService.listerFonctionnalitesParProjet(idProjet));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<FonctionnaliteDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(fonctionnaliteService.ListeFonctionnaliteParId(id));
