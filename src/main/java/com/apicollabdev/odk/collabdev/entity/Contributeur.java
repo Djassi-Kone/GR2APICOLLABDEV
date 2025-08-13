@@ -63,6 +63,7 @@ public class Contributeur extends Utilisateur{
 
 
     @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Coins> coins;
 
     @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)

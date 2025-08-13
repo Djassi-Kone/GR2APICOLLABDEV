@@ -26,6 +26,7 @@ public class Coins {
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
     @JsonIgnoreProperties("coins")
+    @JsonBackReference
     private Contributeur contributeur;
 
     @ManyToOne
@@ -35,6 +36,7 @@ public class Coins {
 
     @ManyToOne
     @JoinColumn(name = "idFonctionnalite", nullable = false)
+    @JsonBackReference
     private Fonctionnalite fonctionnalite;
 
     /*@ManyToOne
@@ -43,6 +45,7 @@ public class Coins {
 
     @ManyToOne
     @JoinColumn(name = "contribution_id")
+    @JsonBackReference
     private Contribution contribution;
 
     public Long getIdCoin() {

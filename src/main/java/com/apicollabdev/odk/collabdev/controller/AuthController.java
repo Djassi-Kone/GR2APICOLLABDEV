@@ -41,6 +41,7 @@ public class AuthController {
             return ResponseEntity.ok(Map.of(
                     "token", fakeToken,
                     "role", role,
+                    "id", user.getId(),
                     "message", "Connexion réussie"
             ));
         } else {
