@@ -1,6 +1,8 @@
 package com.apicollabdev.odk.collabdev.entity;
 
 import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,20 +24,24 @@ public class Fonctionnalite {
 
     @ManyToOne
     @JoinColumn(name = "projet_id", nullable = false)
+    @JsonBackReference
     private Projet projet;
 
     @ManyToOne
     @JoinColumn(name = "id_gestionnaire", nullable = false)
+    @JsonBackReference
     private Gestionnaire gestionnaire;
 
 
 
     @OneToMany(mappedBy = "fonctionnalite" , cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Coins> coins;
 
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_contribution")
+    @JsonBackReference
     private Contribution contribution;
 
     public int getIdFonctionnalite() {

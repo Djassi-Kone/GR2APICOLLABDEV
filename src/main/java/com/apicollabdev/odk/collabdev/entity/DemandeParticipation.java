@@ -2,6 +2,7 @@ package com.apicollabdev.odk.collabdev.entity;
 
 import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
 import com.apicollabdev.odk.collabdev.enums.TypeDemandeParticipation;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,15 +32,18 @@ public class DemandeParticipation {
 
     @ManyToOne
     @JoinColumn(name = "id_projet", nullable = true)
+    @JsonBackReference
     private Projet projet;
 
     @ManyToOne
     @JoinColumn(name = "id_ideeprojet", nullable = true)
+    @JsonBackReference
     private IdeeProjet ideeProjet;
 
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
+    @JsonBackReference
     private Contributeur contributeur;
 
 

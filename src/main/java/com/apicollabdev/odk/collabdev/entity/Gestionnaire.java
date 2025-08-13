@@ -2,6 +2,7 @@ package com.apicollabdev.odk.collabdev.entity;
 
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,9 +21,11 @@ public class Gestionnaire extends Contributeur{
 
 
     @OneToMany(mappedBy = "gestionnaire", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Projet> projets;
 
     @OneToMany(mappedBy = "gestionnaire", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Fonctionnalite> fonctionnalites;
 
     public List<Projet> getProjets() {
