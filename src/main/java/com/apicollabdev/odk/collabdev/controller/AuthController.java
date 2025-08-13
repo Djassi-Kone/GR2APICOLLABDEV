@@ -2,17 +2,15 @@ package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.LoginRequest;
 import com.apicollabdev.odk.collabdev.entity.Utilisateur;
+import com.apicollabdev.odk.collabdev.repository.GestionnaireRepository;
 import com.apicollabdev.odk.collabdev.repository.UtilisateurRepository;
 import com.apicollabdev.odk.collabdev.security.SessionAuth;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,30 +20,39 @@ public class AuthController {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
+    @Autowired
+    private GestionnaireRepository gestionnaireRepository;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        Optional<Utilisateur> userOpt = utilisateurRepository
-                .findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
 
-        if (userOpt.isPresent()) {
-            Utilisateur user = userOpt.get();
-            String fakeToken = UUID.randomUUID().toString(); // Génère un token aléatoire
+        List<Utilisateur> users = utilisateurRepository
+                .findUsersByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
 
-            // Sauvegarder le token en session
-            SessionAuth.sessions.put(fakeToken, user.getId());
-
-            // Détection du rôle selon le type d'objet ou un champ "role"
-            String role = user.getClass().getSimpleName();
-
-
-            return ResponseEntity.ok(Map.of(
-                    "token", fakeToken,
-                    "role", role,
-                    "id", user.getId(),
-                    "message", "Connexion réussie"
-            ));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants incorrects");
+        if (users.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Identifiants incorrects");
         }
+
+        Utilisateur user = users.get(0); // récupère le premier utilisateur
+        String fakeToken = UUID.randomUUID().toString();
+        SessionAuth.sessions.put(fakeToken, user.getId());
+
+        List<String> roles = new ArrayList<>();
+        roles.add(user.getClass().getSimpleName());
+
+        // Vérifie si l'utilisateur est aussi gestionnaire
+        gestionnaireRepository.findById(user.getId()).ifPresent(g -> {
+            if (!roles.contains("Gestionnaire")) roles.add("Gestionnaire");
+        });
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", fakeToken);
+        response.put("roles", roles);
+        response.put("id", user.getId());
+        response.put("message", "Connexion réussie");
+
+        return ResponseEntity.ok(response);
     }
+
 }

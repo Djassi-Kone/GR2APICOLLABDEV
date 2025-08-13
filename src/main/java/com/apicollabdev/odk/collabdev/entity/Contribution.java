@@ -2,6 +2,8 @@ package com.apicollabdev.odk.collabdev.entity;
 
 
 import com.apicollabdev.odk.collabdev.enums.StatutContribution;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -29,18 +31,22 @@ public class Contribution {
 
     @ManyToOne
     @JoinColumn(name = "id_projet", nullable = true)
+    @JsonBackReference
     private Projet projet;
 
     @ManyToOne
     @JoinColumn(name = "contributeur_id")
+    @JsonBackReference
     private Contributeur contributeur;
 
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "fonctionnalite_id")
+    @JsonBackReference
     private Fonctionnalite fonctionnalite;
 
     @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Coins> coins;
 
     public Long getIdContribution() {

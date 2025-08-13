@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,10 +24,12 @@ public class DebloqueProjet {
 
     @ManyToOne
     @JoinColumn(name = "id_projet", nullable = false)
+    @JsonBackReference
     private Projet projet;
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = false, referencedColumnName = "id_contributeur")
+    @JsonBackReference
     private Contributeur contributeur;
 
 

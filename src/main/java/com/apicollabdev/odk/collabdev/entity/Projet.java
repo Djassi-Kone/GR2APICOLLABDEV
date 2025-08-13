@@ -81,6 +81,7 @@ public class Projet {
     private List<Notification> notification;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Fonctionnalite> fonctionnalites;
 
     public Long getIdProjet() {

@@ -4,6 +4,7 @@ package com.apicollabdev.odk.collabdev.entity;
 import com.apicollabdev.odk.collabdev.enums.StatutDemande;
 import com.apicollabdev.odk.collabdev.enums.TypeNotification;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,10 +46,12 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "id_projet")
+    @JsonBackReference
     private Projet projet;
 
 
     @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Recevoir> recevoirs;
 
 

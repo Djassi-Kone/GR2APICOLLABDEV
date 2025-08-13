@@ -19,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/idee-projets")
+@CrossOrigin(origins = "http://localhost:4200")
 public class IdeeProjetController {
 
     @Autowired

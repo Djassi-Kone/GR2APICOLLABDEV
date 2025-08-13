@@ -1,4 +1,5 @@
 package com.apicollabdev.odk.collabdev.entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,10 +19,12 @@ public class Recevoir {
 
     @ManyToOne
     @JoinColumn(name = "id_notification", nullable = false)
+    @JsonBackReference
     private Notification notification;
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = false)
+    @JsonBackReference
     private Contributeur contributeur;
 
     public int getIdRecevoir() {

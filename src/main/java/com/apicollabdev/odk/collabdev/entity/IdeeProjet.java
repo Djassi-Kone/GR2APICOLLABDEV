@@ -4,6 +4,7 @@ import com.apicollabdev.odk.collabdev.enums.Niveau;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -53,6 +54,7 @@ public class IdeeProjet {
     private Projet projet;
 
     @OneToMany(mappedBy = "idDemandeParticipation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DemandeParticipation> demandes;
 
 
