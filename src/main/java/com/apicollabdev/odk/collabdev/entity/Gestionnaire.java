@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)

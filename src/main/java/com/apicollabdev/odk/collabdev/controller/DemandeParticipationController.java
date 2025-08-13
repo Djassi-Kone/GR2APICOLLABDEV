@@ -1,9 +1,12 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
+import com.apicollabdev.odk.collabdev.entity.Projet;
 import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.DemandeParticipationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +19,7 @@ public class DemandeParticipationController {
     private DemandeParticipationServiceImpl demandeParticipationServiceImpl;
 
     // Créer une demande de participation à un projet existant
-    @PostMapping("/participation")
+    @PostMapping("/participation/idProjet/{idProjet}/idContributeur/{idContributeur}")
     public DemandeParticipation createDemandeParticipation(
             @PathVariable Long idProjet,
             @PathVariable Long idContributeur,
@@ -25,11 +28,26 @@ public class DemandeParticipationController {
         return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur, description);
     }
 
-    // Accepter une demande pour devenir participation
+    /*// Accepter une demande pour devenir participation
     @PutMapping("/gestionnaire/accepter/{idDemande}")
-    public DemandeParticipation accepterDemandeParticipation(@PathVariable Long idDemande) {
+    public Projet accepterDemandeGestionnaire(@PathVariable Long idDemande) {
         return demandeParticipationServiceImpl.accepterDemandeParticipation(idDemande);
+    }*/
+
+    @PutMapping("/gestionnaire/accepter/{idDemande}")
+    public ResponseEntity<Projet> accepterDemandeGestionnaire(@PathVariable Long idDemande) {
+        try {
+            Projet projet = demandeParticipationServiceImpl.accepterDemandeGestionnaire(idDemande);
+            return ResponseEntity.ok(projet);  // 200 OK avec le projet créé
+        } catch (RuntimeException e) {
+            System.err.println("Erreur métier : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            // Pour toute autre erreur interne
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
 
     // Rejeter une demande pour devenir gestionnaire
     @PutMapping("/gestionnaire/rejeter/{idDemande}")
