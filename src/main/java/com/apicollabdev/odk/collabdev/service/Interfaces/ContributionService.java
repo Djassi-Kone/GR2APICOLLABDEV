@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ContributionService {
     public List<Contribution> getAllContributions();
+    public List<Contribution> getContributionsByContributeur(Long idContributeur);
+  //  public List<Contribution> findContributionByContributeurIdAndProjetId(Long idContributeur, Long idProjet);
     public Contribution getById(Long id);
     public void deleteById(Long id);
     public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur);

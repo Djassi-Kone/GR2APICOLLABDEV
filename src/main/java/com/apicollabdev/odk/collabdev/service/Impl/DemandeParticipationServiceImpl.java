@@ -2,6 +2,7 @@ package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
 import com.apicollabdev.odk.collabdev.entity.*;
+import com.apicollabdev.odk.collabdev.enums.ModeTransfert;
 import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
 import com.apicollabdev.odk.collabdev.enums.TypeDemandeParticipation;
 import com.apicollabdev.odk.collabdev.enums.TypeNotification;
@@ -23,8 +24,12 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
     @Autowired
     private DemandeParticipationRepository demandeParticipationRepository;
 
+
     @Autowired
     private ProjetRepository projetRepository;
+
+    @Autowired
+    private IdeeProjetServiceImpl ideeProjetServiceImpl;
 
     @Autowired
     private IdeeProjetRepository ideeProjetRepository;
@@ -278,7 +283,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
      return demande;
  }
 
-
+/*
     @Override
     @Transactional
     public DemandeParticipation accepterDemandeGestionnaire(Long idDemande) {
@@ -316,7 +321,42 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         );
         notificationServiceImpl.createNotification(notif, contributeur.getId());
         return demande;
+    } */
+
+    @Transactional
+    public Projet accepterDemandeGestionnaire(Long idDemande) {
+        DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
+                .orElseThrow(() -> new RuntimeException("Demande non trouvée"));
+
+        if (demande.getStatutDemandeParticipation() != StatutDemandeParticipation.EN_ATTENTE) {
+            throw new RuntimeException("Demande déjà traitée");
+        }
+
+        // Valider la demande
+        demande.setIdDemandeParticipation(idDemande);
+        demande.setStatutDemandeParticipation(StatutDemandeParticipation.ACCEPTEE);
+        demandeParticipationRepository.save(demande);
+
+        // Transformer l'idée en projet et affecter le gestionnaire
+        Projet projetCree = ideeProjetServiceImpl.transfererEtTransformerIdeeLeguee(
+                demande.getIdeeProjet().getIdIdeeProjet(),
+                demande.getContributeur().getId(), ModeTransfert.TRANSFERT_GESTIONNAIRE
+        );
+
+        // Notifier le contributeur que sa demande a été acceptée
+        try {
+            notificationServiceImpl.notifierEtEnvoyer(
+                    TypeNotification.DEMANDEGESTIONNAIREACCEPTEE,
+                    demande.getContributeur(),
+                    "Votre demande pour devenir gestionnaire du projet \"" + projetCree.getTitre() + "\" a été acceptée."
+            );
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la notification : " + e.getMessage());
+        }
+
+        return projetCree;
     }
+
 
     @Override
     @Transactional
