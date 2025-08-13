@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.List;
 
 @Data
 @Entity
+@Getter  @Setter  @AllArgsConstructor
 public class Projet {
 
     @Id
@@ -150,6 +151,10 @@ public class Projet {
         this.demandeParticipation = demandeParticipation;
     }
 
+    public Gestionnaire getGestionnaire() {
+        return gestionnaire;
+    }
+
     public List<DemandeParticipation> getDemandes() {
         return demandes;
     }
@@ -174,9 +179,7 @@ public class Projet {
         this.domaine = domaine;
     }
 
-    public Gestionnaire getGestionnaire() {
-        return gestionnaire;
-    }
+
 
     public void setGestionnaire(Gestionnaire gestionnaire) {
         this.gestionnaire = gestionnaire;
