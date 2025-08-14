@@ -1,86 +1,94 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
-import com.apicollabdev.odk.collabdev.entity.Projet;
-import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.DemandeParticipationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/demandes")
+@RequestMapping("/api/demandeParticipation")
 @CrossOrigin(origins = "http://localhost:4200")
+@RequiredArgsConstructor
 public class DemandeParticipationController {
 
     @Autowired
-    private DemandeParticipationServiceImpl demandeParticipationServiceImpl;
+    private DemandeParticipationService demandeParticipationService;
 
-    // Créer une demande de participation à un projet existant
-    @PostMapping("/participation/idProjet/{idProjet}/idContributeur/{idContributeur}")
-    public DemandeParticipation createDemandeParticipation(
+    @PostMapping("/projet/{idProjet}/contributeur/{idContributeur}")
+    public ResponseEntity<DemandeParticipation> faireDemande(
             @PathVariable Long idProjet,
             @PathVariable Long idContributeur,
-            @RequestParam String description
+            @RequestBody(required = false) String description
     ) {
-        return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur, description);
+        DemandeParticipation demande = demandeParticipationService.createDemandeParticipation(idProjet, idContributeur, description);
+        return ResponseEntity.ok(demande);
     }
 
-    /*// Accepter une demande pour devenir participation
-    @PutMapping("/gestionnaire/accepter/{idDemande}")
-    public Projet accepterDemandeGestionnaire(@PathVariable Long idDemande) {
-        return demandeParticipationServiceImpl.accepterDemandeParticipation(idDemande);
-    }*/
-
-    @PutMapping("/gestionnaire/accepter/{idDemande}")
-    public ResponseEntity<Projet> accepterDemandeGestionnaire(@PathVariable Long idDemande) {
-        try {
-            Projet projet = demandeParticipationServiceImpl.accepterDemandeGestionnaire(idDemande);
-            return ResponseEntity.ok(projet);  // 200 OK avec le projet créé
-        } catch (RuntimeException e) {
-            System.err.println("Erreur métier : " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        } catch (Exception e) {
-            // Pour toute autre erreur interne
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-
-
-    // Rejeter une demande pour devenir gestionnaire
-    @PutMapping("/gestionnaire/rejeter/{idDemande}")
-    public DemandeParticipation rejeterDemandeParticipation(@PathVariable Long idDemande) {
-        return demandeParticipationServiceImpl.rejeterDemandeParticipation(idDemande);
-    }
-
-    // Faire une demande pour devenir gestionnaire d'une idée de projet
-    @PostMapping("/idContributeur/{idContributeur}/idIdeeProjet/{idIdeeProjet}")
-    public DemandeParticipation faireDemandeGestionnaire(
-            @PathVariable Long idContributeur,
-            @PathVariable Long idIdeeProjet
-
-    ) {
-        return demandeParticipationServiceImpl.faireDemandeGestionnaire(idIdeeProjet, idContributeur);
-    }
-
-    // Récupérer toutes les demandes
     @GetMapping
-    public List<DemandeParticipation> getAllDemandes() {
-        return demandeParticipationServiceImpl.getAllDemandeParticipation();
+    public List<DemandeParticipation> getAll() {
+        return demandeParticipationService.getAllDemandeParticipation();
     }
 
-    // Récupérer une demande par ID
     @GetMapping("/{id}")
-    public DemandeParticipation getById(@PathVariable Long id) {
-        return demandeParticipationServiceImpl.getById(id);
+    public ResponseEntity<DemandeParticipation> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(demandeParticipationService.getById(id));
     }
 
-    // Supprimer une demande
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
-        demandeParticipationServiceImpl.deleteById(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        demandeParticipationService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/*import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
+import com.apicollabdev.odk.collabdev.service.Interfaces.DemandeParticipationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+@RestController
+@RequestMapping("/api/demandeParticipation")
+@RequiredArgsConstructor
+public class DemandeParticipationController {
+    @Autowired
+    private DemandeParticipationService demandeParticipationService;
+
+    @PostMapping
+    public ResponseEntity<DemandeParticipation> create(@RequestBody DemandeParticipation demandeParticipation) {
+        return ResponseEntity.ok(demandeParticipationService.createDemandeParticipation(demandeParticipation));
+    }
+
+    @GetMapping
+    public List<DemandeParticipation> getAll() {
+        return demandeParticipationService.getAllDemandeParticipation();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DemandeParticipation> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(demandeParticipationService.getById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        demandeParticipationService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+}*/
