@@ -182,9 +182,6 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
      IdeeProjet idee = ideeProjetRepository.findById(idIdeeProjet)
              .orElseThrow(() -> new RuntimeException("Idée de projet introuvable"));
 
-     if (idee.getProjet() != null && idee.getProjet().getGestionnaire() != null) {
-         throw new RuntimeException("Ce projet a déjà un gestionnaire.");
-     }
 
      Contributeur contributeur = contributeurRepository.findById(idContributeur)
              .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
