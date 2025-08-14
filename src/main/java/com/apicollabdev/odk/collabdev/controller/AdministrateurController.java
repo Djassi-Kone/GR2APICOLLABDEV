@@ -16,6 +16,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @RestController // Indique que cette classe est un contrôleur REST
 @RequestMapping("/admin") // Tous les endpoints ici auront le préfixe "/admin"
+@CrossOrigin(origins = "http://localhost:4200")
 public class AdministrateurController {
 
     // Injection du repository pour accéder aux administrateurs en base
