@@ -86,6 +86,10 @@ public class Projet {
     @JsonManagedReference
     private List<Fonctionnalite> fonctionnalites;
 
+    @ManyToOne
+    @JsonBackReference
+    private Administrateur administrateur;
+
     public Long getIdProjet() {
         return idProjet;
     }
@@ -204,6 +208,14 @@ public class Projet {
 
     public void setNewGestionnaire(Long userId) {
         this.newGestionnaire = userId;
+    }
+
+    public Administrateur getAdministrateur() {
+        return administrateur;
+    }
+
+    public void setAdministrateur(Administrateur administrateur) {
+        this.administrateur = administrateur;
     }
 }
 
