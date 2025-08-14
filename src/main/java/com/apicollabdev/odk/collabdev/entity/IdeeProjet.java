@@ -48,10 +48,10 @@ public class IdeeProjet {
     @JsonBackReference
     private Contributeur contributeur;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  /*  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_projet")
     @JsonBackReference
-    private Projet projet;
+    private Projet projet; */
 
     @OneToMany(mappedBy = "idDemandeParticipation", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -121,13 +121,6 @@ public class IdeeProjet {
         this.contributeur = contributeur;
     }
 
-    public Projet getProjet() {
-        return projet;
-    }
-
-    public void setProjet(Projet projet) {
-        this.projet = projet;
-    }
 
     public Domaine getDomaine() {
         return domaine;

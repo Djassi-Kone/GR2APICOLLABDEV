@@ -87,8 +87,12 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         ideeProjet.setDomaine(domaine);
         ideeProjet.setDateCreation(LocalDateTime.now());
 
-        if (!dto.isLeguer()) {
-            // Création d'un nouveau contributeur (clone)
+        Projet projet = new Projet();
+        IdeeProjet saved=new IdeeProjet();
+
+        if (!dto.isLeguer()|| contributeurOriginal != null) {
+            System.out.println("L===================="+ contributeurOriginal.getId());
+           /* // Création d'un nouveau contributeur (clone)
             Contributeur nouveauContributeur = new Contributeur();
             nouveauContributeur.setNom(contributeurOriginal.getNom());
             nouveauContributeur.setPrenom(contributeurOriginal.getPrenom());
@@ -97,47 +101,55 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
             nouveauContributeur.setActive(true);
             nouveauContributeur.setProfil(contributeurOriginal.getProfil());
             nouveauContributeur.setNiveau(contributeurOriginal.getNiveau());
-            // Initialiser autres champs nécessaires...
+            // Initialiser autres champs nécessaires... */
 
-            Contributeur contributeurCree = contributeurRepository.save(nouveauContributeur);
+           // Contributeur contributeurCree = contributeurRepository.save(nouveauContributeur);
 
-            ideeProjet.setContributeur(contributeurCree);
+            ideeProjet.setContributeur(contributeurOriginal);
             ideeProjet.setStatut(StatutIdee.ACCEPTEE);
 
-            // Créer gestionnaire à partir du nouveau contributeur
+            // Créer gestionnaire à partir du contributeurOriginal
             Gestionnaire gestionnaire = new Gestionnaire();
-            gestionnaire.setNom(contributeurCree.getNom());
-            gestionnaire.setPrenom(contributeurCree.getPrenom());
-            gestionnaire.setEmail(contributeurCree.getEmail());
-            gestionnaire.setPassword(contributeurCree.getPassword());
+            gestionnaire.setNom(contributeurOriginal.getNom());
+            gestionnaire.setPrenom(contributeurOriginal.getPrenom());
+            gestionnaire.setEmail(contributeurOriginal.getEmail());
+            gestionnaire.setPassword(contributeurOriginal.getPassword());
             gestionnaire.setActive(true);
-            gestionnaire.setProfil(contributeurCree.getProfil());
-            gestionnaire.setNiveau(contributeurCree.getNiveau());
+            gestionnaire.setProfil(contributeurOriginal.getProfil());
+            gestionnaire.setNiveau(contributeurOriginal.getNiveau());
+            gestionnaire.setParent(contributeurOriginal.getId());
             gestionnaire.setVersion(0L);
 
             Gestionnaire gestionnaireCree = gestionnaireRepository.save(gestionnaire);
 
             // Créer projet lié
-            Projet projet = new Projet();
+
             projet.setTitre(dto.getTitre());
             projet.setDescription(dto.getDescription());
             projet.setDateCreation(LocalDateTime.now());
             projet.setStatut(StatutProjet.EN_COURS);
             projet.setCahierDeCharge(false);
             projet.setGestionnaire(gestionnaireCree);
+            projet.setNewGestionnaire(idContributeurOriginal);
             projet.setDomaine(domaine);
 
+
+            saved = ideeProjetRepository.save(ideeProjet);
+            projet.setIdeeProjet(saved);
             Projet projetCree = projetRepository.save(projet);
 
-            ideeProjet.setProjet(projetCree);
 
-        } else {
+        }
+        else {
             // Si leguer == true, on garde le contributeur original
             ideeProjet.setContributeur(contributeurOriginal);
             ideeProjet.setStatut(StatutIdee.PROPOSEE);
+
+            saved = ideeProjetRepository.save(ideeProjet);
+
         }
 
-        IdeeProjet saved = ideeProjetRepository.save(ideeProjet);
+       // saved = ideeProjetRepository.save(ideeProjet);
 
         try {
             notificationServiceImpl.notifierEtEnvoyer(
@@ -225,7 +237,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
 
         Projet projetCree = projetRepository.save(projet);
 
-        ideeProjet.setProjet(projetCree);
         ideeProjet.setStatut(StatutIdee.ACCEPTEE);
         ideeProjetRepository.save(ideeProjet);
 
@@ -276,7 +287,6 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
 
         Projet projetCree = projetRepository.save(projet);
 
-        ideeProjet.setProjet(projetCree);
         ideeProjet.setStatut(StatutIdee.ACCEPTEE);
         ideeProjetRepository.save(ideeProjet);
 

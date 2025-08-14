@@ -23,6 +23,7 @@ public class Projet {
 
     private String titre;
     private String description;
+    private Long newGestionnaire;
 
     private LocalDateTime dateCreation;
 
@@ -65,6 +66,12 @@ public class Projet {
     @JoinColumn(name = "id_domaine", nullable = true)
     @JsonBackReference
     private Domaine domaine;
+
+
+   /* @ManyToOne
+    @JoinColumn(name = "id_contributeur", nullable = false) // le nom de la colonne dans la table Projet
+    private Contributeur contributeur; */
+
 
     @ManyToOne
     @JoinColumn(name = "id_gestionnaire", referencedColumnName = "id_utilisateur")
@@ -189,6 +196,14 @@ public class Projet {
 
     public void setNotification(List<Notification> notification) {
         this.notification = notification;
+    }
+
+    public Long getNewGestionnaire() {
+        return newGestionnaire;
+    }
+
+    public void setNewGestionnaire(Long userId) {
+        this.newGestionnaire = userId;
     }
 }
 

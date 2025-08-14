@@ -51,16 +51,15 @@ public ResponseEntity<Projet> createProjet(@RequestBody CreateProjetRequest requ
     @GetMapping("/{id_contributeur}")
     public Projet getById(@RequestParam Long id, @PathVariable Long id_contributeur) {
         Contributeur contributeur = contributeurRepository.findById(id_contributeur)
-                .orElseThrow(() -> new RuntimeException("Le administrateur n'existe pas"));
+                .orElseThrow(() -> new RuntimeException("Ce contributeur n'existe pas"));
         return projetServiceimpl.getProjetById(id, id_contributeur);
     }
 
-    @GetMapping("/recupère/id_contributeur/{id_contributeur}")
-    public List<Projet> getAllProjets(@PathVariable Long id_contributeur) {
-        Contributeur contributeur = contributeurRepository.findById(id_contributeur)
-                .orElseThrow(() -> new RuntimeException("Le contributeur n'existe pas"));
-        return projetServiceimpl.getAllProjets(id_contributeur);
+    @GetMapping("/recupere/id_contributeur/{idContributeur}")
+    public List<Projet> getAllProjets(@PathVariable Long idContributeur) {
+        return projetServiceimpl.getAllProjets(idContributeur);
     }
+
 
     @GetMapping("/allprojets")
     public ResponseEntity<List<Projet>> getAllProjetsSysteme() {
