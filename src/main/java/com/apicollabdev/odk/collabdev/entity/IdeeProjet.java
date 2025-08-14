@@ -46,16 +46,19 @@ public class IdeeProjet {
     @ManyToOne
     @JsonBackReference()
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
+    @JsonBackReference
     private Contributeur contributeur;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference()
     @JoinColumn(name = "id_projet")
+    @JsonBackReference
     private Projet projet;
 
     @OneToMany(mappedBy = "idDemandeParticipation", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<DemandeParticipation> demandes;
+
 
 
     @ManyToOne
