@@ -8,6 +8,7 @@ import com.apicollabdev.odk.collabdev.enums.StatutIdee;
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
 import com.apicollabdev.odk.collabdev.repository.*;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ProjetService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,20 +109,7 @@ public class ProjetServiceImpl implements ProjetService {
         return projetRepository.findAll();
     }
 
-    @Override
-    public void deleteProjet(Long id, Long idAdmin) {
-        Administrateur administrateur = administrateurRepository.findById(idAdmin)
-                .orElseThrow(() -> new RuntimeException("Cet admin n'existe pas"));
 
-        Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Projet non trouvé"));
-
-        if (projet.getContributions() != null && !projet.getContributions().isEmpty()) {
-            throw new RuntimeException("Impossible de supprimer : le projet a déjà des contributions.");
-        }
-
-        projetRepository.deleteById(id);
-    }
 
     @Override
     public Projet updateProjet(Long id) {
@@ -132,5 +120,19 @@ public class ProjetServiceImpl implements ProjetService {
     public List<Projet> getAllProjetsSysteme() {
         return projetRepository.findAll();
     }
+
+    @Override
+    @Transactional
+    public void deleteProjet(Long idProjet, Long idAdmin) {
+        Projet projet = projetRepository.findByIdProjet(idProjet)
+                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+
+        if (!projet.getAdministrateur().getId().equals(idAdmin)) {
+            throw new RuntimeException("Vous n'êtes pas autorisé à supprimer ce projet");
+        }
+
+        projetRepository.delete(projet);
+    }
+
 
 }

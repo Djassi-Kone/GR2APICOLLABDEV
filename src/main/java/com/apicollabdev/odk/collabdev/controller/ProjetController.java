@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/projets")
-@CrossOrigin("*")
 public class ProjetController {
 
     @Autowired
@@ -68,8 +68,10 @@ public ResponseEntity<Projet> createProjet(@RequestBody CreateProjetRequest requ
         return ResponseEntity.ok(projets);
     }
 
-    @DeleteMapping("supprime/{idAdmin}")
-    public ResponseEntity<String> deleteProjet(@RequestParam Long id, @PathVariable Long idAdmin) {
+    @DeleteMapping("/supprime/{idAdmin}")
+    public ResponseEntity<String> deleteProjet(
+            @PathVariable Long idAdmin,
+            @RequestParam Long id) {
         try {
             projetServiceimpl.deleteProjet(id, idAdmin);
             return ResponseEntity.ok("Projet supprimé avec succès.");
@@ -77,5 +79,7 @@ public ResponseEntity<Projet> createProjet(@RequestBody CreateProjetRequest requ
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+
 
 }

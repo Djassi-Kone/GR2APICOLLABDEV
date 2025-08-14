@@ -45,6 +45,11 @@ public class Projet {
     private List<Contribution> contributions;
 
 
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "id_administrateur", referencedColumnName = "id_utilisateur")
+    @JsonIgnore
+    private Administrateur administrateur;
 
 
     @JsonBackReference()
@@ -196,6 +201,14 @@ public class Projet {
 
     public void setNotification(List<Notification> notification) {
         this.notification = notification;
+    }
+
+    public Administrateur getAdministrateur() {
+        return administrateur;
+    }
+
+    public void setAdministrateur(Administrateur administrateur) {
+        this.administrateur = administrateur;
     }
 }
 

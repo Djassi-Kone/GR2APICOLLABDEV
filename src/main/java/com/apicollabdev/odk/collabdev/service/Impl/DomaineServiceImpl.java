@@ -73,4 +73,17 @@ public class DomaineServiceImpl implements DomaineService {
         return domaineRepository.save(domaine);
     }
 
+    public Domaine updateDomaineFromDto(Long idDomaine, DomaineRequestDto dto, Administrateur admin) {
+        Domaine domaine = domaineRepository.findByIdDomaine(idDomaine)
+                .orElseThrow(() -> new RessourceNotFoundException("Domaine introuvable"));
+
+        if(dto.getTitre() != null) domaine.setTitre(dto.getTitre());
+        if(dto.getDescription() != null) domaine.setDescription(dto.getDescription());
+
+        domaine.setAdministrateur(admin);
+
+        return domaineRepository.save(domaine);
+    }
+
+
 }
