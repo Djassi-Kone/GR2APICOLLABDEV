@@ -3,10 +3,9 @@ package com.apicollabdev.odk.collabdev.entity;
 
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.util.List;
 
 @Data
 @Entity
-@Getter  @Setter  @AllArgsConstructor
 public class Projet {
 
     @Id
@@ -25,6 +23,7 @@ public class Projet {
 
     private String titre;
     private String description;
+    private Long newGestionnaire;
 
     private LocalDateTime dateCreation;
 
@@ -40,49 +39,47 @@ public class Projet {
         this.contributions = contributions;
     }
 
-    @JsonManagedReference()
+
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Contribution> contributions;
 
-
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "id_administrateur", referencedColumnName = "id_utilisateur")
-    @JsonIgnore
-    private Administrateur administrateur;
-
-
-    @JsonBackReference()
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_idee_projet")
+    @JsonBackReference
     private IdeeProjet ideeProjet;
 
-    @JsonManagedReference()
+
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DemandeParticipation> demandeParticipation;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DemandeParticipation> demandes;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DebloqueProjet> debloqueProjets;
 
-
-    @JsonBackReference()
     @ManyToOne
     @JoinColumn(name = "id_domaine", nullable = true)
+    @JsonBackReference
     private Domaine domaine;
 
-    @JsonBackReference()
+
+   /* @ManyToOne
+    @JoinColumn(name = "id_contributeur", nullable = false) // le nom de la colonne dans la table Projet
+    private Contributeur contributeur; */
+
+
     @ManyToOne
     @JoinColumn(name = "id_gestionnaire", referencedColumnName = "id_utilisateur")
-    @JsonIgnore
+    @JsonBackReference
     private Gestionnaire gestionnaire;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Notification> notification;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -153,10 +150,6 @@ public class Projet {
         this.demandeParticipation = demandeParticipation;
     }
 
-    public Gestionnaire getGestionnaire() {
-        return gestionnaire;
-    }
-
     public List<DemandeParticipation> getDemandes() {
         return demandes;
     }
@@ -181,7 +174,9 @@ public class Projet {
         this.domaine = domaine;
     }
 
-
+    public Gestionnaire getGestionnaire() {
+        return gestionnaire;
+    }
 
     public void setGestionnaire(Gestionnaire gestionnaire) {
         this.gestionnaire = gestionnaire;
@@ -203,12 +198,12 @@ public class Projet {
         this.notification = notification;
     }
 
-    public Administrateur getAdministrateur() {
-        return administrateur;
+    public Long getNewGestionnaire() {
+        return newGestionnaire;
     }
 
-    public void setAdministrateur(Administrateur administrateur) {
-        this.administrateur = administrateur;
+    public void setNewGestionnaire(Long userId) {
+        this.newGestionnaire = userId;
     }
 }
 

@@ -12,8 +12,18 @@ public class Utilisateur {
     private String email;
     private String password;
 
+    private  Long parent;
+
     @Version  // <-- Ajoute cette annotation
     private Long version;
+
+    public Long getParent() {
+        return parent;
+    }
+
+    public void setParent(Long parent) {
+        this.parent = parent;
+    }
 
     public Long getId() {
         return id;
