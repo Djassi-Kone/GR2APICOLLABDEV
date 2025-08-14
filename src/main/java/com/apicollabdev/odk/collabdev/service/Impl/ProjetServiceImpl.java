@@ -49,6 +49,11 @@ public class ProjetServiceImpl implements ProjetService {
         projet.setStatut(EN_COURS);
         return projetRepository.save(projet);
     } */
+
+    public List<Projet> getProjetsByNewGestionnaire(Long newGestionnaireId) {
+        return projetRepository.findByNewGestionnaire(newGestionnaireId);
+    }
+
     @Override
     public Projet createProjetFromIdee(CreateProjetRequest request) {
         IdeeProjet idee = ideeProjetRepository.findById(request.getIdIdee())

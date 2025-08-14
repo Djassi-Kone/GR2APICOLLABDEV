@@ -29,11 +29,6 @@ public class DemandeParticipationController {
         return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur, description);
     }
 
-    /*// Accepter une demande pour devenir participation
-    @PutMapping("/gestionnaire/accepter/{idDemande}")
-    public Projet accepterDemandeGestionnaire(@PathVariable Long idDemande) {
-        return demandeParticipationServiceImpl.accepterDemandeParticipation(idDemande);
-    }*/
 
     @PutMapping("/gestionnaire/accepter/{idDemande}")
     public ResponseEntity<Projet> accepterDemandeGestionnaire(@PathVariable Long idDemande) {

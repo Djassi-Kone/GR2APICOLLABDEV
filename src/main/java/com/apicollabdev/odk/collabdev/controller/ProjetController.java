@@ -55,6 +55,19 @@ public ResponseEntity<Projet> createProjet(@RequestBody CreateProjetRequest requ
         return projetServiceimpl.getProjetById(id, id_contributeur);
     }
 
+    @GetMapping("/gestionnaire/{idNewGestionnaire}")
+    public ResponseEntity<List<Projet>> getProjetsByNewGestionnaire(
+            @PathVariable("idNewGestionnaire") Long idNewGestionnaire) {
+
+        List<Projet> projets = projetServiceimpl.getProjetsByNewGestionnaire(idNewGestionnaire);
+
+        if (projets.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(projets);
+    }
+
     @GetMapping("/recupere/id_contributeur/{idContributeur}")
     public List<Projet> getAllProjets(@PathVariable Long idContributeur) {
         return projetServiceimpl.getAllProjets(idContributeur);

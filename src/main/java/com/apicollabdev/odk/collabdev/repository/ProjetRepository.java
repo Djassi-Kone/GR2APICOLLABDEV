@@ -14,6 +14,6 @@ public interface ProjetRepository extends JpaRepository<Projet, Long> {
     Optional<Projet> findByIdProjet(Long id);
     List<Projet> findByStatut(StatutProjet statut);
     //List<Projet> findByContributeurIdContributeur(Long idContributeur);
-
+    List<Projet> findByNewGestionnaire(Long newGestionnaireId);
 }
 
