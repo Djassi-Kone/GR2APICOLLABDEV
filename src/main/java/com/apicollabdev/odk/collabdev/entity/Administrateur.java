@@ -37,6 +37,7 @@ public class Administrateur extends Utilisateur{
     private List<Notification> notification;
   
     @OneToMany(mappedBy = "administrateur")
+    @JsonManagedReference
     private List<Domaine> domaine;
 
 }

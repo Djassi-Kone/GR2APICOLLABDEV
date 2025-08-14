@@ -3,7 +3,6 @@ package com.apicollabdev.odk.collabdev.entity;
 import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
 import com.apicollabdev.odk.collabdev.enums.TypeDemandeParticipation;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -2,7 +2,6 @@ package com.apicollabdev.odk.collabdev.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +24,6 @@ public class Coins {
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
-    @JsonIgnoreProperties("coins")
     @JsonBackReference
     private Contributeur contributeur;
 

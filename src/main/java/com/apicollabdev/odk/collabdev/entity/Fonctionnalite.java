@@ -41,7 +41,7 @@ public class Fonctionnalite {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_contribution")
-    @JsonManagedReference
+    @JsonBackReference
     private Contribution contribution;
 
     public int getIdFonctionnalite() {
