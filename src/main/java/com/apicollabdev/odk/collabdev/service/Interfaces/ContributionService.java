@@ -12,7 +12,7 @@ public interface ContributionService {
     public Contribution getById(Long id);
     public void deleteById(Long id);
     public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur);
-    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, String urlCode);
+    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, Long idProjet);
     public Contribution validerContribution(Long idContribution);
     public Contribution rejeterContribution(Long idContribution);
 

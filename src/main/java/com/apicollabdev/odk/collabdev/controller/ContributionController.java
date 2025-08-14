@@ -28,12 +28,12 @@ public class ContributionController {
         return ResponseEntity.ok(contribution);
     }
 
-    @PostMapping("/fonctionnalite/{idFonctionnalite}/deposer")
+    @PostMapping("/fonctionnalite/{idFonctionnalite}/idContributeur/{idContributeur}/idProjet/{idProjet}")
     public ResponseEntity<Contribution> deposerContribution(
             @PathVariable Long idFonctionnalite,
-            @RequestParam Long idContributeur,
-            @RequestParam String urlCode) {
-        Contribution contribution = contributionService.deposerContribution(idFonctionnalite, idContributeur, urlCode);
+            @PathVariable Long idContributeur,
+            @PathVariable Long idProjet) {
+        Contribution contribution = contributionService.deposerContribution(idFonctionnalite, idContributeur, idProjet);
         return ResponseEntity.ok(contribution);
     }
 

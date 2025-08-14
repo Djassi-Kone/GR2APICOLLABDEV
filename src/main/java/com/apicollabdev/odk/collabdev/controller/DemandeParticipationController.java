@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.controller;
 
+import com.apicollabdev.odk.collabdev.dto.DemandeDTO;
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
 import com.apicollabdev.odk.collabdev.entity.Projet;
 import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
@@ -19,15 +20,13 @@ public class DemandeParticipationController {
     private DemandeParticipationServiceImpl demandeParticipationServiceImpl;
 
     // Créer une demande de participation à un projet existant
-    @PostMapping("/participation/idProjet/{idProjet}/idContributeur/{idContributeur}")
+    @PostMapping("/idProjet/{idProjet}/idContributeur/{idContributeur}/participation")
     public DemandeParticipation createDemandeParticipation(
             @PathVariable Long idProjet,
-            @PathVariable Long idContributeur,
-            @RequestParam String description
-    ) {
-        return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur, description);
+            @PathVariable Long idContributeur
+            ) {
+        return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur);
     }
-
 
     @PutMapping("/gestionnaire/accepter/{idDemande}")
     public ResponseEntity<Projet> accepterDemandeGestionnaire(@PathVariable Long idDemande) {

@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
+import com.apicollabdev.odk.collabdev.dto.DemandeDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.ModeTransfert;
 import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
@@ -44,7 +45,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
     private EmailService emailService;
 
     @Override
-    public DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur, String description) {
+    public DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur) {
         // Récupération du projet
         Projet projet = projetRepository.findById(idProjet)
                 .orElseThrow(() -> new RuntimeException("Projet non trouvé avec l'id: " + idProjet));
@@ -60,7 +61,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         DemandeParticipation demandeParticipation = new DemandeParticipation();
         demandeParticipation.setProjet(projet);
         demandeParticipation.setContributeur(contributeur);
-        demandeParticipation.setDescription(description);
+        demandeParticipation.setTypeDemandeParticipationemande(TypeDemandeParticipation.CONTRIBUTEUR);
         demandeParticipation.setDatedemande(LocalDateTime.now());
         demandeParticipation.setStatutDemandeParticipation(StatutDemandeParticipation.EN_ATTENTE);
 
@@ -95,6 +96,31 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         } catch (Exception e) {
             System.err.println("Erreur lors de la notification : " + e.getMessage());
         }
+
+        // Emails
+      /*  try {
+            // Email au contributeur
+            String sujetContributeur = "Demande de participation envoyée";
+            String messageContributeur = "Bonjour " + contributeur.getNom() + ",\n\n" +
+                    "Vous avez fait une demande de participation sur le projet \"" + projet.getTitre() + "\".\n\n" +
+                    "Merci de patienter en attendant une réponse.";
+
+            emailService.sendEmail(contributeur.getEmail(), sujetContributeur, messageContributeur);
+
+            // Email au gestionnaire
+            if (gestionnaire != null) {
+                String sujetGestionnaire = "Nouvelle demande de participation";
+                String messageGestionnaire = "Bonjour " + gestionnaire.getNom() + ",\n\n" +
+                        "Le contributeur " + contributeur.getNom() + " a demandé à participer au projet \"" + projet.getTitre() + "\".\n\n" +
+                        "Veuillez vous rendre sur la plateforme pour valider ou refuser sa demande.";
+
+                emailService.sendEmail(gestionnaire.getEmail(), sujetGestionnaire, messageGestionnaire);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'envoi d'email :");
+            e.printStackTrace();
+        }*/
 
         return saved;
     }
@@ -156,6 +182,10 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
      IdeeProjet idee = ideeProjetRepository.findById(idIdeeProjet)
              .orElseThrow(() -> new RuntimeException("Idée de projet introuvable"));
 
+     if (idee.getProjet() != null && idee.getProjet().getGestionnaire() != null) {
+         throw new RuntimeException("Ce projet a déjà un gestionnaire.");
+     }
+
      Contributeur contributeur = contributeurRepository.findById(idContributeur)
              .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
 
@@ -163,7 +193,6 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
      demande.setContributeur(contributeur);
      demande.setIdeeProjet(idee);
      demande.setStatutDemandeParticipation(StatutDemandeParticipation.EN_ATTENTE);
-     demande.setDescription(demande.getDescription());
      demande.setTypeDemandeParticipationemande(TypeDemandeParticipation.GESTIONNAIRE);
      demande.setDatedemande(LocalDateTime.now());
      demandeParticipationRepository.save(demande);
@@ -183,6 +212,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
 
      return demande;
  }
+
 
     @Transactional
     public Projet accepterDemandeGestionnaire(Long idDemande) {

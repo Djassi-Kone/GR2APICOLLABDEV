@@ -71,7 +71,7 @@ public class ContributionServiceImpl implements ContributionService {
 
 
     @Override
-    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, String urlCode) {
+    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, Long idProjet) {
         Contributeur contributeur = contributeurRepository.findById(idContributeur)
                 .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
 
@@ -89,7 +89,7 @@ public class ContributionServiceImpl implements ContributionService {
         }
 
         Contribution contribution = new Contribution();
-        contribution.setContenu(urlCode);
+        //contribution.setContenu(contribution.getContenu());
         contribution.setFonctionnalite(fonctionnalite);
         contribution.setContributeur(contributeur);
         contribution.setStatutC(StatutContribution.EN_ATTENTE);
@@ -98,8 +98,8 @@ public class ContributionServiceImpl implements ContributionService {
         contribution = contributionRepository.save(contribution);
 
         // Notification
-        Notification notification = NotificationFactory.creerNotificationContribution(
-                gestionnaire,
+       Notification notification = NotificationFactory.creerNotificationContribution(
+                contributeur,
                 projet.getTitre(),
                 fonctionnalite.getNomFonctionnalite()
         );
@@ -107,14 +107,14 @@ public class ContributionServiceImpl implements ContributionService {
 
         Recevoir recevoir = new Recevoir();
         recevoir.setNotification(notification);
-        recevoir.setContributeur(gestionnaire); // Gestionnaire hérite de Contributeur
+        recevoir.setContributeur(contributeur); // Gestionnaire hérite de Contributeur
         recevoir.setLue(false);
         recevoir.setDateReception(LocalDateTime.now());
         recevoirRepository.save(recevoir);
 
         // Email
         emailService.sendEmail(
-                gestionnaire.getEmail(),
+                contributeur.getEmail(),
                 "Nouvelle contribution reçue",
                 notification.getDescription()
         );
