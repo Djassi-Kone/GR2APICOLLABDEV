@@ -24,5 +24,9 @@ public interface ContributeurRepository extends JpaRepository<Contributeur, Long
     Optional<Contributeur> findByIdWithLock(@Param("id") Long id);
 
 
+
+    Optional<Contributeur> findById(Long id);
+
+
 }
 

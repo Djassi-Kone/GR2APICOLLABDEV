@@ -3,10 +3,9 @@ package com.apicollabdev.odk.collabdev.controller;
 import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
 import com.apicollabdev.odk.collabdev.dto.ContributeurDTO;
 import com.apicollabdev.odk.collabdev.dto.LoginRequest;
-import com.apicollabdev.odk.collabdev.entity.Contributeur;
-import com.apicollabdev.odk.collabdev.entity.Notification;
-import com.apicollabdev.odk.collabdev.entity.Utilisateur;
+import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.mapper.ContributeurMapper;
+import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.repository.UtilisateurRepository;
 import com.apicollabdev.odk.collabdev.security.SessionAuth;
 import com.apicollabdev.odk.collabdev.service.Impl.ContributeurServiceImpl;
@@ -36,8 +35,8 @@ public class ContributeurController {
 
     @Autowired
     UtilisateurRepository utilisateurRepository;
-
-
+    @Autowired
+    private ContributeurRepository contributeurRepository;
 
 
     @PostMapping("/inscription")
@@ -51,25 +50,44 @@ public class ContributeurController {
         List<Utilisateur> users = utilisateurRepository
                 .findUsersByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
 
-        if (!users.isEmpty()) {
-            Utilisateur user = users.get(0); // On prend le premier
-
-            String fakeToken = UUID.randomUUID().toString();
-            SessionAuth.sessions.put(fakeToken, user.getId());
-
-            List<String> roles = new ArrayList<>();
-            roles.add(user.getClass().getSimpleName());
-
-            return ResponseEntity.ok(Map.of(
-                    "token", fakeToken,
-                    "roles", roles,
-                    "id", user.getId(),
-                    "message", "Connexion réussie"
-            ));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants incorrects");
+        if (users.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Identifiants incorrects");
         }
+
+        Utilisateur utilisateur = users.get(0);
+
+        String nom = null;
+        String prenom = null;
+        List<String> roles = new ArrayList<>();
+
+        // Déterminer le rôle avec instanceof
+        if (utilisateur instanceof Contributeur) {
+            Contributeur contributeur = contributeurRepository.findById(utilisateur.getId())
+                    .orElse(null);
+            if (contributeur != null) {
+                nom = contributeur.getNom();
+                prenom = contributeur.getPrenom();
+            }
+            roles.add("Contributeur");
+            roles.add("Gestionnaire");
+        }
+
+        String fakeToken = UUID.randomUUID().toString();
+        SessionAuth.sessions.put(fakeToken, utilisateur.getId());
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Connexion réussie",
+                "token", fakeToken,
+                "id", utilisateur.getId(),
+                "roles", roles,
+                "nom", nom,
+                "prenom", prenom
+        ));
     }
+
+
+
 
 
 
