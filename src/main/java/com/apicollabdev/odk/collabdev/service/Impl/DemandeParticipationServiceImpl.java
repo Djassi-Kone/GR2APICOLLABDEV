@@ -97,34 +97,10 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
             System.err.println("Erreur lors de la notification : " + e.getMessage());
         }
 
-        // Emails
-      /*  try {
-            // Email au contributeur
-            String sujetContributeur = "Demande de participation envoyée";
-            String messageContributeur = "Bonjour " + contributeur.getNom() + ",\n\n" +
-                    "Vous avez fait une demande de participation sur le projet \"" + projet.getTitre() + "\".\n\n" +
-                    "Merci de patienter en attendant une réponse.";
-
-            emailService.sendEmail(contributeur.getEmail(), sujetContributeur, messageContributeur);
-
-            // Email au gestionnaire
-            if (gestionnaire != null) {
-                String sujetGestionnaire = "Nouvelle demande de participation";
-                String messageGestionnaire = "Bonjour " + gestionnaire.getNom() + ",\n\n" +
-                        "Le contributeur " + contributeur.getNom() + " a demandé à participer au projet \"" + projet.getTitre() + "\".\n\n" +
-                        "Veuillez vous rendre sur la plateforme pour valider ou refuser sa demande.";
-
-                emailService.sendEmail(gestionnaire.getEmail(), sujetGestionnaire, messageGestionnaire);
-            }
-
-        } catch (Exception e) {
-            System.err.println("Erreur lors de l'envoi d'email :");
-            e.printStackTrace();
-        }*/
-
         return saved;
     }
 
+/*
  @Transactional
  public DemandeParticipation accepterDemandeParticipation(Long idDemande) {
      DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
@@ -149,6 +125,57 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
      return demande;
  }
 
+
+    @Override
+    @Transactional
+    public DemandeParticipation rejeterDemandeParticipation(Long idDemande) {
+        DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
+                .orElseThrow(() -> new RuntimeException("Demande introuvable"));
+
+        demande.setStatutDemandeParticipation(StatutDemandeParticipation.REFUSEE);
+        demandeParticipationRepository.save(demande);
+
+        Contributeur contributeur = demande.getContributeur();
+        IdeeProjet idee = demande.getIdeeProjet();
+
+        // Notifier le demandeur
+        notificationServiceImpl.notifierEtEnvoyer(
+                TypeNotification.DEMANDEREJETEE,
+                contributeur,
+                idee.getTitre()
+        );
+
+        Notification notif = NotificationFactory.creerNotificationDemandeGestionnaireRejetee(
+                idee.getTitre()
+        );
+        notificationServiceImpl.createNotification(notif, contributeur.getId());
+        return demande;
+    } */
+@Override
+@Transactional
+public DemandeParticipation accepterDemandeParticipation(Long idDemande) {
+    DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
+            .orElseThrow(() -> new RuntimeException("Demande introuvable"));
+
+    demande.setStatutDemandeParticipation(StatutDemandeParticipation.ACCEPTEE);
+    demandeParticipationRepository.save(demande);
+
+    IdeeProjet idee = demande.getIdeeProjet();
+    Contributeur contributeur = demande.getContributeur();
+
+    // Notifier le demandeur
+    notificationServiceImpl.notifierEtEnvoyer(
+            TypeNotification.DEMADEACCEPTEE,
+            contributeur,
+            idee.getTitre()
+    );
+
+    Notification notif = NotificationFactory.creerNotificationDemandeGestionnaireAcceptee(
+            idee.getTitre()
+    );
+    notificationServiceImpl.createNotification(notif, contributeur.getId());
+    return demande;
+}
 
     @Override
     @Transactional

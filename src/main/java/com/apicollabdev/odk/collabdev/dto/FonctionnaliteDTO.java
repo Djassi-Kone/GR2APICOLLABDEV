@@ -1,9 +1,11 @@
 package com.apicollabdev.odk.collabdev.dto;
 
+import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
+
 public class FonctionnaliteDTO {
     private int id;
     private String pointFonctionnalite;
-    private String statutF;
+    private StatutFonctionnalite statutF;
     private Long projetId;
     private String FonctionnaliteNom;
     private String FonctionnaliteDescription;
@@ -15,7 +17,6 @@ public class FonctionnaliteDTO {
     public FonctionnaliteDTO(int id, String pointFonctionnalite, String statut, Long projetId, String FonctionnaliteNom, String FonctionnaliteDescription) {
         this.id = id;
         this.pointFonctionnalite = pointFonctionnalite;
-        this.statutF = statut;
         this.projetId = projetId;
         this.FonctionnaliteNom = FonctionnaliteNom;
         this.FonctionnaliteDescription = FonctionnaliteDescription;
@@ -37,12 +38,12 @@ public class FonctionnaliteDTO {
         this.pointFonctionnalite = pointFonctionnalite;
     }
 
-    public String getStatut() {
+    public StatutFonctionnalite getStatutF() {
         return statutF;
     }
 
-    public void setStatut(String statut) {
-        this.statutF = statut;
+    public void setStatutF(StatutFonctionnalite statutF) {
+        this.statutF = statutF;
     }
 
     public long getProjetId() {

@@ -28,6 +28,38 @@ public class DemandeParticipationController {
         return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur);
     }
 
+    @PutMapping("/contributeur/accepter/{idDemande}")
+    public ResponseEntity<Projet> accepterDemandeParticipation(@PathVariable Long idDemande) {
+        try {
+            // 1️⃣ On accepte la demande UNE SEULE fois
+            DemandeParticipation demande = demandeParticipationServiceImpl.accepterDemandeParticipation(idDemande);
+
+            if (demande == null || demande.getProjet() == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            // 2️⃣ On récupère le projet de la demande
+            Projet projet = demande.getProjet();
+
+            // 3️⃣ On renvoie la réponse
+            return ResponseEntity.ok(projet);
+
+        } catch (RuntimeException e) {
+            System.err.println("Erreur métier : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            System.err.println("Erreur interne : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
+    // Rejeter une demande pour devenir contribution
+    @PutMapping("/contributeur/rejeter/{idDemande}")
+    public DemandeParticipation rejeterDemandeParticipation(@PathVariable Long idDemande) {
+        return demandeParticipationServiceImpl.rejeterDemandeParticipation(idDemande);
+    }
+
     @PutMapping("/gestionnaire/accepter/{idDemande}")
     public ResponseEntity<Projet> accepterDemandeGestionnaire(@PathVariable Long idDemande) {
         try {
@@ -45,8 +77,8 @@ public class DemandeParticipationController {
 
     // Rejeter une demande pour devenir gestionnaire
     @PutMapping("/gestionnaire/rejeter/{idDemande}")
-    public DemandeParticipation rejeterDemandeParticipation(@PathVariable Long idDemande) {
-        return demandeParticipationServiceImpl.rejeterDemandeParticipation(idDemande);
+    public DemandeParticipation rejeterDemandeGestionnaire(@PathVariable Long idDemande) {
+        return demandeParticipationServiceImpl.rejeterDemandeGestionnaire(idDemande);
     }
 
     // Faire une demande pour devenir gestionnaire d'une idée de projet

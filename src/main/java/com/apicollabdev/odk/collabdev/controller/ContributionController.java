@@ -2,11 +2,15 @@ package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.ContributionDTO;
 import com.apicollabdev.odk.collabdev.entity.Contribution;
+import com.apicollabdev.odk.collabdev.service.Impl.ContributionServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.FonctionnaliteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,10 +19,39 @@ import java.util.List;
 public class ContributionController {
 
     @Autowired
-    private ContributionService contributionService;
+    private ContributionServiceImpl contributionService;
 
     @Autowired
     private FonctionnaliteService fonctionnaliteService;
+
+
+
+    @PostMapping(value = "/ajoutcontribution/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> ajouterContribution(
+            @RequestPart("dto") ContributionDTO dto,
+            @RequestPart(value = "fichier", required = false) MultipartFile fichier
+    ) {
+        dto.setFichier(fichier);
+        String message = contributionService.ajouterContribution(dto);
+        return ResponseEntity.ok(message);
+    }
+
+    @PostMapping("/ajoutcontribution/autres")
+    public ResponseEntity<String> ajouterContributionAutres(@RequestBody ContributionDTO dto) {
+        try {
+            // Le fichier est null ici, on traite juste le contenu texte ou lien
+            dto.setFichier(null);
+            String message = contributionService.ajouterContribution(dto);
+            return ResponseEntity.ok(message);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Une erreur interne est survenue : " + e.getMessage());
+        }
+    }
+
+
 
     @PostMapping("/fonctionnalite/{idFonctionnalite}/reserver/contributeur/{idContributeur}")
     public ResponseEntity<Contribution> reserverFonctionnalite(

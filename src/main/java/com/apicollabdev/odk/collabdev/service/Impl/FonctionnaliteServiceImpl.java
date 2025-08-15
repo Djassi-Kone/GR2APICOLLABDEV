@@ -52,9 +52,9 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
 
         // Statut
         try {
-            f.setStatutF(StatutFonctionnalite.valueOf(dto.getStatut().toUpperCase()));
+            f.setStatutF(StatutFonctionnalite.valueOf(dto.getStatutF().toString()));
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Statut de fonctionnalité invalide : " + dto.getStatut());
+            throw new RuntimeException("Statut de fonctionnalité invalide : " + dto.getStatutF());
         }
 
         // Nom + description
@@ -135,7 +135,7 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
                 .orElseThrow(() -> new RuntimeException("Fonctionnalité non trouvée"));
 
         f.setPointFonctionnalite(Integer.parseInt(dto.getPointFonctionnalite()));
-        f.setStatutF(StatutFonctionnalite.valueOf(dto.getStatut()));
+        f.setStatutF(StatutFonctionnalite.valueOf(dto.getStatutF().toString()));
         f.setNomFonctionnalite(dto.getFonctionnaliteNom());
         f.setDescriptionFonctionnalite(dto.getFonctionnaliteDescription());
 
