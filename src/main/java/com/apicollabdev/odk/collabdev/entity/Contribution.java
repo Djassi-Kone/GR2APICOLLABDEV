@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.entity;
 
 import com.apicollabdev.odk.collabdev.enums.StatutContribution;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,7 +37,7 @@ public class Contribution {
 
     @ManyToOne
     @JoinColumn(name = "contributeur_id")
-    @JsonBackReference
+    @JsonIgnoreProperties({"contributions"})
     private Contributeur contributeur;
 
 

@@ -19,6 +19,15 @@ public class DemandeDTO {
 
     @Enumerated(EnumType.STRING)
     private ChoixRole choixRole;
+    private String nomContributeur;
+
+    public String getNomContributeur() {
+        return nomContributeur;
+    }
+
+    public void setNomContributeur(String nomContributeur) {
+        this.nomContributeur = nomContributeur;
+    }
 
     public String getDescription() {
         return description;

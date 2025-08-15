@@ -8,7 +8,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -30,23 +29,26 @@ public class Coins {
     private Contributeur contributeur;
 
     @ManyToOne
+    @JoinColumn(name = "id_gestionnaire") // nom de la colonne en DB
+    @JsonBackReference
+    private Gestionnaire gestionnaire;
+
+    @ManyToOne
     @JoinColumn(name = "id_administrateur", nullable = true, referencedColumnName = "id_administrateur")
     @JsonBackReference
     private Administrateur administrateur;
 
     @ManyToOne
-    @JoinColumn(name = "idFonctionnalite", nullable = false)
+    @JoinColumn(name = "id_fonctionnalite", nullable = false)
     @JsonBackReference
     private Fonctionnalite fonctionnalite;
 
-    /*@ManyToOne
-    @JoinColumn(name = "id_contribution")
-    private Contribution contributions;*/
-
     @ManyToOne
-    @JoinColumn(name = "contribution_id")
+    @JoinColumn(name = "contribution_id", nullable = false)
     @JsonBackReference
     private Contribution contribution;
+
+    // Getters et setters
 
     public Long getIdCoin() {
         return idCoin;
@@ -62,6 +64,14 @@ public class Coins {
 
     public void setNombreCoins(int nombreCoins) {
         this.nombreCoins = nombreCoins;
+    }
+
+    public LocalDateTime getDateAcquisition() {
+        return dateAcquisition;
+    }
+
+    public void setDateAcquisition(LocalDateTime dateAcquisition) {
+        this.dateAcquisition = dateAcquisition;
     }
 
     public Contributeur getContributeur() {
@@ -80,23 +90,27 @@ public class Coins {
         this.administrateur = administrateur;
     }
 
-    public LocalDateTime getDateAcquisition(LocalDateTime now) {
-        return dateAcquisition;
-    }
-
-    public void setDateAcquisition(LocalDateTime dateAcquisition) {
-        this.dateAcquisition = dateAcquisition;
-    }
-
-    public LocalDateTime getDateAcquisition() {
-        return dateAcquisition;
-    }
-
     public Fonctionnalite getFonctionnalite() {
         return fonctionnalite;
     }
 
     public void setFonctionnalite(Fonctionnalite fonctionnalite) {
         this.fonctionnalite = fonctionnalite;
+    }
+
+    public Contribution getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Contribution contribution) {
+        this.contribution = contribution;
+    }
+
+    public Gestionnaire getGestionnaire() {
+        return gestionnaire;
+    }
+
+    public void setGestionnaire(Gestionnaire gestionnaire) {
+        this.gestionnaire = gestionnaire;
     }
 }

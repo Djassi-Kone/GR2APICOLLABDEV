@@ -9,4 +9,6 @@ import java.util.List;
 public interface DemandeParticipationRepository extends JpaRepository<DemandeParticipation, Long> {
 
     List<DemandeParticipation> findByContributeur(Contributeur contributeur);
+
+    List<DemandeParticipation> findByProjetIdProjet(Long idProjet);
 }

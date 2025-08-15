@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.entity;
 import com.apicollabdev.odk.collabdev.enums.Niveau;
 import com.apicollabdev.odk.collabdev.enums.Profil;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -88,6 +89,7 @@ public class Contributeur extends Utilisateur{
 
     @OneToMany(mappedBy = "contributeur", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @JsonIgnore
     private List<Contribution> contributions;
 
 // + autres attributs habituels

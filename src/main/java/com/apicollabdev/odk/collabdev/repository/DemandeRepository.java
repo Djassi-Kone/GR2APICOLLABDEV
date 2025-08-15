@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface DemandeRepository extends JpaRepository<DemandeParticipation, Long> {
     List<DemandeParticipation> findByStatutDemandeParticipation(StatutDemandeParticipation statutDemandeParticipation);
+    List<DemandeParticipation> findByProjetIdProjet(Long idProjet);
 
 }
 

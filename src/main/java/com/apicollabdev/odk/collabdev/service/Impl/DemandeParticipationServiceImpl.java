@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
+import com.apicollabdev.odk.collabdev.dto.DemandeProjetDto;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.ModeTransfert;
 import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
@@ -186,6 +187,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
 
     @Transactional
     public Projet accepterDemandeGestionnaire(Long idDemande) {
+        // Récupération de la demande
         DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
                 .orElseThrow(() -> new RuntimeException("Demande non trouvée"));
 
@@ -193,26 +195,47 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
             throw new RuntimeException("Demande déjà traitée");
         }
 
-        // Valider la demande
-        demande.setIdDemandeParticipation(idDemande);
+        // Mettre à jour le statut de la demande
         demande.setStatutDemandeParticipation(StatutDemandeParticipation.ACCEPTEE);
         demandeParticipationRepository.save(demande);
 
-        // Transformer l'idée en projet et affecter le gestionnaire
-        Projet projetCree = ideeProjetServiceImpl.transfererEtTransformerIdeeLeguee(
-                demande.getIdeeProjet().getIdIdeeProjet(),
-                demande.getContributeur().getId(), ModeTransfert.TRANSFERT_GESTIONNAIRE
-        );
+        Projet projetCree = null;
 
-        // Notifier le contributeur que sa demande a été acceptée
-        try {
-            notificationServiceImpl.notifierEtEnvoyer(
-                    TypeNotification.DEMANDEGESTIONNAIREACCEPTEE,
-                    demande.getContributeur(),
-                    "Votre demande pour devenir gestionnaire du projet \"" + projetCree.getTitre() + "\" a été acceptée."
+        if (demande.getIdeeProjet() != null) {
+            // Cas : demande pour devenir gestionnaire d'une idée → créer un nouveau projet
+            projetCree = ideeProjetServiceImpl.transfererEtTransformerIdeeLeguee(
+                    demande.getIdeeProjet().getIdIdeeProjet(),
+                    demande.getContributeur().getId(),
+                    ModeTransfert.TRANSFERT_GESTIONNAIRE
             );
-        } catch (Exception e) {
-            System.err.println("Erreur lors de la notification : " + e.getMessage());
+
+            // Notification spécifique pour la transformation d'idée en projet
+            try {
+                notificationServiceImpl.notifierEtEnvoyer(
+                        TypeNotification.DEMANDEGESTIONNAIREACCEPTEE,
+                        demande.getContributeur(),
+                        "Votre demande pour devenir gestionnaire du projet \"" + projetCree.getTitre() + "\" a été acceptée."
+                );
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la notification : " + e.getMessage());
+            }
+
+        } else if (demande.getProjet() != null) {
+            // Cas : demande pour contribuer à un projet existant
+            projetCree = demande.getProjet(); // On récupère le projet existant
+
+            // Notification spécifique pour une contribution validée
+            try {
+                notificationServiceImpl.notifierEtEnvoyer(
+                        TypeNotification.DEMADEACCEPTEE,
+                        demande.getContributeur(),
+                        "Votre demande pour contribuer au projet \"" + projetCree.getTitre() + "\" a été acceptée."
+                );
+            } catch (Exception e) {
+                System.err.println("Erreur lors de la notification : " + e.getMessage());
+            }
+        } else {
+            throw new RuntimeException("La demande n'est liée ni à un projet ni à une idée");
         }
 
         return projetCree;
@@ -264,4 +287,27 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         }
         demandeParticipationRepository.deleteById(id);
     }
+
+
+    public List<DemandeParticipation> getDemandesByProjet(Long idProjet) {
+        return demandeParticipationRepository.findByProjetIdProjet(idProjet);
+    }
+
+    public List<DemandeProjetDto> getDemandesDTOByProjet(Long idProjet) {
+        List<DemandeParticipation> demandes = demandeParticipationRepository.findByProjetIdProjet(idProjet);
+        return demandes.stream().map(d -> {
+            DemandeProjetDto dto = new DemandeProjetDto();
+            dto.setIdDemandeParticipation(d.getIdDemandeParticipation());
+            dto.setDescription(d.getDescription());
+            dto.setDatedemande(d.getDatedemande());
+            dto.setStatutDemandeParticipation(d.getStatutDemandeParticipation().name());
+            dto.setTypeDemandeParticipationemande(d.getTypeDemandeParticipationemande() != null
+                    ? d.getTypeDemandeParticipationemande().name()
+                    : null);
+            dto.setNomContributeur(d.getContributeur() != null ? d.getContributeur().getNom() : null);
+            return dto;
+        }).toList();
+    }
+
+
 }

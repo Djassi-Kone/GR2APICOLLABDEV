@@ -5,11 +5,15 @@ import com.apicollabdev.odk.collabdev.dto.ContributionDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.StatutContribution;
 import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
+import com.apicollabdev.odk.collabdev.enums.TypeNotification;
 import com.apicollabdev.odk.collabdev.repository.*;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +24,9 @@ public class ContributionServiceImpl implements ContributionService {
 
     @Autowired
     private ContributionRepository contributionRepository;
+
+    @Autowired
+    NotificationServiceImpl notificationService;
 
     @Autowired
     private ContributeurRepository contributeurRepository;
@@ -123,48 +130,56 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
     @Override
+    @Transactional
     public Contribution validerContribution(Long idContribution) {
+        // 1️⃣ Récupérer la contribution
         Contribution contribution = contributionRepository.findById(idContribution)
                 .orElseThrow(() -> new RuntimeException("Contribution non trouvée"));
 
+        // 2️⃣ Vérifier si déjà validée
+        if (contribution.getStatutC() == StatutContribution.VALIDEE) {
+            throw new RuntimeException("Contribution déjà validée");
+        }
+
+        // 3️⃣ Mettre à jour le statut de la contribution
         contribution.setStatutC(StatutContribution.VALIDEE);
         contributionRepository.save(contribution);
 
+        // 4️⃣ Mettre à jour la fonctionnalité associée
         Fonctionnalite f = contribution.getFonctionnalite();
+        if (f == null) throw new RuntimeException("Fonctionnalité introuvable");
         f.setStatutF(StatutFonctionnalite.TERMINEE);
         fonctionnaliteRepository.save(f);
 
+        // 5️⃣ Créer et assigner les coins
         Contributeur c = contribution.getContributeur();
-        Coins gain = new Coins();
-        int totalCoins = f.getCoins().stream().mapToInt(Coins::getNombreCoins).sum();
-        gain.setNombreCoins(totalCoins);
-        gain.setDateAcquisition(LocalDateTime.now());
-        c.getCoins().add(gain); // ajout du gain à la liste
+        if (c == null) throw new RuntimeException("Contributeur introuvable");
 
+        Coins gain = new Coins();
+        gain.setNombreCoins(f.getPointFonctionnalite()); // nombre de coins = points de la fonctionnalité
+        gain.setDateAcquisition(LocalDateTime.now());
+        gain.setFonctionnalite(f);
+        gain.setContribution(contribution);
+        gain.setContributeur(c);
+
+        c.getCoins().add(gain);
         contributeurRepository.save(c);
 
-        Notification notification = NotificationFactory.creerNotificationContributionValider(
-                c,
-                f.getProjet().getTitre(),
-                f.getNomFonctionnalite()
-        );
-        notificationRepository.save(notification);
-
-        Recevoir recevoir = new Recevoir();
-        recevoir.setNotification(notification);
-        recevoir.setContributeur(c);
-        recevoir.setLue(false);
-        recevoir.setDateReception(LocalDateTime.now());
-        recevoirRepository.save(recevoir);
-
-        emailService.sendEmail(
-                c.getEmail(),
-                "Contribution validée",
-                notification.getDescription()
-        );
+        // 6️⃣ Notifications et email hors de la transaction critique
+        try {
+            notificationService.notifierEtEnvoyer(
+                    TypeNotification.CONTRIBUTIONVALIDER,
+                    c,
+                    f.getProjet().getTitre(),
+                    f.getNomFonctionnalite()
+            );
+        } catch (Exception e) {
+            System.err.println("Erreur notification/email : " + e.getMessage());
+        }
 
         return contribution;
     }
+
 
     @Override
     public Contribution rejeterContribution(Long idContribution) {
@@ -225,6 +240,47 @@ public class ContributionServiceImpl implements ContributionService {
     public void deleteById(Long id) {
         contributionRepository.deleteById(id);
     }
+
+    public List<Contribution> getContributionsByProjet(Long idProjet) {
+        return contributionRepository.findByProjetIdProjet(idProjet);
+    }
+
+
+    @Transactional
+    public Coins attribuerCoinsParGestionnaire(Contribution contribution) {
+        Fonctionnalite f = contribution.getFonctionnalite();
+        Contributeur c = contribution.getContributeur();
+
+        if (f == null || c == null) {
+            throw new RuntimeException("Fonctionnalité ou contributeur introuvable");
+        }
+
+        Coins gain = new Coins();
+        gain.setNombreCoins(f.getPointFonctionnalite());
+        gain.setDateAcquisition(LocalDateTime.now());
+        gain.setFonctionnalite(f);
+        gain.setContribution(contribution);
+        gain.setContributeur(c);
+
+        c.getCoins().add(gain);
+        contributeurRepository.save(c);
+
+        try {
+            notificationService.notifierEtEnvoyer(TypeNotification.GAINCOINS, c, f.getPointFonctionnalite());
+        } catch (Exception e) {
+            System.err.println("Erreur notification/email : " + e.getMessage());
+        }
+
+        return gain;
+    }
+
+
+
+
+
+
+
+
 
 
 }

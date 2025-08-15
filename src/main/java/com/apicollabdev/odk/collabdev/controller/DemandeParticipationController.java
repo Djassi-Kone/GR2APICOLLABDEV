@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.controller;
 
+import com.apicollabdev.odk.collabdev.dto.DemandeProjetDto;
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
 import com.apicollabdev.odk.collabdev.entity.Projet;
 import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
@@ -78,4 +79,12 @@ public class DemandeParticipationController {
     public void deleteById(@PathVariable Long id) {
         demandeParticipationServiceImpl.deleteById(id);
     }
+
+    // Récupérer toutes les demandes pour un projet donné
+    @GetMapping("/projet/{idProjet}")
+    public List<DemandeProjetDto> getDemandesByProjet(@PathVariable Long idProjet) {
+        return demandeParticipationServiceImpl.getDemandesDTOByProjet(idProjet);
+    }
+
+
 }

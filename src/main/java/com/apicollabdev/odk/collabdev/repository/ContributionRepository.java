@@ -18,6 +18,8 @@ public interface ContributionRepository extends JpaRepository<Contribution, Long
     @Query("SELECT c FROM Contribution c WHERE c.contributeur.id = :idContributeur")
     List<Contribution> findContributionByContributeur(@Param("idContributeur") Long idContributeur);
    // List<Contribution> findContributionByContributeurIdAndProjetId(Long idContributeur, Long idProjet);
+   List<Contribution> findByProjetIdProjet(Long idProjet);
+
 
 }
 
