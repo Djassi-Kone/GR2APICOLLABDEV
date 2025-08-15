@@ -2,6 +2,7 @@ package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
 import com.apicollabdev.odk.collabdev.entity.*;
+import com.apicollabdev.odk.collabdev.enums.ModeTransfert;
 import com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation;
 import com.apicollabdev.odk.collabdev.enums.TypeDemandeParticipation;
 import com.apicollabdev.odk.collabdev.enums.TypeNotification;
@@ -215,9 +216,13 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         demande.setTypeDemandeParticipationemande(TypeDemandeParticipation.GESTIONNAIRE);
         demande.setDatedemande(LocalDateTime.now());
         demandeParticipationRepository.save(demande);
-        idee.isLeguer(true);
+        idee.setLeguer(true);
         ideeProjetRepository.save(idee);
-        ideeProjetService.transfererEtTransformerIdeeLeguee(idIdeeProjet, idContributeur);
+        ideeProjetService.transfererEtTransformerIdeeLeguee(
+                idIdeeProjet,
+                idContributeur,
+                ModeTransfert.TRANSFERT_GESTIONNAIRE // ou CREATION selon le contexte
+        );
 
 
         // Notifier le créateur de l'idée
@@ -240,7 +245,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
 
     @Override
     @Transactional
-    public DemandeParticipation accepterDemandeGestionnaire(Long idDemande) {
+    public Projet accepterDemandeGestionnaire(Long idDemande) {
         DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
                 .orElseThrow(() -> new RuntimeException("Demande introuvable"));
 
@@ -274,7 +279,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
                 idee.getTitre()
         );
         notificationServiceImpl.createNotification(notif, contributeur.getId());
-        return demande;
+        return demande.getProjet();
     }
 
     @Override
@@ -303,6 +308,11 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         return demande;
     }
 
+
+    @Override
+    public DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur) {
+        return null;
+    }
 
     @Override
     public List<DemandeParticipation> getAllDemandeParticipation() {

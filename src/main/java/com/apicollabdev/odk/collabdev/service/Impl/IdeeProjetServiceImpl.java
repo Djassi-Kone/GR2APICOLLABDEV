@@ -199,7 +199,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         ideeProjetRepository.deleteById(id);
     }
 
-    @Transactional
+    /*@Transactional
     public Projet transformerIdeeEnProjet(Long idIdeeProjet) {
         IdeeProjet ideeProjet = ideeProjetRepository.findById(idIdeeProjet)
                 .orElseThrow(() -> new RessourceNotFoundException("Idée de projet non trouvée"));
@@ -243,6 +243,8 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         return projetCree;
     }
 
+     */
+
     @Transactional
     public Projet transfererEtTransformerIdeeLeguee(Long idIdeeProjet, Long idNouveauContributeur, ModeTransfert mode) {
         IdeeProjet ideeProjet = ideeProjetRepository.findById(idIdeeProjet)
@@ -261,7 +263,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
                 .orElseThrow(() -> new RessourceNotFoundException("Contributeur à affecter non trouvé"));
 
         ideeProjet.setContributeur(nouveauContributeur);
-        ideeProjet.setLeguer(false);
+        ideeProjet.setLeguer(true);
 
         Gestionnaire gestionnaire = gestionnaireRepository.findById(nouveauContributeur.getId())
                 .orElseGet(() -> {

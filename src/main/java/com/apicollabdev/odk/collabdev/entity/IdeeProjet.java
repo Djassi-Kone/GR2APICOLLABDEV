@@ -131,7 +131,7 @@ public class IdeeProjet {
         this.domaine = domaine;
     }
 
-    public boolean isLeguer(boolean b) {
+    public boolean isLeguer() {
         return Leguer;
     }
 
@@ -154,6 +154,14 @@ public class IdeeProjet {
     public void setVersion(Long version) {
         this.version = version;
     }
+
+    public void setProjet(Projet projet) {
+    }
+
+    public Fonctionnalite getProjet() {
+        return null;
+    }
+
 }
 
 

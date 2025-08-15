@@ -14,6 +14,9 @@ public interface DemandeParticipationService {
     DemandeParticipation faireDemandeGestionnaire (Long idIdeeProjet, Long idContributeur);
     Projet accepterDemandeGestionnaire(Long idDomaine);
     DemandeParticipation rejeterDemandeGestionnaire (Long idDemande);
+
+    DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur, String description);
+
     DemandeParticipation accepterDemandeParticipation(Long idDomaine);
     DemandeParticipation rejeterDemandeParticipation (Long idDemande);
 }
