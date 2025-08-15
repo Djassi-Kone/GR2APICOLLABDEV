@@ -24,6 +24,7 @@ public class Badge {
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true)
+    @JsonBackReference
     private Contributeur contributeur;
 
     @ManyToOne

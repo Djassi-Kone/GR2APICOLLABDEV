@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
+import com.apicollabdev.odk.collabdev.Exception.ResourceNotFoundException;
 import com.apicollabdev.odk.collabdev.dto.BadgeDTO;
 import com.apicollabdev.odk.collabdev.entity.Administrateur;
 import com.apicollabdev.odk.collabdev.entity.Badge;
@@ -41,6 +42,24 @@ public class BadgeServiceImpl implements BadgeService {
         badge.setImage(dto.getImage());
         return badgeRepository.save(badge);
     }
+
+    @Override
+    public Badge updateBadge(Long idBadge, BadgeDTO dto, long idAdmin) {
+        Administrateur admin = administrateurRepository.findById(idAdmin)
+                .orElseThrow(() -> new ResourceNotFoundException("Cet admin n'existe pas"));
+
+        Badge badge = badgeRepository.findByIdBadge(idBadge)
+                .orElseThrow(() -> new ResourceNotFoundException("Ce badge n'existe pas"));
+
+        badge.setNom(dto.getNom());
+        badge.setDescription(dto.getDescription());
+        badge.setImage(dto.getImage());
+        badge.setNombre(dto.getNombre());
+        badge.setAdministrateur(admin);
+
+        return badgeRepository.save(badge);
+    }
+
 
     @Override
     public List<Badge> getAllBadges() {

@@ -7,9 +7,11 @@ import com.apicollabdev.odk.collabdev.enums.StatutContribution;
 import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
 import com.apicollabdev.odk.collabdev.repository.*;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,26 +37,41 @@ public class ContributionServiceImpl implements ContributionService {
     private RecevoirRepository recevoirRepository;
 
     @Override
+    @Transactional
     public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur) {
+        // Récupérer la fonctionnalité
         Fonctionnalite f = fonctionnaliteRepository.findById(idFonctionnalite)
                 .orElseThrow(() -> new RuntimeException("Fonctionnalité non trouvée"));
 
+        // Vérifier si disponible
         if (f.getStatutF() != StatutFonctionnalite.DISPONIBLE) {
             throw new RuntimeException("Fonctionnalité non disponible");
         }
 
-        Contribution c = contributionRepository.findById(idContributeur)
-                .orElseThrow(() -> new RuntimeException("Contribution non trouvé"));
+        // Récupérer le contributeur
+        Contributeur contributeur = contributeurRepository.findById(idContributeur)
+                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
 
+        // Créer une nouvelle contribution
+        Contribution contribution = new Contribution();
+        contribution.setContributeur(contributeur);
+        contribution.setFonctionnalite(f);
+
+        // Sauvegarder la contribution
+        contributionRepository.save(contribution);
+
+        // Mettre à jour la fonctionnalité
         f.setStatutF(StatutFonctionnalite.RESERVEE);
-        f.setContribution(c);
+        f.setContribution(contribution);
         fonctionnaliteRepository.save(f);
 
-        return null;
+        return contribution;
     }
 
+
+
     @Override
-    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, String urlCode) {
+    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, Long idProjet) {
         Contributeur contributeur = contributeurRepository.findById(idContributeur)
                 .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
 
@@ -72,7 +89,7 @@ public class ContributionServiceImpl implements ContributionService {
         }
 
         Contribution contribution = new Contribution();
-        contribution.setContenu(urlCode);
+        //contribution.setContenu(contribution.getContenu());
         contribution.setFonctionnalite(fonctionnalite);
         contribution.setContributeur(contributeur);
         contribution.setStatutC(StatutContribution.EN_ATTENTE);
@@ -81,8 +98,8 @@ public class ContributionServiceImpl implements ContributionService {
         contribution = contributionRepository.save(contribution);
 
         // Notification
-        Notification notification = NotificationFactory.creerNotificationContribution(
-                gestionnaire,
+       Notification notification = NotificationFactory.creerNotificationContribution(
+                contributeur,
                 projet.getTitre(),
                 fonctionnalite.getNomFonctionnalite()
         );
@@ -90,14 +107,14 @@ public class ContributionServiceImpl implements ContributionService {
 
         Recevoir recevoir = new Recevoir();
         recevoir.setNotification(notification);
-        recevoir.setContributeur(gestionnaire); // Gestionnaire hérite de Contributeur
+        recevoir.setContributeur(contributeur); // Gestionnaire hérite de Contributeur
         recevoir.setLue(false);
         recevoir.setDateReception(LocalDateTime.now());
         recevoirRepository.save(recevoir);
 
         // Email
         emailService.sendEmail(
-                gestionnaire.getEmail(),
+                contributeur.getEmail(),
                 "Nouvelle contribution reçue",
                 notification.getDescription()
         );
@@ -182,11 +199,21 @@ public class ContributionServiceImpl implements ContributionService {
 
         return contribution;
     }
-
     @Override
     public List<Contribution> getAllContributions() {
+
         return contributionRepository.findAll();
     }
+
+    @Override
+    public List<Contribution> getContributionsByContributeur(Long idContributeur) {
+        return contributionRepository.findContributionByContributeur(idContributeur);
+    }
+
+   /* @Override
+    public List<Contribution> getContributionsByContributeurAndProjet(Long idContributeur, Long idProjet) {
+        return contributionRepository.findContributionByContributeurIdAndProjetId(idContributeur, idProjet);
+    }*/
 
     @Override
     public Contribution getById(Long id) {

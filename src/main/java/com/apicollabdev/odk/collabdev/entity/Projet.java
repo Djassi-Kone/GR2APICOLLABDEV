@@ -2,6 +2,8 @@ package com.apicollabdev.odk.collabdev.entity;
 
 
 import com.apicollabdev.odk.collabdev.enums.StatutProjet;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,6 +23,7 @@ public class Projet {
 
     private String titre;
     private String description;
+    private Long newGestionnaire;
 
     private LocalDateTime dateCreation;
 
@@ -38,34 +41,49 @@ public class Projet {
 
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Contribution> contributions;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_idee_projet")
+    @JsonBackReference
     private IdeeProjet ideeProjet;
 
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DemandeParticipation> demandeParticipation;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DemandeParticipation> demandes;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DebloqueProjet> debloqueProjets;
 
     @ManyToOne
     @JoinColumn(name = "id_domaine", nullable = true)
+    @JsonBackReference
     private Domaine domaine;
+
+
+   /* @ManyToOne
+    @JoinColumn(name = "id_contributeur", nullable = false) // le nom de la colonne dans la table Projet
+    private Contributeur contributeur; */
+
 
     @ManyToOne
     @JoinColumn(name = "id_gestionnaire", referencedColumnName = "id_utilisateur")
+    @JsonBackReference
     private Gestionnaire gestionnaire;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Notification> notification;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Fonctionnalite> fonctionnalites;
 
     public Long getIdProjet() {
@@ -178,6 +196,14 @@ public class Projet {
 
     public void setNotification(List<Notification> notification) {
         this.notification = notification;
+    }
+
+    public Long getNewGestionnaire() {
+        return newGestionnaire;
+    }
+
+    public void setNewGestionnaire(Long userId) {
+        this.newGestionnaire = userId;
     }
 }
 

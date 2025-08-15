@@ -37,8 +37,6 @@ public class CommentaireController {
         Commentaire commentaire = new Commentaire();
         commentaire.setAuteur(dto.getAuteur());
         commentaire.setContenu(dto.getContenu());
-        commentaire.setSupprime(dto.isSupprime());
-        commentaire.setModifie(dto.isModifie());
         commentaire.setContributeur(contributeur);
         commentaire.setProjet(projet);
 

@@ -75,10 +75,10 @@ public class NotificationFactory {
         return notif;
     }
 
-    public static Notification creerNotificationContribution(Gestionnaire gestionnaire, String titreProjet, String nomFonctionnalite) {
+    public static Notification creerNotificationContribution(Contributeur contributeur, String titreProjet, String nomFonctionnalite) {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.FAIRECONTRIBUTION);
-        notif.setDescription("Le contributeur \"" + gestionnaire + "\" a fait une contribution sur le projet \"" + titreProjet + "\" pour la fonctionnalité \"" + nomFonctionnalite + "\"  veillez vérifier pour valider ou rejeter.");
+        notif.setDescription("Le contributeur \"" + contributeur + "\" a fait une contribution sur le projet \"" + titreProjet + "\" pour la fonctionnalité \"" + nomFonctionnalite + "\"  veillez vérifier pour valider ou rejeter.");
         return notif;
     }
 

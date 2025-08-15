@@ -9,8 +9,6 @@ public interface CommentaireMapper {
         Commentaire comment = new Commentaire();
         comment.setAuteur(dto.getAuteur());
         comment.setContenu(dto.getContenu());
-        comment.setSupprime(dto.isSupprime());
-        comment.setModifie(dto.isModifie());
         return comment;
     }
 

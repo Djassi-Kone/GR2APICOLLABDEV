@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.controller;
 
+import com.apicollabdev.odk.collabdev.Exception.RessourceNotFoundException;
 import com.apicollabdev.odk.collabdev.dto.DomaineRequestDto;
 import com.apicollabdev.odk.collabdev.entity.Administrateur;
 import com.apicollabdev.odk.collabdev.entity.Domaine;
@@ -43,24 +44,20 @@ public class DomaineController {
         return ResponseEntity.ok(domaineServiceImpl.getById(id));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/domaine/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         domaineServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(
-            value = "/administrateur/{idAdmin}/{idDomaine}",
-            consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE },
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PutMapping("/{idDomaine}/admin/{idAdmin}")
     public ResponseEntity<Domaine> updateDomaine(
-            @PathVariable("idAdmin") Long idAdmin,
-            @PathVariable("idDomaine") Long idDomaine,
+            @PathVariable Long idDomaine,
+            @PathVariable Long idAdmin,
             @RequestBody Domaine domaine) {
 
         Administrateur admin = administrateurRepository.findById(idAdmin)
-                .orElseThrow(() -> new RuntimeException("Administrateur non trouvé"));
+                .orElseThrow(() -> new RessourceNotFoundException("Administrateur non trouvé"));
 
         Domaine updated = domaineServiceImpl.updateDomaine(idDomaine, domaine, admin);
         return ResponseEntity.ok(updated);

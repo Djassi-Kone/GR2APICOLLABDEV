@@ -3,6 +3,7 @@ package com.apicollabdev.odk.collabdev.entity;
 import com.apicollabdev.odk.collabdev.enums.Niveau;
 import com.apicollabdev.odk.collabdev.enums.StatutIdee;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,14 +46,18 @@ public class IdeeProjet {
 
     @ManyToOne
     @JoinColumn(name = "id_contributeur", nullable = true, referencedColumnName = "id_contributeur")
+    @JsonBackReference
     private Contributeur contributeur;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  /*  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_projet")
-    private Projet projet;
+    @JsonBackReference
+    private Projet projet; */
 
     @OneToMany(mappedBy = "idDemandeParticipation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DemandeParticipation> demandes;
+
 
 
     @ManyToOne
@@ -117,13 +122,6 @@ public class IdeeProjet {
         this.contributeur = contributeur;
     }
 
-    public Projet getProjet() {
-        return projet;
-    }
-
-    public void setProjet(Projet projet) {
-        this.projet = projet;
-    }
 
     public Domaine getDomaine() {
         return domaine;

@@ -48,6 +48,11 @@ public class ProjetServiceImpl implements ProjetService {
         projet.setStatut(EN_COURS);
         return projetRepository.save(projet);
     } */
+
+    public List<Projet> getProjetsByNewGestionnaire(Long newGestionnaireId) {
+        return projetRepository.findByNewGestionnaire(newGestionnaireId);
+    }
+
     @Override
     public Projet createProjetFromIdee(CreateProjetRequest request) {
         IdeeProjet idee = ideeProjetRepository.findById(request.getIdIdee())
@@ -103,9 +108,19 @@ public class ProjetServiceImpl implements ProjetService {
     @Override
     public List<Projet> getAllProjets(Long id_contributeur) {
         Contributeur contributeur= contributeurRepository.findById(id_contributeur).
-                orElseThrow(()->new RuntimeException("Cet admin n'existe pas"));
+                orElseThrow(()->new RuntimeException("Ce contributeur n'existe pas "));
 
-        return projetRepository.findAll();
+        // Récupérer ses projets
+        List<Projet> projets = null;
+
+       // List<Projet> projets = projetRepository.findByContributeurIdContributeur(id_contributeur);
+
+        // Vérifier si la liste est vide
+        if (projets.isEmpty()) {
+            throw new RuntimeException("Ce contributeur n'a aucun projet.");
+        }
+
+        return projets;
     }
 
     @Override
