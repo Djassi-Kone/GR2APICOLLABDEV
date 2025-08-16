@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,13 +15,14 @@ public class Fonctionnalite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_fonctionnalite")
-    private Long idFonctionnalite;
+    private int idFonctionnalite;
 
     private int pointFonctionnalite;
     @Enumerated(EnumType.STRING)
     private StatutFonctionnalite statutF;
     private String nomFonctionnalite;
     private String DescriptionFonctionnalite;
+    private String CahierDeCharge;
 
     @ManyToOne
     @JoinColumn(name = "projet_id", nullable = false)
@@ -38,11 +40,17 @@ public class Fonctionnalite {
     @JsonManagedReference
     private List<Coins> coins;
 
-    public Long getIdFonctionnalite() {
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_contribution")
+    @JsonBackReference
+    private Contribution contribution;
+
+    public int getIdFonctionnalite() {
         return idFonctionnalite;
     }
 
-    public void setIdFonctionnalite(Long idFonctionnalite) {
+    public void setIdFonctionnalite(int idFonctionnalite) {
         this.idFonctionnalite = idFonctionnalite;
     }
 
@@ -101,4 +109,23 @@ public class Fonctionnalite {
     public void setCoins(List<Coins> coins) {
         this.coins = coins;
     }
+
+    public Contribution getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Contribution contribution) {
+        this.contribution = contribution;
+    }
+
+    public String getCahierDeCharge() {
+        return CahierDeCharge;
+    }
+
+    public void setCahierDeCharge(String cahierDeCharge) {
+        CahierDeCharge = cahierDeCharge;
+    }
 }
+
+
+
