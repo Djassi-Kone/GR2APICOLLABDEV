@@ -1,9 +1,14 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.entity.Administrateur;
+import com.apicollabdev.odk.collabdev.entity.Projet;
 import com.apicollabdev.odk.collabdev.repository.AdministrateurRepository;
+import com.apicollabdev.odk.collabdev.service.Impl.AdministrateurServiceImpl;
+import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
+import com.apicollabdev.odk.collabdev.service.Impl.ProjetServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +22,12 @@ public class AdministrateurController {
 
     @Autowired
     private AdministrateurRepository administrateurRepository;
+    @Autowired
+    private AdministrateurServiceImpl administrateurServiceImpl;
+    @Autowired
+    private DemandeParticipationServiceImpl demandeParticipationServiceImpl;
+    @Autowired
+    private ProjetServiceImpl projetServiceImpl;
 
     // DTO pour login
     public static class LoginRequest {
@@ -50,4 +61,25 @@ public class AdministrateurController {
         });
     }
 
+    @PutMapping("/accepter-demande-gestionnaire/{idDemande}/admin/{idAdmin}")
+    public ResponseEntity<Projet> accepterDemandeParAdmin(
+            @PathVariable Long idDemande,
+            @PathVariable Long idAdmin) {
+        try {
+            Projet projet = administrateurServiceImpl
+                    .accepterDemandeGestionnairePourIdee(idDemande, idAdmin);
+            return ResponseEntity.ok(projet);
+        } catch (RuntimeException e) {
+            System.err.println("Erreur métier : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            System.err.println("Erreur interne : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }
+
+
+
+
