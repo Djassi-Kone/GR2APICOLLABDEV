@@ -58,7 +58,8 @@ public class ContributionServiceImpl implements ContributionService {
 
 
     @Transactional
-    public String ajouterContribution(ContributionDTO dto) {
+    public String ajouterContribution(ContributionDTO dto, Long idFonctionnalite) {
+        Fonctionnalite fonctionnalite = fonctionnaliteRepository.findById(idFonctionnalite).orElseThrow(() -> new RuntimeException("fonctionnalite introuvable avec l'id : " + idFonctionnalite));;
         // 1. Vérifier que le type est correct
         TypeContribution typeEnum;
         try {
@@ -83,6 +84,7 @@ public class ContributionServiceImpl implements ContributionService {
         contribution.setStatutC(StatutContribution.EN_ATTENTE); // par exemple
         contribution.setProjet(projet);
         contribution.setContributeur(contributeur);
+        contribution.setFonctionnalite_id(fonctionnalite.getIdFonctionnalite());
 
         // 4. Gestion spécifique selon le type
         switch (typeEnum) {
@@ -114,24 +116,33 @@ public class ContributionServiceImpl implements ContributionService {
                 break;
         }
 
-        // 5. Ajouter une fonctionnalité si besoin
+         /*// 5. Ajouter une fonctionnalité si besoin
         if (dto.getFonctionnaliteNom() != null) {
+            Gestionnaire g = new Gestionnaire();
             Fonctionnalite fonctionnalite = new Fonctionnalite();
+            fonctionnalite.setGestionnaire(g);
             fonctionnalite.setNomFonctionnalite(dto.getFonctionnaliteNom());
             fonctionnalite.setDescriptionFonctionnalite(dto.getFonctionnaliteDescription());
+            fonctionnaliteRepository.save(fonctionnalite);
             // Sauvegarde automatique via cascade
             contribution.setFonctionnalite(fonctionnalite);
         }
 
-        // 6. Sauvegarder en base
-        contributionRepository.save(contribution);
 
-        // 7. Notification si nécessaire
         notificationServiceImpl.notifierEtEnvoyer(
                 TypeNotification.FAIRECONTRIBUTION,
                 contributeur,
                 contribution.getTitre()
         );
+
+        */
+
+        // 6. Sauvegarder en base
+        contributionRepository.save(contribution);
+
+        // 7. Notification si nécessaire
+
+
 
         return "Contribution ajoutée avec succès !";
     }
@@ -225,14 +236,13 @@ public class ContributionServiceImpl implements ContributionService {
         // Créer une nouvelle contribution
         Contribution contribution = new Contribution();
         contribution.setContributeur(contributeur);
-        contribution.setFonctionnalite(f);
+        //contribution.setFonctionnalite(f);
 
         // Sauvegarder la contribution
         contributionRepository.save(contribution);
 
         // Mettre à jour la fonctionnalité
         f.setStatutF(StatutFonctionnalite.RESERVEE);
-        f.setContribution(contribution);
         fonctionnaliteRepository.save(f);
 
         return contribution;
@@ -260,7 +270,7 @@ public class ContributionServiceImpl implements ContributionService {
 
         Contribution contribution = new Contribution();
         //contribution.setContenu(contribution.getContenu());
-        contribution.setFonctionnalite(fonctionnalite);
+        //contribution.setFonctionnalite(fonctionnalite);
         contribution.setContributeur(contributeur);
         contribution.setStatutC(StatutContribution.EN_ATTENTE);
         contribution.setDateSoumission(LocalDateTime.now());
@@ -297,10 +307,10 @@ public class ContributionServiceImpl implements ContributionService {
         Contribution contribution = contributionRepository.findById(idContribution)
                 .orElseThrow(() -> new RuntimeException("Contribution non trouvée"));
 
-        contribution.setStatutC(StatutContribution.VALIDEE);
+        /* contribution.setStatutC(StatutContribution.VALIDEE);
         contributionRepository.save(contribution);
 
-        Fonctionnalite f = contribution.getFonctionnalite();
+        //Fonctionnalite f = contribution.getFonctionnalite();
         f.setStatutF(StatutFonctionnalite.TERMINEE);
         fonctionnaliteRepository.save(f);
 
@@ -332,16 +342,18 @@ public class ContributionServiceImpl implements ContributionService {
                 "Contribution validée",
                 notification.getDescription()
         );
-
+*/
         return contribution;
     }
+
+
 
     @Override
     public Contribution rejeterContribution(Long idContribution) {
         Contribution contribution = contributionRepository.findById(idContribution)
                 .orElseThrow(() -> new RuntimeException("Contribution non trouvée"));
 
-        contribution.setStatutC(StatutContribution.REJETEE);
+        /*contribution.setStatutC(StatutContribution.REJETEE);
         contributionRepository.save(contribution);
 
         Fonctionnalite f = contribution.getFonctionnalite();
@@ -365,7 +377,7 @@ public class ContributionServiceImpl implements ContributionService {
                 c.getEmail(),
                 "Contribution rejetée",
                 notification.getDescription()
-        );
+        );*/
 
         return contribution;
     }

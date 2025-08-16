@@ -8,7 +8,7 @@ public interface FonctionnaliteMapper {
 
     public static FonctionnaliteDTO toDTO(Fonctionnalite f) {
         FonctionnaliteDTO dto = new FonctionnaliteDTO();
-        dto.setId(f.getIdFonctionnalite());
+        //dto.setId(f.getIdFonctionnalite());
         dto.setPointFonctionnalite(String.valueOf(f.getPointFonctionnalite()));
         dto.setStatutF(f.getStatutF());
          // suppose que Gestionnaire a getId()

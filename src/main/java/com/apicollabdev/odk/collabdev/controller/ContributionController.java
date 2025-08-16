@@ -2,6 +2,8 @@ package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.ContributionDTO;
 import com.apicollabdev.odk.collabdev.entity.Contribution;
+import com.apicollabdev.odk.collabdev.entity.Fonctionnalite;
+import com.apicollabdev.odk.collabdev.repository.FonctionnaliteRepository;
 import com.apicollabdev.odk.collabdev.service.Impl.ContributionServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.FonctionnaliteService;
@@ -23,25 +25,26 @@ public class ContributionController {
 
     @Autowired
     private FonctionnaliteService fonctionnaliteService;
+    @Autowired
+    private FonctionnaliteRepository fonctionnaliteRepository;
 
 
-
-    @PostMapping(value = "/ajoutcontribution/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/idFonctionnalites/{idFonctionnalites}/ajoutcontribution/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> ajouterContribution(
             @RequestPart("dto") ContributionDTO dto,
-            @RequestPart(value = "fichier", required = false) MultipartFile fichier
+            @RequestPart(value = "fichier", required = false) MultipartFile fichier, @PathVariable Long idFonctionnalites
     ) {
         dto.setFichier(fichier);
-        String message = contributionService.ajouterContribution(dto);
+        String message = contributionService.ajouterContribution(dto, idFonctionnalites);
         return ResponseEntity.ok(message);
     }
 
-    @PostMapping("/ajoutcontribution/autres")
-    public ResponseEntity<String> ajouterContributionAutres(@RequestBody ContributionDTO dto) {
+    @PostMapping("/idFonctionnalites/{idFonctionnalites}/ajoutcontribution/autres")
+    public ResponseEntity<String> ajouterContributionAutres(@RequestBody ContributionDTO dto,  @PathVariable Long idFonctionnalites) {
         try {
             // Le fichier est null ici, on traite juste le contenu texte ou lien
             dto.setFichier(null);
-            String message = contributionService.ajouterContribution(dto);
+            String message = contributionService.ajouterContribution(dto, idFonctionnalites);
             return ResponseEntity.ok(message);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

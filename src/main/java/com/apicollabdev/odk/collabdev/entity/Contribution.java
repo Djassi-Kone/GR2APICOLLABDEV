@@ -23,6 +23,7 @@ public class Contribution {
     private String titre;
 
     private String contenu;
+    private Long fonctionnalite_id;
     @Enumerated(EnumType.STRING)
     private StatutContribution statutC;
     private String type; // Exemple : "code", "design", "idée", etc.
@@ -40,10 +41,10 @@ public class Contribution {
     private Contributeur contributeur;
 
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    /*@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "fonctionnalite_id")
     @JsonBackReference
-    private Fonctionnalite fonctionnalite;
+    private Fonctionnalite fonctionnalite; */
 
     @OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -113,14 +114,13 @@ public class Contribution {
         this.statutC = statutC;
     }
 
-    public Fonctionnalite getFonctionnalite() {
-        return fonctionnalite;
+
+    public Long getFonctionnalite_id() {
+        return fonctionnalite_id;
     }
 
-    public void setFonctionnalite(Fonctionnalite fonctionnalite) {
-        this.fonctionnalite = fonctionnalite;
+    public void setFonctionnalite_id(Long fonctionnalite_id) {
+        this.fonctionnalite_id = fonctionnalite_id;
     }
-
-
 }
 
