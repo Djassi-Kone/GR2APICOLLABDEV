@@ -31,17 +31,17 @@ public class DemandeParticipationController {
     @PutMapping("/contributeur/accepter/{idDemande}")
     public ResponseEntity<Projet> accepterDemandeParticipation(@PathVariable Long idDemande) {
         try {
-            // 1️⃣ On accepte la demande UNE SEULE fois
+            // On accepte la demande UNE SEULE fois
             DemandeParticipation demande = demandeParticipationServiceImpl.accepterDemandeParticipation(idDemande);
 
             if (demande == null || demande.getProjet() == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
 
-            // 2️⃣ On récupère le projet de la demande
+            // On récupère le projet de la demande
             Projet projet = demande.getProjet();
 
-            // 3️⃣ On renvoie la réponse
+            // On renvoie la réponse
             return ResponseEntity.ok(projet);
 
         } catch (RuntimeException e) {
