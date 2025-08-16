@@ -242,6 +242,22 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
     }
 
 
+    public List<Projet> getProjetsOuJeSuisGestionnaire(Long idContributeur) {
+        List<DemandeParticipation> demandes = demandeParticipationRepository
+                .findByContributeurIdAndStatutDemandeParticipationAndTypeDemandeParticipationemande(
+                        idContributeur,
+                        StatutDemandeParticipation.ACCEPTEE,
+                        TypeDemandeParticipation.GESTIONNAIRE
+                );
+
+        return demandes.stream()
+                .map(DemandeParticipation::getProjet)
+                .filter(projet -> projet != null) // sécurité
+                .toList();
+    }
+
+
+
     @Override
     @Transactional
     public DemandeParticipation rejeterDemandeGestionnaire(Long idDemande) {
@@ -309,5 +325,27 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         }).toList();
     }
 
+
+
+
+    public Projet accepterDemandeContributeur(Long idDemande) {
+        DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
+                .orElseThrow(() -> new RuntimeException("Demande non trouvée"));
+
+        if (!demande.getTypeDemandeParticipationemande().equals(TypeDemandeParticipation.CONTRIBUTEUR)) {
+            throw new RuntimeException("Cette demande n'est pas de type CONTRIBUTEUR");
+        }
+
+        demande.setStatutDemandeParticipation(StatutDemandeParticipation.ACCEPTEE);
+        demandeParticipationRepository.save(demande);
+
+        // le projet existe déjà, on le retourne
+        return demande.getProjet();
+    }
+
+
+    public List<Projet> getProjetsAcceptesParContributeur(Long idContributeur) {
+        return demandeParticipationRepository.findProjetsAcceptesByContributeur(idContributeur);
+    }
 
 }

@@ -110,6 +110,14 @@ public class ContributionController {
     }
 
 
+    @GetMapping("/projet/{idProjet}/contributeur/{idContributeur}")
+    public List<Contribution> getContributionsParProjetEtContributeur(
+            @PathVariable Long idProjet,
+            @PathVariable Long idContributeur) {
+        return contributionServiceImpl.getContributionsParProjetEtContributeur(idProjet, idContributeur);
+    }
+
+
 
 }
 

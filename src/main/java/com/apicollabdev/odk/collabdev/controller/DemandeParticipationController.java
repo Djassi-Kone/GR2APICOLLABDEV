@@ -45,6 +45,13 @@ public class DemandeParticipationController {
         }
     }
 
+    @GetMapping("/gestionnaire/valides/{idContributeur}")
+    public ResponseEntity<List<Projet>> getProjetsGestionnaireValides(@PathVariable Long idContributeur) {
+        List<Projet> projets = demandeParticipationServiceImpl.getProjetsOuJeSuisGestionnaire(idContributeur);
+        return ResponseEntity.ok(projets);
+    }
+
+
 
     // Rejeter une demande pour devenir gestionnaire
     @PutMapping("/gestionnaire/rejeter/{idDemande}")
@@ -84,6 +91,28 @@ public class DemandeParticipationController {
     @GetMapping("/projet/{idProjet}")
     public List<DemandeProjetDto> getDemandesByProjet(@PathVariable Long idProjet) {
         return demandeParticipationServiceImpl.getDemandesDTOByProjet(idProjet);
+    }
+
+
+
+    // Accepter une demande de participation en tant que contributeur
+    @PutMapping("/contributeur/accepter/{idDemande}")
+    public ResponseEntity<Projet> accepterDemandeContributeur(@PathVariable Long idDemande) {
+        try {
+            Projet projet = demandeParticipationServiceImpl.accepterDemandeContributeur(idDemande);
+            return ResponseEntity.ok(projet);  // 200 OK avec le projet lié
+        } catch (RuntimeException e) {
+            System.err.println("Erreur métier : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/projets-acceptes/{idContributeur}")
+    public ResponseEntity<List<Projet>> getProjetsAcceptes(@PathVariable Long idContributeur) {
+        List<Projet> projets = demandeParticipationServiceImpl.getProjetsAcceptesParContributeur(idContributeur);
+        return ResponseEntity.ok(projets);
     }
 
 

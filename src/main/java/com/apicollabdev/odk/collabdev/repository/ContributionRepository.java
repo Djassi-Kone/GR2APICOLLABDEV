@@ -20,6 +20,7 @@ public interface ContributionRepository extends JpaRepository<Contribution, Long
    // List<Contribution> findContributionByContributeurIdAndProjetId(Long idContributeur, Long idProjet);
    List<Contribution> findByProjetIdProjet(Long idProjet);
 
+    List<Contribution> findByProjetIdProjetAndContributeurId(Long idProjet, Long idContributeur);
 
 }
 

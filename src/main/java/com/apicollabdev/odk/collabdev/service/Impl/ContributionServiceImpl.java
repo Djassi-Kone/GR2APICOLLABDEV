@@ -246,6 +246,11 @@ public class ContributionServiceImpl implements ContributionService {
     }
 
 
+    public List<Contribution> getContributionsParProjetEtContributeur(Long idProjet, Long idContributeur) {
+        return contributionRepository.findByProjetIdProjetAndContributeurId(idProjet, idContributeur);
+    }
+
+
     @Transactional
     public Coins attribuerCoinsParGestionnaire(Contribution contribution) {
         Fonctionnalite f = contribution.getFonctionnalite();
