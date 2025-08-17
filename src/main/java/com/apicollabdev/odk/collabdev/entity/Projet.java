@@ -205,5 +205,13 @@ public class Projet {
     public void setNewGestionnaire(Long userId) {
         this.newGestionnaire = userId;
     }
+
+    public List<Fonctionnalite> getFonctionnalites() {
+        return fonctionnalites;
+    }
+
+    public void setFonctionnalites(List<Fonctionnalite> fonctionnalites) {
+        this.fonctionnalites = fonctionnalites;
+    }
 }
 

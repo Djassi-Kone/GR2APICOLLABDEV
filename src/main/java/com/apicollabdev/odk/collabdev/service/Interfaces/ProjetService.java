@@ -7,6 +7,11 @@ import java.util.List;
 
 public interface ProjetService {
     Projet createProjetFromIdee(CreateProjetRequest request);
+
+    private boolean toutesFonctionnalitesTerminees(Projet projet) {
+        return false;
+    }
+    public void verifierEtCloturerProjet(Long projetId);
     Projet createProjet(Projet projet, Long id_contributeur);
     Projet getProjetById(Long id,Long id_contributeur);
     List<Projet> getAllProjets(Long id_contributeur);
