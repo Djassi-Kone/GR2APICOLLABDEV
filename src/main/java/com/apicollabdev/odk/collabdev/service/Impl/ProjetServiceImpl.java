@@ -11,7 +11,12 @@ import com.apicollabdev.odk.collabdev.service.Interfaces.ProjetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +32,9 @@ public class ProjetServiceImpl implements ProjetService {
     private AdministrateurRepository administrateurRepository;
 
     private  IdeeProjet ideeProjet;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private IdeeProjetRepository ideeProjetRepository;
@@ -88,6 +96,66 @@ public class ProjetServiceImpl implements ProjetService {
 
         return projetRepository.save(projet);
     }
+
+
+    // ---------------- Vérifier si toutes les fonctionnalités sont terminées ----------------
+    private boolean toutesFonctionnalitesTerminees(Projet projet) {
+        if (projet.getFonctionnalites() == null || projet.getFonctionnalites().isEmpty()) {
+            return false;
+        }
+        return projet.getFonctionnalites()
+                .stream()
+                .allMatch(f -> f.getStatutF().equals("TERMINE")); // f.getStatut() == StatutFonctionnalite.TERMINE
+    }
+
+    // ---------------- Vérification et clôture automatique du projet ----------------
+    public void verifierEtCloturerProjet(Long projetId) {
+        Projet projet = projetRepository.findById(projetId)
+                .orElseThrow(() -> new RessourceNotFoundException("Projet introuvable"));
+
+        if (toutesFonctionnalitesTerminees(projet)) {
+            projet.setStatut(StatutProjet.TERMINE);
+            projetRepository.save(projet);
+
+            try {
+                File zip = genererZipProjet(projet);
+                String lienTelechargement = "http://localhost:8080/projets/" + projet.getIdProjet() + "/download";
+
+                String corps = "Bonjour " + projet.getGestionnaire().getNom() + ",\n\n" +
+                        "Toutes les fonctionnalités de votre projet \"" + projet.getTitre() + "\" sont terminées.\n" +
+                        "Vous pouvez télécharger le projet complet ici : " + lienTelechargement + "\n\n" +
+                        "Cordialement,\nL'équipe CollabDev";
+
+                emailService.sendEmail(
+                        projet.getGestionnaire().getEmail(), // destinataire
+                        "Votre projet est terminé !",        // sujet
+                        corps                                // contenu du mail
+                );
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // ---------------- Génération du ZIP du projet ----------------
+    public File genererZipProjet(Projet projet) throws IOException {
+        String zipFileName = "projet_" + projet.getIdProjet() + ".zip";
+        File zipFile = new File(System.getProperty("java.io.tmpdir"), zipFileName);
+
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            for (Fonctionnalite f : projet.getFonctionnalites()) {
+                ZipEntry entry = new ZipEntry(f.getNomFonctionnalite() + ".txt");
+                zos.putNextEntry(entry);
+                byte[] data = f.getDescriptionFonctionnalite().getBytes();
+                zos.write(data, 0, data.length);
+                zos.closeEntry();
+            }
+        }
+
+        return zipFile;
+    }
+
 
     @Override
     public Projet createProjet(Projet projet, Long id_contributeur) {
