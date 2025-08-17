@@ -2,6 +2,7 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.FonctionnaliteDTO;
+import com.apicollabdev.odk.collabdev.entity.Contribution;
 import com.apicollabdev.odk.collabdev.service.Impl.FonctionnaliteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,15 @@ public class FonctionnaliteController {
 
     @Autowired
     private FonctionnaliteServiceImpl fonctionnaliteService;
+
+    @PostMapping("/{idFonctionnalite}/reserver/{idContributeur}")
+    public ResponseEntity<Contribution> reserverFonctionnalite(
+            @PathVariable Long idFonctionnalite,
+            @PathVariable Long idContributeur) {
+        Contribution contribution = fonctionnaliteService.reserverFonctionnalite(idFonctionnalite, idContributeur);
+        return ResponseEntity.ok(contribution);
+    }
+
 
     @PostMapping("/gestionnaire/{idGestionnaire}/newfonctionnalite")
     public ResponseEntity<FonctionnaliteDTO> create(@RequestBody FonctionnaliteDTO dto, @PathVariable("idGestionnaire") Long id_gestionnaire) {

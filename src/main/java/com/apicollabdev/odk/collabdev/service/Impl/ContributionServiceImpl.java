@@ -1,7 +1,6 @@
 package com.apicollabdev.odk.collabdev.service.Impl;
 
 import com.apicollabdev.odk.collabdev.Notification.NotificationFactory;
-import com.apicollabdev.odk.collabdev.dto.ContributionDTO;
 import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.StatutContribution;
 import com.apicollabdev.odk.collabdev.enums.StatutFonctionnalite;
@@ -11,11 +10,8 @@ import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -77,57 +73,6 @@ public class ContributionServiceImpl implements ContributionService {
 
 
 
-    @Override
-    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, String urlCode) {
-        Contributeur contributeur = contributeurRepository.findById(idContributeur)
-                .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
-
-        Fonctionnalite fonctionnalite = fonctionnaliteRepository.findById(idFonctionnalite)
-                .orElseThrow(() -> new RuntimeException("Fonctionnalité introuvable"));
-
-        Projet projet = fonctionnalite.getProjet();
-        if (projet == null) {
-            throw new RuntimeException("La fonctionnalité n'est liée à aucun projet.");
-        }
-
-        Gestionnaire gestionnaire = projet.getGestionnaire();
-        if (gestionnaire == null) {
-            throw new RuntimeException("Le projet n'a pas de gestionnaire.");
-        }
-
-        Contribution contribution = new Contribution();
-        contribution.setContenu(urlCode);
-        contribution.setFonctionnalite(fonctionnalite);
-        contribution.setContributeur(contributeur);
-        contribution.setStatutC(StatutContribution.EN_ATTENTE);
-        contribution.setDateSoumission(LocalDateTime.now());
-
-        contribution = contributionRepository.save(contribution);
-
-        // Notification
-        Notification notification = NotificationFactory.creerNotificationContribution(
-                gestionnaire,
-                projet.getTitre(),
-                fonctionnalite.getNomFonctionnalite()
-        );
-        notificationRepository.save(notification);
-
-        Recevoir recevoir = new Recevoir();
-        recevoir.setNotification(notification);
-        recevoir.setContributeur(gestionnaire); // Gestionnaire hérite de Contributeur
-        recevoir.setLue(false);
-        recevoir.setDateReception(LocalDateTime.now());
-        recevoirRepository.save(recevoir);
-
-        // Email
-        emailService.sendEmail(
-                gestionnaire.getEmail(),
-                "Nouvelle contribution reçue",
-                notification.getDescription()
-        );
-
-        return contribution;
-    }
 
     @Override
     @Transactional
@@ -277,6 +222,62 @@ public class ContributionServiceImpl implements ContributionService {
         }
 
         return gain;
+    }
+
+
+
+    @Transactional
+    @Override
+    public Contribution deposerContribution(Long idFonctionnalite, String contenu, Long idProjet, Long idContributeur) {
+
+        if (contributionRepository.existsByContributeurAndFonctionnalite(idContributeur, idFonctionnalite)) {
+            throw new RuntimeException("Vous avez déjà déposé une contribution pour cette fonctionnalité.");
+        }
+
+        Contributeur contributeur = contributeurRepository.findById(idContributeur)
+                .orElseThrow(() -> new RuntimeException("Contributeur introuvable"));
+
+        Fonctionnalite fonctionnalite = fonctionnaliteRepository.findById(idFonctionnalite)
+                .orElseThrow(() -> new RuntimeException("Fonctionnalité introuvable"));
+
+        Projet projet = fonctionnalite.getProjet();
+        if (projet == null || !projet.getIdProjet().equals(idProjet)) {
+            throw new RuntimeException("Projet incorrect pour cette fonctionnalité.");
+        }
+
+        Contribution contribution = new Contribution();
+        contribution.setContributeur(contributeur);
+        contribution.setFonctionnalite(fonctionnalite);
+        contribution.setContenu(contenu);
+        contribution.setStatutC(StatutContribution.EN_ATTENTE);
+        contribution.setDateSoumission(LocalDateTime.now());
+        contribution = contributionRepository.save(contribution);
+
+        // Notification au gestionnaire
+        Gestionnaire gestionnaire = projet.getGestionnaire();
+        Notification notification = NotificationFactory.creerNotificationContribution(
+                gestionnaire,
+                projet.getTitre(),
+                fonctionnalite.getNomFonctionnalite()
+        );
+        notification.setContributeur(contributeur);
+        notification.setProjet(projet);
+        notificationRepository.save(notification);
+
+        Recevoir recevoir = new Recevoir();
+        recevoir.setNotification(notification);
+        recevoir.setContributeur(gestionnaire);
+        recevoir.setDateReception(LocalDateTime.now());
+        recevoir.setLue(false);
+        recevoirRepository.save(recevoir);
+
+        emailService.sendEmail(
+                gestionnaire.getEmail(),
+                "Nouvelle contribution reçue",
+                notification.getDescription()
+        );
+
+        return contribution;
     }
 
 

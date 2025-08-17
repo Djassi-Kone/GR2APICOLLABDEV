@@ -142,4 +142,35 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
         Fonctionnalite updated = fonctionnaliteRepository.save(f);
         return FonctionnaliteMapper.toDTO(updated);
     }
+
+
+
+    public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur) {
+        // Vérifier la fonctionnalité
+        Fonctionnalite fonctionnalite = fonctionnaliteRepository.findById(idFonctionnalite)
+                .orElseThrow(() -> new RuntimeException("Fonctionnalité non trouvée"));
+
+        if (fonctionnalite.getStatutF() != StatutFonctionnalite.DISPONIBLE) {
+            throw new RuntimeException("Fonctionnalité non disponible à la réservation");
+        }
+
+        // Vérifier le contributeur
+        Contributeur contributeur = contributeurRepository.findById(idContributeur)
+                .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
+
+        // Créer une contribution liée
+        Contribution contribution = new Contribution();
+        contribution.setContributeur(contributeur);
+        contribution.setFonctionnalite(fonctionnalite);
+
+        Contribution savedContribution = contributionRepository.save(contribution);
+
+        // Marquer la fonctionnalité comme réservée
+        fonctionnalite.setStatutF(StatutFonctionnalite.RESERVEE);
+        fonctionnalite.setContribution(savedContribution);
+        fonctionnaliteRepository.save(fonctionnalite);
+
+        return savedContribution;
+    }
+
 }

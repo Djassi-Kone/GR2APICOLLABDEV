@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/contributions")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ContributionController {
 
     @Autowired
@@ -34,14 +36,16 @@ public class ContributionController {
         return ResponseEntity.ok(contribution);
     }
 
-    @PostMapping("/fonctionnalite/{idFonctionnalite}/deposer")
-    public ResponseEntity<Contribution> deposerContribution(
-            @PathVariable Long idFonctionnalite,
-            @RequestParam Long idContributeur,
-            @RequestParam String urlCode) {
-        Contribution contribution = contributionService.deposerContribution(idFonctionnalite, idContributeur, urlCode);
-        return ResponseEntity.ok(contribution);
+
+
+    @PostMapping("/deposer")
+    public Contribution deposer(@RequestParam Long idFonctionnalite,
+                                @RequestParam String contenu,
+                                @RequestParam Long idProjet,
+                                @RequestParam Long idContributeur) {
+        return contributionService.deposerContribution(idFonctionnalite, contenu, idProjet, idContributeur);
     }
+
 
     @PutMapping("/valider/{id}")
     public ResponseEntity<Contribution> validerContribution(@PathVariable Long id) {
@@ -116,6 +120,10 @@ public class ContributionController {
             @PathVariable Long idContributeur) {
         return contributionServiceImpl.getContributionsParProjetEtContributeur(idProjet, idContributeur);
     }
+
+
+    // Vérifier si la contribution existe déjà
+
 
 
 
