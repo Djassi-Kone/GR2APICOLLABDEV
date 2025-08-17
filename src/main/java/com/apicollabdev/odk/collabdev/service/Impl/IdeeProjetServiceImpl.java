@@ -90,7 +90,7 @@ public class IdeeProjetServiceImpl implements IdeeProjetService {
         Projet projet = new Projet();
         IdeeProjet saved=new IdeeProjet();
 
-        if (!dto.isLeguer()|| contributeurOriginal != null) {
+        if (!dto.isLeguer()) {
             System.out.println("L===================="+ contributeurOriginal.getId());
            /* // Création d'un nouveau contributeur (clone)
             Contributeur nouveauContributeur = new Contributeur();

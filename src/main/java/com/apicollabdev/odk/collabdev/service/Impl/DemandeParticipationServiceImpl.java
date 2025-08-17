@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.apicollabdev.odk.collabdev.enums.StatutDemandeParticipation.EN_ATTENTE;
+
 @Service
 public class DemandeParticipationServiceImpl implements DemandeParticipationService {
 
@@ -44,7 +46,7 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
     private EmailService emailService;
 
     @Override
-    public DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur, String description) {
+    public DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur) {
         // Récupération du projet
         Projet projet = projetRepository.findById(idProjet)
                 .orElseThrow(() -> new RuntimeException("Projet non trouvé avec l'id: " + idProjet));
@@ -60,9 +62,12 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         DemandeParticipation demandeParticipation = new DemandeParticipation();
         demandeParticipation.setProjet(projet);
         demandeParticipation.setContributeur(contributeur);
-        demandeParticipation.setDescription(description);
+        demandeParticipation.setDescription(demandeParticipation.getDescription() != null ? demandeParticipation.getDescription() : "Pas de description");
         demandeParticipation.setDatedemande(LocalDateTime.now());
+        demandeParticipation.setTypeDemandeParticipationemande(TypeDemandeParticipation.CONTRIBUTEUR);
         demandeParticipation.setStatutDemandeParticipation(StatutDemandeParticipation.EN_ATTENTE);
+
+
 
         // Sauvegarde
         DemandeParticipation saved = demandeParticipationRepository.save(demandeParticipation);
@@ -133,18 +138,18 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         demande.setStatutDemandeParticipation(StatutDemandeParticipation.ACCEPTEE);
         demandeParticipationRepository.save(demande);
 
-        IdeeProjet idee = demande.getIdeeProjet();
+        Projet projet = demande.getProjet();
         Contributeur contributeur = demande.getContributeur();
 
         // Notifier le demandeur
         notificationServiceImpl.notifierEtEnvoyer(
                 TypeNotification.DEMADEACCEPTEE,
                 contributeur,
-                idee.getTitre()
+                projet.getTitre()
         );
 
         Notification notif = NotificationFactory.creerNotificationDemandeGestionnaireAcceptee(
-                idee.getTitre()
+                projet.getTitre()
         );
         notificationServiceImpl.createNotification(notif, contributeur.getId());
         return demande;
@@ -308,11 +313,11 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         return demande;
     }
 
-
+/*
     @Override
     public DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur) {
         return null;
-    }
+    } */
 
     @Override
     public List<DemandeParticipation> getAllDemandeParticipation() {

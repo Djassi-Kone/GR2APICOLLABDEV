@@ -46,6 +46,13 @@ public class DemandeParticipation {
     @JsonBackReference
     private Contributeur contributeur;
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Long getIdDemandeParticipation() {
         return idDemandeParticipation;
@@ -63,13 +70,6 @@ public class DemandeParticipation {
         this.statutDemandeParticipation = statutDemandeParticipation;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public TypeDemandeParticipation getTypeDemandeParticipationemande() {
         return typeDemandeParticipationemande;

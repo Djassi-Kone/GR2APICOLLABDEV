@@ -23,7 +23,7 @@ public class DemandeParticipationController {
     @PostMapping("/idProjet/{idProjet}/idContributeur/{idContributeur}/participation")
     public DemandeParticipation createDemandeParticipation(
             @PathVariable Long idProjet,
-            @PathVariable Long idContributeur
+            @PathVariable Long idContributeur, String description
             ) {
         return demandeParticipationServiceImpl.createDemandeParticipation(idProjet, idContributeur);
     }

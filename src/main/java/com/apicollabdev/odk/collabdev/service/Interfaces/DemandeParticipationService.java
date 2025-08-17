@@ -7,7 +7,6 @@ import com.apicollabdev.odk.collabdev.entity.Projet;
 import java.util.List;
 
 public interface DemandeParticipationService {
-    DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur);
     List<DemandeParticipation> getAllDemandeParticipation();
     DemandeParticipation getById(Long id);
     void deleteById(Long id);
@@ -15,7 +14,7 @@ public interface DemandeParticipationService {
     Projet accepterDemandeGestionnaire(Long idDomaine);
     DemandeParticipation rejeterDemandeGestionnaire (Long idDemande);
 
-    DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur, String description);
+    DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur);
 
     DemandeParticipation accepterDemandeParticipation(Long idDomaine);
     DemandeParticipation rejeterDemandeParticipation (Long idDemande);
