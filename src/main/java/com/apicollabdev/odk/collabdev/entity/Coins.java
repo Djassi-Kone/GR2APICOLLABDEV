@@ -97,4 +97,12 @@ public class Coins {
     public void setFonctionnalite(Fonctionnalite fonctionnalite) {
         this.fonctionnalite = fonctionnalite;
     }
+
+    public Contribution getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Contribution contribution) {
+        this.contribution = contribution;
+    }
 }

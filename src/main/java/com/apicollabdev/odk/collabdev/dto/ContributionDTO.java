@@ -18,8 +18,7 @@ public class ContributionDTO {
     private TypeContribution type;          // Type de contribution
     private Long projetId;                  // ID du projet associé
     private Long contributeurId;            // ID du contributeur
-    private String fonctionnaliteNom;       // Nom de la fonctionnalité si ajoutée
-    private String fonctionnaliteDescription; // Description de la fonctionnalité
+    private String motifRejet;
 
     public String getTitre() {
         return titre;
@@ -77,19 +76,11 @@ public class ContributionDTO {
         this.contributeurId = contributeurId;
     }
 
-    public String getFonctionnaliteNom() {
-        return fonctionnaliteNom;
+    public String getMotifRejet() {
+        return motifRejet;
     }
 
-    public void setFonctionnaliteNom(String fonctionnaliteNom) {
-        this.fonctionnaliteNom = fonctionnaliteNom;
-    }
-
-    public String getFonctionnaliteDescription() {
-        return fonctionnaliteDescription;
-    }
-
-    public void setFonctionnaliteDescription(String fonctionnaliteDescription) {
-        this.fonctionnaliteDescription = fonctionnaliteDescription;
+    public void setMotifRejet(String motifRejet) {
+        this.motifRejet = motifRejet;
     }
 }

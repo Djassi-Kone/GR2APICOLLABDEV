@@ -15,7 +15,7 @@ public class Fonctionnalite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_fonctionnalite")
-    private int idFonctionnalite;
+    private Long idFonctionnalite;
 
     private int pointFonctionnalite;
     @Enumerated(EnumType.STRING)
@@ -46,11 +46,12 @@ public class Fonctionnalite {
     @JsonBackReference
     private Contribution contribution;
 
-    public int getIdFonctionnalite() {
+
+    public Long getIdFonctionnalite() {
         return idFonctionnalite;
     }
 
-    public void setIdFonctionnalite(int idFonctionnalite) {
+    public void setIdFonctionnalite(Long idFonctionnalite) {
         this.idFonctionnalite = idFonctionnalite;
     }
 

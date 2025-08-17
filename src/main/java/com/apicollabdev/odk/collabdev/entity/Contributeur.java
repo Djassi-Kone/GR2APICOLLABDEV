@@ -88,8 +88,10 @@ public class Contributeur extends Utilisateur{
     @JsonManagedReference
     private List<Contribution> contributions;
 
-// + autres attributs habituels
 
+    public void ajouterPoints(int points) {
+        this.totalCoins += points;
+    }
 
 
     public List<Badge> getBadges() {

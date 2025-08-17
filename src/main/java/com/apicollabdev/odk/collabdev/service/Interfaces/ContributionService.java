@@ -12,9 +12,11 @@ public interface ContributionService {
     public Contribution getById(Long id);
     public void deleteById(Long id);
     public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur);
-    public Contribution deposerContribution(Long idFonctionnalite, Long idContributeur, Long idProjet);
-    public Contribution validerContribution(Long idContribution);
-    public Contribution rejeterContribution(Long idContribution);
+    public String ajouterContribution(ContributionDTO dto, Long idFonctionnalite);
+    public Contribution validerContribution(Long idContribution, Long idGestionnaire, boolean accepter);
+    public Contribution rejeterContribution(Long idContribution, Long idGestionnaire, String motifRejet);
+    List<Contribution> getContributionsByContributeurAndProjet(Long idContributeur, Long idProjet);
+
 
 
 

@@ -2,10 +2,7 @@ package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.ContributionDTO;
 import com.apicollabdev.odk.collabdev.entity.Contribution;
-import com.apicollabdev.odk.collabdev.entity.Fonctionnalite;
-import com.apicollabdev.odk.collabdev.repository.FonctionnaliteRepository;
 import com.apicollabdev.odk.collabdev.service.Impl.ContributionServiceImpl;
-import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.FonctionnaliteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,30 +18,32 @@ import java.util.List;
 public class ContributionController {
 
     @Autowired
-    private ContributionServiceImpl contributionService;
+    private ContributionServiceImpl contributionServiceImpl;
 
     @Autowired
     private FonctionnaliteService fonctionnaliteService;
-    @Autowired
-    private FonctionnaliteRepository fonctionnaliteRepository;
 
-
+    // 📁 Ajouter une contribution avec document (type DOCUMENT)
     @PostMapping(value = "/idFonctionnalites/{idFonctionnalites}/ajoutcontribution/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> ajouterContribution(
+    public ResponseEntity<String> ajouterContributionAvecFichier(
             @RequestPart("dto") ContributionDTO dto,
-            @RequestPart(value = "fichier", required = false) MultipartFile fichier, @PathVariable Long idFonctionnalites
+            @RequestPart(value = "fichier", required = false) MultipartFile fichier,
+            @PathVariable Long idFonctionnalites
     ) {
         dto.setFichier(fichier);
-        String message = contributionService.ajouterContribution(dto, idFonctionnalites);
+        String message = contributionServiceImpl.ajouterContribution(dto, idFonctionnalites);
         return ResponseEntity.ok(message);
     }
 
+    // Ajouter une contribution autres types (GITHUB, FIGMA, EDITEUR)
     @PostMapping("/idFonctionnalites/{idFonctionnalites}/ajoutcontribution/autres")
-    public ResponseEntity<String> ajouterContributionAutres(@RequestBody ContributionDTO dto,  @PathVariable Long idFonctionnalites) {
+    public ResponseEntity<String> ajouterContributionAutres(
+            @RequestBody ContributionDTO dto,
+            @PathVariable Long idFonctionnalites
+    ) {
         try {
-            // Le fichier est null ici, on traite juste le contenu texte ou lien
-            dto.setFichier(null);
-            String message = contributionService.ajouterContribution(dto, idFonctionnalites);
+            dto.setFichier(null); // Pas de fichier attendu ici
+            String message = contributionServiceImpl.ajouterContribution(dto, idFonctionnalites);
             return ResponseEntity.ok(message);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -54,65 +53,72 @@ public class ContributionController {
         }
     }
 
-
-
+    //  Réserver une fonctionnalité
     @PostMapping("/fonctionnalite/{idFonctionnalite}/reserver/contributeur/{idContributeur}")
     public ResponseEntity<Contribution> reserverFonctionnalite(
             @PathVariable Long idFonctionnalite,
-            @PathVariable Long idContributeur) {
-        Contribution contribution = contributionService.reserverFonctionnalite(idFonctionnalite, idContributeur);
+            @PathVariable Long idContributeur
+    ) {
+        Contribution contribution = contributionServiceImpl.reserverFonctionnalite(idFonctionnalite, idContributeur);
         return ResponseEntity.ok(contribution);
     }
 
-    @PostMapping("/fonctionnalite/{idFonctionnalite}/idContributeur/{idContributeur}/idProjet/{idProjet}")
-    public ResponseEntity<Contribution> deposerContribution(
-            @PathVariable Long idFonctionnalite,
-            @PathVariable Long idContributeur,
-            @PathVariable Long idProjet) {
-        Contribution contribution = contributionService.deposerContribution(idFonctionnalite, idContributeur, idProjet);
+    // Valider (accepter) une contribution
+    @PutMapping("/{id}/valider")
+    public ResponseEntity<Contribution> validerContribution(
+            @PathVariable("id") Long idContribution,
+            @RequestParam Long idGestionnaire
+    ) {
+        Contribution contribution = contributionServiceImpl.validerContribution(idContribution, idGestionnaire, true);
         return ResponseEntity.ok(contribution);
     }
 
-    @PutMapping("/valider/{id}")
-    public ResponseEntity<Contribution> validerContribution(@PathVariable Long id) {
-        Contribution contribution = contributionService.validerContribution(id);
+    // Rejeter une contribution
+    @PutMapping("/{id}/rejeter")
+    public ResponseEntity<Contribution> rejeterContribution(
+            @PathVariable("id") Long idContribution,
+            @RequestParam Long idGestionnaire,
+            @RequestParam String motifRejet
+    ) {
+        Contribution contribution = contributionServiceImpl.rejeterContribution(idContribution, idGestionnaire, motifRejet);
         return ResponseEntity.ok(contribution);
     }
 
-    @PutMapping("/rejeter/{id}")
-    public ResponseEntity<Contribution> rejeterContribution(@PathVariable Long id) {
-        Contribution contribution = contributionService.rejeterContribution(id);
-        return ResponseEntity.ok(contribution);
-    }
 
+    //  Liste des contributions d’un contributeur
     @GetMapping("/contributeur/{idContributeur}")
     public ResponseEntity<List<Contribution>> getByContributeur(@PathVariable Long idContributeur) {
-        List<Contribution> contributions = contributionService.getContributionsByContributeur(idContributeur);
+        List<Contribution> contributions = contributionServiceImpl.getContributionsByContributeur(idContributeur);
         return ResponseEntity.ok(contributions);
     }
 
-    /*@GetMapping("/contributeur/{idContributeur}/projet/{idProjet}")
-    public ResponseEntity<List<Contribution>> getByContributeurAndProjet(
-            @PathVariable Long idContributeur,
-            @PathVariable Long idProjet) {
-        List<Contribution> contributions = contributionService.getContributionsByContributeurAndProjet(idContributeur, idProjet);
-        return ResponseEntity.ok(contributions);
-    }*/
-
+    // Récupérer toutes les contributions
     @GetMapping
     public ResponseEntity<List<Contribution>> getAllContributions() {
-        return ResponseEntity.ok(contributionService.getAllContributions());
+        return ResponseEntity.ok(contributionServiceImpl.getAllContributions());
     }
 
+    @GetMapping("/contributeur/{idContributeur}/projet/{idProjet}")
+    public ResponseEntity<List<Contribution>> getByContributeurAndProjet(
+            @PathVariable Long idContributeur,
+            @PathVariable Long idProjet
+    ) {
+        List<Contribution> contributions = contributionServiceImpl.getContributionsByContributeurAndProjet(idContributeur, idProjet);
+        return ResponseEntity.ok(contributions);
+    }
+
+
+    // Récupérer une contribution par son ID
     @GetMapping("/{id}")
     public ResponseEntity<Contribution> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(contributionService.getById(id));
+        return ResponseEntity.ok(contributionServiceImpl.getById(id));
     }
 
+    // Supprimer une contribution
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        contributionService.deleteById(id);
+        contributionServiceImpl.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-}
 
+}

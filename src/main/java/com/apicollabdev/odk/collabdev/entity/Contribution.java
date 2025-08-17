@@ -28,7 +28,9 @@ public class Contribution {
     private StatutContribution statutC;
     private String type; // Exemple : "code", "design", "idée", etc.
 
+    private String motifRejet;
     private LocalDateTime dateSoumission;
+    private LocalDateTime dateValidation;
 
     @ManyToOne
     @JoinColumn(name = "id_projet", nullable = true)
@@ -122,5 +124,34 @@ public class Contribution {
     public void setFonctionnalite_id(Long fonctionnalite_id) {
         this.fonctionnalite_id = fonctionnalite_id;
     }
+
+    public String getContenu() {
+        return contenu;
+    }
+
+    public String getMotifRejet() {
+        return motifRejet;
+    }
+
+    public void setMotifRejet(String motifRejet) {
+        this.motifRejet = motifRejet;
+    }
+
+    public LocalDateTime getDateValidation() {
+        return dateValidation;
+    }
+
+    public void setDateValidation(LocalDateTime dateValidation) {
+        this.dateValidation = dateValidation;
+    }
+
+    public List<Coins> getCoins() {
+        return coins;
+    }
+
+    public void setCoins(List<Coins> coins) {
+        this.coins = coins;
+    }
 }
+
 

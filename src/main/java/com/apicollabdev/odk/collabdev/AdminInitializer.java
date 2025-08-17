@@ -23,8 +23,8 @@ public class AdminInitializer implements CommandLineRunner {
         if (administrateurRepository.count() == 0) {
             Administrateur admin = new Administrateur();
 
-            admin.setEmail("admin@example.com");
-            admin.setPassword("admin123"); // mot de passe stocké en clair (à éviter en prod)
+            admin.setEmail("djassikone22@gmail.com");
+            admin.setPassword("djassi@123"); // mot de passe stocké en clair (à éviter en prod)
 
             administrateurRepository.save(admin);
 
