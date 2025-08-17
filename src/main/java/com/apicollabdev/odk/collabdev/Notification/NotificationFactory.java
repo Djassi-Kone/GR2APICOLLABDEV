@@ -1,10 +1,7 @@
 package com.apicollabdev.odk.collabdev.Notification;
 
-import com.apicollabdev.odk.collabdev.entity.Contributeur;
-import com.apicollabdev.odk.collabdev.entity.Gestionnaire;
-import com.apicollabdev.odk.collabdev.entity.Notification;
+import com.apicollabdev.odk.collabdev.entity.*;
 import com.apicollabdev.odk.collabdev.enums.TypeNotification;
-import com.apicollabdev.odk.collabdev.entity.Fonctionnalite;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
@@ -114,6 +111,48 @@ public class NotificationFactory {
         Notification notif = new Notification();
         notif.setTypeNotyf(TypeNotification.DEMANDEGESTIONNAIREREJETEE);
         notif.setDescription("Votre demande à être gestionnaire du projet \"" + titreProjet + "\" a été rejetée.");
+        return notif;
+    }
+
+    public static Notification creerNotificationReserverFonctionnalite(String nomFonctionnalite, Projet projet) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.FONCTIONNALITERESERVE);
+        notif.setDescription("Vous avez reserver cette fonctionnalité: \"" + nomFonctionnalite + "\" dans le projet:" +projet);
+        return notif;
+    }
+
+    public static Notification creerNotificationReserverFonctionnaliteG(String nomFonctionnalite, Projet projet, Contributeur contributeur) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.RESERVEFONCTIONNALITE);
+        notif.setDescription("Le contributeur: \"" + contributeur + "\" la fonctionnalité :" +nomFonctionnalite+ "\" dans le projet:" +projet);
+        return notif;
+    }
+
+    public static Notification creerNotificationAjouterContribution(String nomFonctionnalite, Projet projet, Contributeur contributeur) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.FAIRECONTRIBUTION);
+        notif.setDescription("Le contributeur: \"" + contributeur + "\" a reserver la fonctionnalité :" +nomFonctionnalite+ "\" dans le projet:" +projet);
+        return notif;
+    }
+
+    public static Notification creerNotificationAjouterContributionG(String nomFonctionnalite, Projet projet, Contributeur contributeur) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.AJOUTERCONTRIBUTION);
+        notif.setDescription("Le contributeur: \"" + contributeur + "\" a faire une contribution sur le projet :" +projet+ "\" pour la fonctionnalité : " +nomFonctionnalite);
+        return notif;
+    }
+
+    public static Notification creerNotificationFonctionnaliteTerminer(Projet projet) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.FONCTIONNALITETERMINEE);
+        notif.setDescription("Votre projet :" +projet+ "\" est terminer vous pouver le télécharger en local. L'équipe collabDev vous remerci pour votre confiance!");
+        return notif;
+    }
+
+    public static Notification creerNotificationAjouterFonctionnalite(String nomFonctionnalite, Projet projet, Contributeur contributeur) {
+        Notification notif = new Notification();
+        notif.setTypeNotyf(TypeNotification.AJOUTERCONTRIBUTION);
+        notif.setDescription("Bonjour \"" + contributeur + "\" Le gestionnaire du projet : \"" + projet + "\" a ajouter une nouvelle fonctionnalité :" +nomFonctionnalite);
         return notif;
     }
 }

@@ -30,6 +30,11 @@ public class Commentaire {
     @JsonBackReference
     private Projet projet;
 
+    @ManyToOne
+    @JoinColumn(name = "id_IdeeProjet", nullable = true)
+    @JsonBackReference
+    private IdeeProjet ideeProjet;
+
 
     public int getIdCommentaire() {
         return idCommentaire;
@@ -69,6 +74,14 @@ public class Commentaire {
 
     public void setProjet(Projet projet) {
         this.projet = projet;
+    }
+
+    public IdeeProjet getIdeeProjet() {
+        return ideeProjet;
+    }
+
+    public void setIdeeProjet(IdeeProjet ideeProjet) {
+        this.ideeProjet = ideeProjet;
     }
 }
 

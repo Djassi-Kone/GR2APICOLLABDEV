@@ -81,8 +81,39 @@ public class ContributionServiceImpl implements ContributionService {
         f.setStatutF(StatutFonctionnalite.RESERVEE);
         fonctionnaliteRepository.save(f);
 
+       /* try {
+            // Message personnalisé pour contributeur
+            String messageContribNotif = "Vous avez reserver la fonctionnalité : " + "fait une demande de participation sur le projet : " + projet.getTitre();
+
+            // Notification contributeur
+            notificationServiceImpl.notifierEtEnvoyer(
+                    TypeNotification.DEMANDEPARTICIPATION,
+                    contributeur,
+                    messageContribNotif
+            );
+
+            // Message personnalisé pour gestionnaire
+            if (gestionnaire != null) {
+                String messageGestNotif = "Le contributeur " + contributeur.getNom() +
+                        " a fait une demande de participation sur le projet : " + projet.getTitre() +
+                        ". Veuillez valider ou rejeter sa demande.";
+
+                notificationServiceImpl.notifierEtEnvoyer(
+                        TypeNotification.DEMANDECONTRIBUTION,
+                        gestionnaire,
+                        messageGestNotif
+                );
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la notification : " + e.getMessage());
+        }
+*/
+
         return contribution;
     }
+
+
 
     @Override
     @Transactional
@@ -147,7 +178,35 @@ public class ContributionServiceImpl implements ContributionService {
         // Sauvegarder en base
         contributionRepository.save(contribution);
 
-        //  Notification si nécessaire
+        //  Notification
+        /*try {
+            // Message personnalisé pour contributeur
+            String messageContribNotif = "Vous avez fait une demande de participation sur le projet : " + projet.getTitre();
+
+            // Notification contributeur
+            notificationServiceImpl.notifierEtEnvoyer(
+                    TypeNotification.DEMANDEPARTICIPATION,
+                    contributeur,
+                    messageContribNotif
+            );
+
+            // Message personnalisé pour gestionnaire
+            if (gestionnaire != null) {
+                String messageGestNotif = "Le contributeur " + contributeur.getNom() +
+                        " a fait une demande de participation sur le projet : " + projet.getTitre() +
+                        ". Veuillez valider ou rejeter sa demande.";
+
+                notificationServiceImpl.notifierEtEnvoyer(
+                        TypeNotification.DEMANDECONTRIBUTION,
+                        gestionnaire,
+                        messageGestNotif
+                );
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la notification : " + e.getMessage());
+        }
+*/
 
         return "Contribution ajoutée avec succès !";
     }
@@ -209,6 +268,35 @@ public class ContributionServiceImpl implements ContributionService {
         contribution.setDateValidation(LocalDateTime.now());
         contributionRepository.save(contribution);
 
+      /*  try {
+            // Message personnalisé pour contributeur
+            String messageContribNotif = "Vous avez fait une demande de participation sur le projet : " + projet.getTitre();
+
+            // Notification contributeur
+            notificationServiceImpl.notifierEtEnvoyer(
+                    TypeNotification.DEMANDEPARTICIPATION,
+                    contributeur,
+                    messageContribNotif
+            );
+
+            // Message personnalisé pour gestionnaire
+            if (gestionnaire != null) {
+                String messageGestNotif = "Le contributeur " + contributeur.getNom() +
+                        " a fait une demande de participation sur le projet : " + projet.getTitre() +
+                        ". Veuillez valider ou rejeter sa demande.";
+
+                notificationServiceImpl.notifierEtEnvoyer(
+                        TypeNotification.DEMANDECONTRIBUTION,
+                        gestionnaire,
+                        messageGestNotif
+                );
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la notification : " + e.getMessage());
+        }
+
+*/
         return contribution;
     }
 
@@ -247,6 +335,35 @@ public class ContributionServiceImpl implements ContributionService {
             f.setStatutF(StatutFonctionnalite.DISPONIBLE);
             fonctionnaliteRepository.save(f);
         }
+
+     /*   try {
+            // Message personnalisé pour contributeur
+            String messageContribNotif = "Vous avez fait une demande de participation sur le projet : " + projet.getTitre();
+
+            // Notification contributeur
+            notificationServiceImpl.notifierEtEnvoyer(
+                    TypeNotification.DEMANDEPARTICIPATION,
+                    contributeur,
+                    messageContribNotif
+            );
+
+            // Message personnalisé pour gestionnaire
+            if (gestionnaire != null) {
+                String messageGestNotif = "Le contributeur " + contributeur.getNom() +
+                        " a fait une demande de participation sur le projet : " + projet.getTitre() +
+                        ". Veuillez valider ou rejeter sa demande.";
+
+                notificationServiceImpl.notifierEtEnvoyer(
+                        TypeNotification.DEMANDECONTRIBUTION,
+                        gestionnaire,
+                        messageGestNotif
+                );
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la notification : " + e.getMessage());
+        }
+*/
 
         return contribution;
     }

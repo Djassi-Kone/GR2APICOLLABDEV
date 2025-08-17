@@ -72,6 +72,10 @@ public class Projet {
     @JoinColumn(name = "id_contributeur", nullable = false) // le nom de la colonne dans la table Projet
     private Contributeur contributeur; */
 
+    @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Commentaire> commentaires;
+
 
     @ManyToOne
     @JoinColumn(name = "id_gestionnaire", referencedColumnName = "id_utilisateur")
@@ -212,6 +216,14 @@ public class Projet {
 
     public void setFonctionnalites(List<Fonctionnalite> fonctionnalites) {
         this.fonctionnalites = fonctionnalites;
+    }
+
+    public List<Commentaire> getCommentaires() {
+        return commentaires;
+    }
+
+    public void setCommentaires(List<Commentaire> commentaires) {
+        this.commentaires = commentaires;
     }
 }
 

@@ -58,7 +58,9 @@ public class IdeeProjet {
     @JsonManagedReference
     private List<DemandeParticipation> demandes;
 
-
+    @OneToMany(mappedBy = "ideeProjet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Commentaire> commentaires;
 
     @ManyToOne
     @JoinColumn(name = "domaine_id")
@@ -162,6 +164,13 @@ public class IdeeProjet {
         return null;
     }
 
+    public List<Commentaire> getCommentaires() {
+        return commentaires;
+    }
+
+    public void setCommentaires(List<Commentaire> commentaires) {
+        this.commentaires = commentaires;
+    }
 }
 
 

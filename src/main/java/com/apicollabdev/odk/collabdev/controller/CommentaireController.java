@@ -26,8 +26,9 @@ public class CommentaireController {
     @Autowired
     private  ProjetRepository projetRepository;
 
-    @PostMapping("/comment")
-    public ResponseEntity<Commentaire> create(@RequestBody CommentaireDTO dto) {
+    // ---------------- Créer un commentaire sur un projet ----------------
+    @PostMapping("/projet/{idProjet}/contributeur/{idContributeur}")
+    public ResponseEntity<Commentaire> createCommentaireSurProjet(@RequestBody CommentaireDTO dto) {
         Contributeur contributeur = contributeurRepository.findById(dto.getIdContributeur())
                 .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
 
@@ -40,10 +41,19 @@ public class CommentaireController {
         commentaire.setContributeur(contributeur);
         commentaire.setProjet(projet);
 
-        return ResponseEntity.ok(commentaireService.createCommentaire(commentaire, dto.getIdContributeur(), dto.getIdProjet()));
+        return ResponseEntity.ok(commentaireService.createCommentaireSurProjet(commentaire, dto.getIdContributeur(), dto.getIdProjet()));
     }
 
+    // ---------------- Créer un commentaire sur une idée de projet ----------------
+    @PostMapping("/idee-projet/{idIdeeProjet}/contributeur/{idContributeur}")
+    public ResponseEntity<Commentaire> createCommentaireSurIdeeProjet(
+            @PathVariable Long idIdeeProjet,
+            @PathVariable Long idContributeur,
+            @RequestBody Commentaire commentaire) {
 
+        Commentaire savedCommentaire = commentaireService.createCommentaireSurIdeeProjet(commentaire, idContributeur, idIdeeProjet);
+        return ResponseEntity.ok(savedCommentaire);
+    }
 
     @GetMapping("{idContributeur}")
     public List<Commentaire> getAll(@PathVariable("idContributeur") long idContributeur) {
