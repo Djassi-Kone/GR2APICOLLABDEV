@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.DemandeProjetDto;
+import com.apicollabdev.odk.collabdev.dto.ProjetDTO;
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
 import com.apicollabdev.odk.collabdev.entity.Projet;
 import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
@@ -97,12 +98,11 @@ public class DemandeParticipationController {
 
     // Accepter une demande de participation en tant que contributeur
     @PutMapping("/contributeur/accepter/{idDemande}")
-    public ResponseEntity<Projet> accepterDemandeContributeur(@PathVariable Long idDemande) {
+    public ResponseEntity<ProjetDTO> accepterDemandeContributeur(@PathVariable Long idDemande) {
         try {
             Projet projet = demandeParticipationServiceImpl.accepterDemandeContributeur(idDemande);
-            return ResponseEntity.ok(projet);  // 200 OK avec le projet lié
+            return ResponseEntity.ok(new ProjetDTO());
         } catch (RuntimeException e) {
-            System.err.println("Erreur métier : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

@@ -21,6 +21,21 @@ public class Contribution {
     @Column(name = "id_contribution")
     private Long idContribution;
 
+    private Long newIdFonctionnalite;
+
+
+    public String getContenu() {
+        return contenu;
+    }
+
+    public List<Coins> getCoins() {
+        return coins;
+    }
+
+    public void setCoins(List<Coins> coins) {
+        this.coins = coins;
+    }
+
     private String titre;
 
     private String contenu;
@@ -39,6 +54,8 @@ public class Contribution {
     @JoinColumn(name = "contributeur_id")
     @JsonIgnoreProperties({"contributions"})
     private Contributeur contributeur;
+
+
 
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -82,12 +99,24 @@ public class Contribution {
         this.type = type;
     }
 
+    public void setFonctionnalite(Fonctionnalite fonctionnalite) {
+        this.fonctionnalite = fonctionnalite;
+    }
+
     public LocalDateTime getDateSoumission() {
         return dateSoumission;
     }
 
     public void setDateSoumission(LocalDateTime dateSoumission) {
         this.dateSoumission = dateSoumission;
+    }
+
+    public Long getNewIdFonctionnalite() {
+        return newIdFonctionnalite;
+    }
+
+    public void setNewIdFonctionnalite(Long newIdFonctionnalite) {
+        this.newIdFonctionnalite = newIdFonctionnalite;
     }
 
     public Projet getProjet() {
@@ -114,13 +143,11 @@ public class Contribution {
         this.statutC = statutC;
     }
 
-    public Fonctionnalite getFonctionnalite() {
+   public Fonctionnalite getFonctionnalite() {
         return fonctionnalite;
     }
 
-    public void setFonctionnalite(Fonctionnalite fonctionnalite) {
-        this.fonctionnalite = fonctionnalite;
-    }
+
 
 
 }

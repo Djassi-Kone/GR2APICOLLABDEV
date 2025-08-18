@@ -145,7 +145,7 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
 
 
 
-    public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur) {
+    public Fonctionnalite reserverFonctionnalite(Long idFonctionnalite, Long idContributeur) {
         // Vérifier la fonctionnalité
         Fonctionnalite fonctionnalite = fonctionnaliteRepository.findById(idFonctionnalite)
                 .orElseThrow(() -> new RuntimeException("Fonctionnalité non trouvée"));
@@ -158,19 +158,19 @@ public class FonctionnaliteServiceImpl implements FonctionnaliteService {
         Contributeur contributeur = contributeurRepository.findById(idContributeur)
                 .orElseThrow(() -> new RuntimeException("Contributeur non trouvé"));
 
-        // Créer une contribution liée
+        /*Créer une contribution liée
         Contribution contribution = new Contribution();
         contribution.setContributeur(contributeur);
         contribution.setFonctionnalite(fonctionnalite);
 
-        Contribution savedContribution = contributionRepository.save(contribution);
+        Contribution savedContribution = contributionRepository.save(contribution);*/
 
         // Marquer la fonctionnalité comme réservée
         fonctionnalite.setStatutF(StatutFonctionnalite.RESERVEE);
-        fonctionnalite.setContribution(savedContribution);
-        fonctionnaliteRepository.save(fonctionnalite);
+       // fonctionnalite.setContribution(savedContribution);
+       return fonctionnaliteRepository.save(fonctionnalite);
 
-        return savedContribution;
+
     }
 
 }

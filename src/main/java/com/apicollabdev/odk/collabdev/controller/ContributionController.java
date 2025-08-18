@@ -7,8 +7,11 @@ import com.apicollabdev.odk.collabdev.service.Impl.ContributionServiceImpl;
 import com.apicollabdev.odk.collabdev.service.Interfaces.ContributionService;
 import com.apicollabdev.odk.collabdev.service.Interfaces.FonctionnaliteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -126,6 +129,51 @@ public class ContributionController {
 
 
 
+    @PutMapping("/{idContribution}")
+    public ResponseEntity<Contribution> modifierContribution(
+            @PathVariable Long idContribution,
+            @RequestParam(required = false) String contenu,
+            @RequestParam(required = false) String titre,
+            @RequestParam(required = false) String description) {
+
+        Contribution contributionModifiee = contributionServiceImpl.modifierContribution(
+                idContribution, contenu, titre, description);
+
+        return ResponseEntity.ok(contributionModifiee);
+    }
+
+
+
+
+
+    @PostMapping(value = "/idFonctionnalites/{idFonctionnalites}/ajoutcontribution/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> ajouterContributionAvecFichier(
+            @RequestPart("dto") ContributionDTO dto,
+            @RequestPart(value = "fichier", required = false) MultipartFile fichier,
+            @PathVariable Long idFonctionnalites
+    ) {
+        dto.setFichier(fichier);
+        String message = contributionServiceImpl.ajouterContribution(dto, idFonctionnalites);
+        return ResponseEntity.ok(message);
+    }
+
+    // Ajouter une contribution autres types (GITHUB, FIGMA, EDITEUR)
+    @PostMapping("/idFonctionnalites/{idFonctionnalites}/ajoutcontribution/autres")
+    public ResponseEntity<?> ajouterContributionAutres(
+            @RequestBody ContributionDTO dto,
+            @PathVariable Long idFonctionnalites
+    ) {
+        try {
+            dto.setFichier(null); // Pas de fichier attendu ici
+            String message = contributionServiceImpl.ajouterContribution(dto, idFonctionnalites);
+            return ResponseEntity.ok(message);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Une erreur interne est survenue : " + e.getMessage());
+        }
+    }
 
 }
 

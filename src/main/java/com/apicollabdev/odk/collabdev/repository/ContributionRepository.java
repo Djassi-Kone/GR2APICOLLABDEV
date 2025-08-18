@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.repository;
 
 
+import com.apicollabdev.odk.collabdev.dto.ContributionDTO;
 import com.apicollabdev.odk.collabdev.entity.Contribution;
 
 import com.apicollabdev.odk.collabdev.entity.Fonctionnalite;
@@ -14,6 +15,8 @@ import java.util.Optional;
 
 @Repository
 public interface ContributionRepository extends JpaRepository<Contribution, Long> {
+
+   // String ajouterContribution(ContributionDTO dto, Long idFonctionnalite);
     Contribution save(Contribution contribution);
     Optional<Contribution> findById(Long contributionId);
     @Query("SELECT c FROM Contribution c WHERE c.contributeur.id = :idContributeur")

@@ -1,62 +1,24 @@
 package com.apicollabdev.odk.collabdev.dto;
 
+import com.apicollabdev.odk.collabdev.enums.TypeContribution;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
 public class ContributionDTO {
-    private Long idProjet;
-    private Long idFonctionnalite;
-    private Long idContributeur;
-    private String titre;
-    private String description;
-    private String type;   // "Lien" ou "Fichier"
-    private String urlCode;
-    private String contenu;
-
-    public Long getIdProjet() {
-        return idProjet;
-    }
-
-    public void setIdProjet(Long idProjet) {
-        this.idProjet = idProjet;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-   
-
-    public Long getIdContributeur() {
-        return idContributeur;
-    }
-
-    public void setIdContributeur(Long idContributeur) {
-        this.idContributeur = idContributeur;
-    }
-
-
-
-    public void setUrlCode(String urlCode) {
-        this.urlCode = urlCode;
-    }
-
-    public Long getIdFonctionnalite() {
-        return idFonctionnalite;
-    }
-
-    public void setIdFonctionnalite(Long idFonctionnalite) {
-        this.idFonctionnalite = idFonctionnalite;
-    }
+    private String titre;                   // Nom ou titre de la contribution
+    private String contenu;                 // Code ou texte si type EDITEUR
+    private String lien;                    // Lien GitHub ou Figma
+    private MultipartFile fichier;          // Fichier si type DOCUMENT
+    private TypeContribution type;          // Type de contribution
+    private Long projetId;                  // ID du projet associé
+    private Long contributeurId;            // ID du contributeur
+    private String motifRejet;
 
     public String getTitre() {
         return titre;
@@ -74,11 +36,51 @@ public class ContributionDTO {
         this.contenu = contenu;
     }
 
-    public String getType() {
+    public String getLien() {
+        return lien;
+    }
+
+    public void setLien(String lien) {
+        this.lien = lien;
+    }
+
+    public MultipartFile getFichier() {
+        return fichier;
+    }
+
+    public void setFichier(MultipartFile fichier) {
+        this.fichier = fichier;
+    }
+
+    public TypeContribution getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TypeContribution type) {
         this.type = type;
+    }
+
+    public Long getProjetId() {
+        return projetId;
+    }
+
+    public void setProjetId(Long projetId) {
+        this.projetId = projetId;
+    }
+
+    public Long getContributeurId() {
+        return contributeurId;
+    }
+
+    public void setContributeurId(Long contributeurId) {
+        this.contributeurId = contributeurId;
+    }
+
+    public String getMotifRejet() {
+        return motifRejet;
+    }
+
+    public void setMotifRejet(String motifRejet) {
+        this.motifRejet = motifRejet;
     }
 }
