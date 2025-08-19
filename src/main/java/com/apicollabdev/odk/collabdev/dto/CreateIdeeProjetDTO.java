@@ -1,12 +1,16 @@
 package com.apicollabdev.odk.collabdev.dto;
 
 import com.apicollabdev.odk.collabdev.enums.Niveau;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 @Data
 public class CreateIdeeProjetDTO {
     private String titre;
     private String description;
+
+    @Enumerated(EnumType.STRING)
     private Niveau niveau;
     private boolean leguer;
 

@@ -11,12 +11,18 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(
+        name = "debloque_projet",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"id_projet", "id_contributeur"})
+        }
+)
 public class DebloqueProjet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_debloque_projet")
-    private Integer id_debloqueProjet;
+    private Long id_debloqueProjet;
 
     private boolean visibilite;
 
@@ -33,11 +39,11 @@ public class DebloqueProjet {
     private Contributeur contributeur;
 
 
-    public Integer getId_debloqueProjet() {
+    public Long getId_debloqueProjet() {
         return id_debloqueProjet;
     }
 
-    public void setId_debloqueProjet(Integer id_debloqueProjet) {
+    public void setId_debloqueProjet(Long id_debloqueProjet) {
         this.id_debloqueProjet = id_debloqueProjet;
     }
 

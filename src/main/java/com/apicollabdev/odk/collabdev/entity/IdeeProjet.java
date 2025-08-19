@@ -64,6 +64,13 @@ public class IdeeProjet {
     @JsonBackReference("domaine-idee_projet")
     private Domaine domaine;
 
+    public Niveau getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(Niveau niveau) {
+        this.niveau = niveau;
+    }
 
     public Long getIdIdeeProjet() {
         return idIdeeProjet;
@@ -105,13 +112,6 @@ public class IdeeProjet {
         this.statut = statut;
     }
 
-    public Niveau getNiveau() {
-        return niveau;
-    }
-
-    public void setNiveau(Niveau niveau) {
-        this.niveau = niveau;
-    }
 
     public Contributeur getContributeur() {
         return contributeur;

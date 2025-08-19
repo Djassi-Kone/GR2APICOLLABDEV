@@ -48,6 +48,9 @@ public class ContributionServiceImpl implements ContributionService {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private CoinsRepository coinsRepository;
+
     @Override
     @Transactional
     public Contribution reserverFonctionnalite(Long idFonctionnalite, Long idContributeur) {
@@ -129,6 +132,9 @@ public class ContributionServiceImpl implements ContributionService {
         Contributeur c = contribution.getContributeur();
         if (c == null) throw new RuntimeException("Contributeur introuvable");
 
+
+
+
         Coins gain = new Coins();
         gain.setNombreCoins(f.getPointFonctionnalite()); // nombre de coins = points de la fonctionnalité
         gain.setDateAcquisition(LocalDateTime.now());
@@ -136,8 +142,16 @@ public class ContributionServiceImpl implements ContributionService {
         gain.setContribution(contribution);
         gain.setContributeur(c);
 
+
         c.getCoins().add(gain);
+
+        coinsRepository.save(gain);
+
+
+        int total = coinsRepository.sumCoinsByContributeur(c.getId()); // voir méthode repo ci-dessous
+        c.setTotalCoins(total);
         contributeurRepository.save(c);
+
 
         // 6️⃣ Notifications et email hors de la transaction critique
         try {

@@ -26,6 +26,8 @@ CoinsRepository extends JpaRepository<Coins, Long> {
 
     List<Coins> findByGestionnaireId(Long idGestionnaire);
 
+    @Query("SELECT COALESCE(SUM(c.nombreCoins), 0) FROM Coins c WHERE c.contributeur.id = :contributeurId")
+    int sumCoinsByContributeur(@Param("contributeurId") Long contributeurId);
 
 }
 

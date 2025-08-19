@@ -18,13 +18,18 @@ public class DebloqueProjetController {
     @Autowired
     private DebloqueProjetService debloqueProjetService;
 
-    @PostMapping("/contributeur/{idcontributeur}")
+    @PostMapping("/contributeur/{idContributeur}/projet/{idProjet}")
     public ResponseEntity<DebloqueProjet> create(
-            @RequestBody DebloqueProjetDTO debloqueProjetDTO,
-            @PathVariable("idcontributeur") Long idContributeur
+            @PathVariable Long idProjet,
+            @PathVariable Long idContributeur,
+
+            @RequestBody DebloqueProjetDTO debloqueProjetDTO
     ) {
-        return ResponseEntity.ok(debloqueProjetService.createDebloqueProjet(debloqueProjetDTO, idContributeur));
+        return ResponseEntity.ok(
+                debloqueProjetService.debloquerProjet( idProjet, idContributeur,debloqueProjetDTO)
+        );
     }
+
 
     @GetMapping
     public List<DebloqueProjet> getAll() {
@@ -44,9 +49,10 @@ public class DebloqueProjetController {
 
     @PutMapping("/{id}")
     public ResponseEntity<DebloqueProjet> update(
-            @PathVariable int id,
+            @PathVariable Long id,
             @RequestBody DebloqueProjetDTO debloqueProjetDTO
     ) {
         return ResponseEntity.ok(debloqueProjetService.updateDebloqueProjet(id, debloqueProjetDTO));
     }
+
 }

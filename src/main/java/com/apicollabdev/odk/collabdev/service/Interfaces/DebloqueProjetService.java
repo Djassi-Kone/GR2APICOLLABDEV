@@ -6,12 +6,14 @@ import com.apicollabdev.odk.collabdev.entity.DebloqueProjet;
 import java.util.List;
 
 public interface DebloqueProjetService {
-    DebloqueProjet createDebloqueProjet(DebloqueProjetDTO debloqueProjet, Long idContributeur);
+    DebloqueProjet debloquerProjet(Long idProjet, Long idContributeur, DebloqueProjetDTO debloqueProjetDTO);
+
     List<DebloqueProjet> getAllDebloqueProjet();
+
     DebloqueProjet getById(Long id);
+
     void deleteById(Long id);
-    DebloqueProjet updateDebloqueProjet(
-            int id,
-            DebloqueProjetDTO debloqueProjetDTO
-    );
+
+    DebloqueProjet updateDebloqueProjet(Long id, DebloqueProjetDTO dto);
+
 }
