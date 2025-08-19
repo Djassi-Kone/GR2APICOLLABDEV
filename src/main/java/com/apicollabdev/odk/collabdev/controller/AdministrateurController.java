@@ -62,7 +62,7 @@ public class AdministrateurController {
     }
 
     @PutMapping("/accepter-demande-gestionnaire/{idDemande}/admin/{idAdmin}")
-    public ResponseEntity<Projet> accepterDemandeParAdmin(
+    public ResponseEntity<?> accepterDemandeParAdmin(
             @PathVariable Long idDemande,
             @PathVariable Long idAdmin) {
         try {
@@ -70,11 +70,10 @@ public class AdministrateurController {
                     .accepterDemandeGestionnairePourIdee(idDemande, idAdmin);
             return ResponseEntity.ok(projet);
         } catch (RuntimeException e) {
-            System.err.println("Erreur métier : " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(e.getMessage()); // Renvoyer le message d'erreur métier
         } catch (Exception e) {
-            System.err.println("Erreur interne : " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.internalServerError().build();
         }
     }
 

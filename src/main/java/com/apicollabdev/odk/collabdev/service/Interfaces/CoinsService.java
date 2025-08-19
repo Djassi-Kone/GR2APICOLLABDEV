@@ -2,6 +2,7 @@ package com.apicollabdev.odk.collabdev.service.Interfaces;
 
 import com.apicollabdev.odk.collabdev.dto.CoinsDTO;
 import com.apicollabdev.odk.collabdev.entity.Coins;
+import com.apicollabdev.odk.collabdev.entity.Contributeur;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ public interface CoinsService {
 
     // Récupération de tous les coins créés par un gestionnaire
     List<Coins> getCoinsByGestionnaire(long idGestionnaire);
+
+    List<Coins> getCoinsByContributeur(Contributeur contributeur);
     
 
 }

@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+
 @AllArgsConstructor
 @Service
 public class AdministrateurServiceImpl implements AdministrateurService {
@@ -139,6 +142,11 @@ public class AdministrateurServiceImpl implements AdministrateurService {
 
     @Transactional
     public Projet accepterDemandeGestionnairePourIdee(Long idDemande, Long idAdmin) {
+
+        Optional<Projet> existingProjet = projetRepository.findByIdProjet(idDemande);
+        if (existingProjet.isPresent()) {
+            throw new RuntimeException("Un projet avec cette valeur existe déjà");
+        }
         // Récupération de la demande
         DemandeParticipation demande = demandeParticipationRepository.findById(idDemande)
                 .orElseThrow(() -> new RuntimeException("Demande non trouvée"));

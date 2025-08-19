@@ -26,6 +26,7 @@ CoinsRepository extends JpaRepository<Coins, Long> {
 
     List<Coins> findByGestionnaireId(Long idGestionnaire);
 
+
 }
 
 

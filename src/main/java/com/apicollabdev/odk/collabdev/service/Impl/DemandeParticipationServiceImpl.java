@@ -348,4 +348,9 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
         return demandeParticipationRepository.findProjetsAcceptesByContributeur(idContributeur);
     }
 
+    @Override
+    public List<DemandeParticipation> getDemandesGestionnaire() {
+        return demandeParticipationRepository.findByTypeDemandeParticipationemande(TypeDemandeParticipation.GESTIONNAIRE);
+    }
+
 }

@@ -116,4 +116,11 @@ public class DemandeParticipationController {
     }
 
 
+    @GetMapping("/gestionnaire")
+    public ResponseEntity<List<DemandeParticipation>> getDemandesGestionnaire() {
+        List<DemandeParticipation> demandes = demandeParticipationServiceImpl.getDemandesGestionnaire();
+        return ResponseEntity.ok(demandes);
+    }
+
+
 }

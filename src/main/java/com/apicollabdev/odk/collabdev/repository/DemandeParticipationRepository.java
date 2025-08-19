@@ -28,4 +28,8 @@ public interface DemandeParticipationRepository extends JpaRepository<DemandePar
             "AND dp.statutDemandeParticipation = 'ACCEPTEE'")
     List<Projet> findProjetsAcceptesByContributeur(@Param("idContributeur") Long idContributeur);
 
+    List<DemandeParticipation> findByTypeDemandeParticipationemande(TypeDemandeParticipation typeDemandeParticipationemande);
+// Assurez-vous que le nom après 'findBy' correspond exactement à la propriété de l'entité}
+
+
 }

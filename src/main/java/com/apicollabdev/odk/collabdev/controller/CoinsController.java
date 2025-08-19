@@ -1,7 +1,9 @@
 package com.apicollabdev.odk.collabdev.controller;
 import com.apicollabdev.odk.collabdev.dto.CoinsDTO;
 import com.apicollabdev.odk.collabdev.entity.Coins;
+import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.repository.AdministrateurRepository;
+import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.service.Impl.CoinsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class CoinsController {
 
     @Autowired
     private CoinsServiceImpl coinsServiceImpl;
+
+    @Autowired
+    private ContributeurRepository contributeurRepository;
 
     // Création de coins par un administrateur
     @PostMapping(
@@ -83,7 +88,19 @@ public class CoinsController {
         return ResponseEntity.ok(coinsList);
     }
 
-    
+    @GetMapping("/contributeur/{id}")
+    public ResponseEntity<?> getCoinsByContributeurId(@PathVariable Long id) {
+        Contributeur contributeur = contributeurRepository.findById(id).orElse(null);
+
+        if (contributeur == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Contributeur avec l'ID " + id + " introuvable.");
+        }
+
+        List<Coins> coins = coinsServiceImpl.getCoinsByContributeur(contributeur);
+        return ResponseEntity.ok(coins);
+    }
 
 
 }

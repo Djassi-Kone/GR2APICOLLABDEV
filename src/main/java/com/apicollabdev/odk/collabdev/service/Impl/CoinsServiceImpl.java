@@ -132,6 +132,11 @@ public class CoinsServiceImpl implements CoinsService {
         return coinsRepository.save(coins);
     }
 
+    @Override
+    public List<Coins> getCoinsByContributeur(Contributeur contributeur) {
+        return coinsRepository.findByContributeur(contributeur);
+    }
+
 
 
 
