@@ -1,8 +1,10 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.entity.Administrateur;
+import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.entity.Notification;
 import com.apicollabdev.odk.collabdev.repository.AdministrateurRepository;
+import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.repository.NotificationRepository;
 import com.apicollabdev.odk.collabdev.service.Interfaces.NotificationService;
 import com.apicollabdev.odk.collabdev.service.Impl.NotificationServiceImpl;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -25,6 +28,8 @@ public class NotificationController {
     private  AdministrateurRepository administrateurRepository;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private ContributeurRepository contributeurRepository;
 
     /*@GetMapping("/gestionnaire/{idGestionnaire}")
     public ResponseEntity<List<Notification>> getNotificationsByGestionnaire(@PathVariable Long idGestionnaire) {
@@ -45,9 +50,14 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.createNotification(notification, idAdministrateur));
     }
 
-    @GetMapping
-    public List<Notification> getAll() {
-        return notificationService.getAllNotifications();
+    @GetMapping("/contributeur/{id}")
+    public ResponseEntity<List<Notification>> getNotificationsByContributeur(@PathVariable Long id) {
+        Optional<Contributeur> contributeurOpt = contributeurRepository.findById(id);
+        if (contributeurOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Notification> notifications = notificationService.getNotificationsByContributeur(contributeurOpt.get());
+        return ResponseEntity.ok(notifications);
     }
 
     @GetMapping("/{id}")

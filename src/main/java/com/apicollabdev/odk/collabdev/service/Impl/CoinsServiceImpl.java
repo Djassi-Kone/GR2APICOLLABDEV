@@ -64,8 +64,13 @@ public class CoinsServiceImpl implements CoinsService {
 
     @Override
     public Coins getById(Long id) {
-        return coinsRepository.findById((id))
+        return coinsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Coins non trouvé avec l'id : " + id));
+    }
+
+    @Override
+    public List<Coins> getCoinsByContributeur(Contributeur contributeur) {
+        return coinsRepository.findByContributeur(contributeur);
     }
 
     @Override

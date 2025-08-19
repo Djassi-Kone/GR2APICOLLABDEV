@@ -1,5 +1,6 @@
 package com.apicollabdev.odk.collabdev.repository;
 
+import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
    // List<Notification> findByProjet_Gestionnaire_IdContributeur(Long idGestionnaire);
 
-
+    List<Notification> findByContributeur(Contributeur contributeur);
     List<Notification> findByProjet_IdProjet(Long idProjet);
 
 

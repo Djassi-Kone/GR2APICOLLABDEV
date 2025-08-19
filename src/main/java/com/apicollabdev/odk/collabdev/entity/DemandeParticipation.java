@@ -26,7 +26,7 @@ public class DemandeParticipation {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private TypeDemandeParticipation typeDemandeParticipationemande;
+    private TypeDemandeParticipation typeDemandeParticipation;
 
     private LocalDateTime datedemande;
 
@@ -71,12 +71,12 @@ public class DemandeParticipation {
     }
 
 
-    public TypeDemandeParticipation getTypeDemandeParticipationemande() {
-        return typeDemandeParticipationemande;
+    public TypeDemandeParticipation getTypeDemandeParticipation() {
+        return typeDemandeParticipation;
     }
 
     public void setTypeDemandeParticipationemande(TypeDemandeParticipation typeDemandeParticipationemande) {
-        this.typeDemandeParticipationemande = typeDemandeParticipationemande;
+        this.typeDemandeParticipation = typeDemandeParticipation;
     }
 
     public LocalDateTime getDatedemande() {

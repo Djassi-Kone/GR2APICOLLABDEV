@@ -1,7 +1,9 @@
 package com.apicollabdev.odk.collabdev.controller;
 import com.apicollabdev.odk.collabdev.dto.CoinsDTO;
 import com.apicollabdev.odk.collabdev.entity.Coins;
+import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.repository.AdministrateurRepository;
+import com.apicollabdev.odk.collabdev.repository.ContributeurRepository;
 import com.apicollabdev.odk.collabdev.service.Impl.CoinsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ public class CoinsController {
     private  AdministrateurRepository administrateurRepository;
     @Autowired
     private  CoinsServiceImpl coinsServiceImpl;
+    @Autowired
+    private ContributeurRepository contributeurRepository;
 
 
 
@@ -44,6 +48,20 @@ public class CoinsController {
     @GetMapping("/{id}")
     public ResponseEntity<Coins> getById(@PathVariable Long id) {
         return ResponseEntity.ok(coinsServiceImpl.getById(id));
+    }
+
+    @GetMapping("/contributeur/{idcontributeur}")
+    public ResponseEntity<?> getCoinsByContributeurId(@PathVariable Long id) {
+        Contributeur contributeur = contributeurRepository.findById(id).orElse(null);
+
+        if (contributeur == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Contributeur avec l'ID " + id + " introuvable.");
+        }
+
+        List<Coins> coins = coinsServiceImpl.getCoinsByContributeur(contributeur);
+        return ResponseEntity.ok(coins);
     }
 
     @DeleteMapping("/{id}")

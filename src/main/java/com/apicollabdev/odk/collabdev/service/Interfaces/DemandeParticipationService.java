@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.service.Interfaces;
 
 import com.apicollabdev.odk.collabdev.dto.DemandeDTO;
+import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
 import com.apicollabdev.odk.collabdev.entity.Projet;
 
@@ -15,7 +16,7 @@ public interface DemandeParticipationService {
     DemandeParticipation rejeterDemandeGestionnaire (Long idDemande);
 
     DemandeParticipation createDemandeParticipation(Long idProjet, Long idContributeur);
-
+    List<DemandeParticipation> getDemandesGestionnaire();
     DemandeParticipation accepterDemandeParticipation(Long idDomaine);
     DemandeParticipation rejeterDemandeParticipation (Long idDemande);
 }

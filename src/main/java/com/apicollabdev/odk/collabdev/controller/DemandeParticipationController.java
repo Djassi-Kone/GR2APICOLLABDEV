@@ -1,6 +1,7 @@
 package com.apicollabdev.odk.collabdev.controller;
 
 import com.apicollabdev.odk.collabdev.dto.DemandeDTO;
+import com.apicollabdev.odk.collabdev.entity.Contributeur;
 import com.apicollabdev.odk.collabdev.entity.DemandeParticipation;
 import com.apicollabdev.odk.collabdev.entity.Projet;
 import com.apicollabdev.odk.collabdev.service.Impl.DemandeParticipationServiceImpl;
@@ -89,6 +90,13 @@ public class DemandeParticipationController {
 
     ) {
         return demandeParticipationServiceImpl.faireDemandeGestionnaire(idIdeeProjet, idContributeur);
+    }
+
+    // Récupérer toutes les demandes de type GESTIONNAIRE de les tous contributeurs
+    @GetMapping("/gestionnaire")
+    public ResponseEntity<List<DemandeParticipation>> getDemandesGestionnaire() {
+        List<DemandeParticipation> demandes = demandeParticipationServiceImpl.getDemandesGestionnaire();
+        return ResponseEntity.ok(demandes);
     }
 
     // Récupérer toutes les demandes

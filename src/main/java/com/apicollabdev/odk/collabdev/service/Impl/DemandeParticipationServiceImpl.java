@@ -276,6 +276,12 @@ public class DemandeParticipationServiceImpl implements DemandeParticipationServ
     } */
 
     @Override
+    public List<DemandeParticipation> getDemandesGestionnaire() {
+        return demandeParticipationRepository.findByTypeDemandeParticipation(TypeDemandeParticipation.GESTIONNAIRE);
+    }
+
+
+    @Override
     public List<DemandeParticipation> getAllDemandeParticipation() {
         return demandeParticipationRepository.findAll();
     }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface NotificationService {
     Notification createNotification(Notification notification, long idAdministrateur);
-    List<Notification> getAllNotifications();
+    List<Notification> getNotificationsByContributeur(Contributeur contributeur);
     Notification getById(Long id);
     void deleteById(Long id);
 

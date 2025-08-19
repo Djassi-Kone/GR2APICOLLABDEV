@@ -42,10 +42,9 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setAdministrateur(a);
         return notificationRepository.save(notification);
     }
-
     @Override
-    public List<Notification> getAllNotifications() {
-        return notificationRepository.findAll();
+    public List<Notification> getNotificationsByContributeur(Contributeur contributeur) {
+        return notificationRepository.findByContributeur(contributeur);
     }
 
     @Override
